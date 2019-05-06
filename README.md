@@ -1,5 +1,6 @@
 # SeidarT
-Seismic and Radar Modeling
+
+Seismic and radar modeling using staggered grid finite differences (FDTD) 
 
 
 ### Table of Contents
@@ -14,7 +15,7 @@ Seismic and Radar Modeling
 
 ## Introduction <a name="introduction"></a>
 
-The Seismic and Radar Toolbox (SEISART) is a collaboration between researchers at the Universities of Maine and Washington to provide an open source platform for forward modeling mechanical and electromagnetic wave propagation. The major objective of the project is to easily and quickly implement isotropic and anisotropic complex geometries and/or velocity structures to develop prior constraints for - not limited too - investigating, estimating, and imaging englacial ice structure, sub-glacial boundary conditions on the sub-regional scale. Larger problems would require the curvature of the Earth to be taken into consideration, but many glacier seismic and radar experiments do not expand into regional parameter estimation and velocity modeling. 
+The Seismic and Radar Toolbox (SeidarT) is a collaboration between researchers at the Universities of Maine and Washington to provide an open source platform for forward modeling mechanical and electromagnetic wave propagation. The major objective of the project is to easily and quickly implement isotropic and anisotropic complex geometries and/or velocity structures to develop prior constraints for - not limited too - investigating, estimating, and imaging englacial ice structure, sub-glacial boundary conditions on the sub-regional scale. Larger problems would require the curvature of the Earth to be taken into consideration, but many glacier seismic and radar experiments do not expand into regional parameter estimation and velocity modeling. 
 
 Much of this code has been adopted from the *SEISMIC_CPML* software provided by [Computational Infrastucture for Geophysics (CIG)](https://geodynamics.org/cig/software/). Further details to the backend numerical code can be found in the [References](#references) section below.
 
@@ -38,16 +39,16 @@ To download the software, open a terminal (*Ctrl-Alt-t* for Ubuntu and *Ctrl-Opt
 cd /path/to/parent/directory
 ~~~
 
-to where you would like SEISART to be located then clone the files from *github* 
+to where you would like SeidarT to be located then clone the files from *github* 
 
 ~~~
-git clone git@github.com:sbernsen/SEISART.git
+git clone git@github.com:sbernsen/SeidarT.git
 ~~~
 
-This will create a folder named **SEISART** that contains all executables and modules. Change directories to the **SEISART** folder
+This will create a folder named **SeidarT** that contains all executables and modules. Change directories to the **SeidarT** folder
 
 ~~~
-cd SEISART
+cd SeidarT
 ~~~
 
 and run the install file
@@ -96,8 +97,10 @@ Geometries are initiated with a PNG image and the program identifies unique RGB 
 To get started on a new project create a new folder and save the image to the folder. From the command line, change directories to the project folder then enter into the command line
 
 ~~~
-prjrun -i
+prjbuild -i /path/to/geometry/image.png -o project_filename.prj
+~~~
 
+The project filename is optional if the -o option is omitted and the default file *jordan_downs.prj* will be generated. For any of the executables the -h or --help option will provide 
 
 [comment]: ======================================================================
 

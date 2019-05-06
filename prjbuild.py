@@ -20,7 +20,7 @@ parser.add_argument( '-i', '--image_file', nargs=1, type=str, required = True,
 						help='the full file path for the image', default=None)
 
 parser.add_argument( '-o', '--project_file', nargs=1, type=str, required = False,
-	default = 'cabrini_green.prj',
+	default = 'jordan_downs.prj',
 	help = """name of output file path with extension .prj and excluding 
 				the full path directory""")
 
