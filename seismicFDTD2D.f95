@@ -639,13 +639,13 @@ do it = 1,NSTEP
   ! check stability of the code, exit if unstable
   if (velocnorm > STABILITY_THRESHOLD) stop 'code became unstable and blew up'
 
-  call create_color_image(vx,NX,NY,it,ISOURCE,JSOURCE, &
-                       NPOINTS_PML,1)
-  call create_color_image(vy,NX,NY,it,ISOURCE,JSOURCE, &
-                       NPOINTS_PML,2)
+  ! call create_color_image(vx,NX,NY,it,ISOURCE,JSOURCE, &
+  !                      NPOINTS_PML,1)
+  ! call create_color_image(vy,NX,NY,it,ISOURCE,JSOURCE, &
+  !                      NPOINTS_PML,2)
 
   call write_image(vx, nx, ny, it, 'Vx')
-  call write_image(vy, nx, ny, it, 'Vy')
+  call write_image(vy, nx, ny, it, 'Vz')
   
   endif
 

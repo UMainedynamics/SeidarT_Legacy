@@ -26,7 +26,7 @@ parser = argparse.ArgumentParser(description="""The seisarT software requires a
 parser.add_argument( 'project_file', nargs=1, type=str, 
 						help='the full file path for the project file', default=None)
 
-parser.add_argument( '-m', '--model', nargs = 1, type = str, required = False,
+parser.add_argument( '-M', '--model', nargs = 1, type = str, required = False,
 	help = 'Specify whether to run the seismic (s), or electromagnetic (e), both (b) or none (default = n)',
 	default = 'n')
 

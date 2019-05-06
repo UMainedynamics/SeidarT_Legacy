@@ -7,8 +7,7 @@
 import glob 
 import numpy as np
 import matplotlib.pyplot as plt 
-
-# from scipy.io import FortranFile
+import matplotlib.image as mpimg
 
 # ======================= Create the class variables ==========================
 
@@ -29,7 +28,10 @@ class ts:
 		self.nx = None
 		self.nz = None
 
-	# ----------------- Useful Functions -----------------
+	# -------------------------- Function Definitions -------------------------
+
+
+
 	def getrcx(self):
 	# input rcx as an n-by-2 array integer values for their indices. 
 
@@ -71,27 +73,23 @@ class ts:
 
 
 
-
-# =============================================================================
-def read_dat(fn, nx, ny):
-	f = FortranFile(fn, 'r')
-	dat = np.fromfile(f, dtype = 'float64', count = nx*ny )
-	dat = dat.reshape(nx, ny)
-	return(dat)
-
-
-def dat2csv(chan, nx, ny):
-
-	for fn in glob.glob(chan + '*.dat'):
-		npdat = read_dat(fn, nx, ny)
-
-		# replace the .dat extension with .csv
-		sfn = fn[0:-3] + 'csv'
-		np.savetxt(sfn, npdat, delimiter=",")
-
-
-
-
-
-def make_gif():
+# =========================== General Use Functions ===========================
+def read_rcx(rcxfile):
+	# Import the reciever locations from a text list
 	pass
+
+def modelplt(imfile, rcx=False):
+	# Formatting for plotting the image
+	
+	# Load the image
+
+	if rcx:
+		pass
+	else:
+		pass
+
+
+def plot_image(csvfile):
+	d = np.genfromtxt(csvfile, delimiter=',')
+	plt.imshow(d)
+	plt.show()

@@ -633,59 +633,44 @@ do it = 1,NSTEP
     ! check stability of the code, exit if unstable
     if (velocnorm > STABILITY_THRESHOLD) stop 'code became unstable and blew up'
 
-    call create_color_image(Ex(1:nx,1:ny),NX,NY,it,ISOURCE,JSOURCE, &
-                          NPOINTS_PML,1)
-    call create_color_image(Ey(1:nx,1:ny),NX,NY,it,ISOURCE,JSOURCE, &
-                          NPOINTS_PML,2)
+    ! call create_color_image(Ex(1:nx,1:ny),NX,NY,it,ISOURCE,JSOURCE, &
+    !                       NPOINTS_PML,1)
+    ! call create_color_image(Ey(1:nx,1:ny),NX,NY,it,ISOURCE,JSOURCE, &
+    !                       NPOINTS_PML,2)
+
+    call write_image(Ex, nx, ny, it, 'Ex')
+    call write_image(Ey, nx, ny, it, 'Ez')
 
   endif
 
 enddo   ! end of time loop
 
-! save seismograms
-! call write_seismograms(sisEx,sisEy,nstep,nrec,DT)
 
 end subroutine electromag_cpml_2d
 
 
 !==============================================================================
 !==============================================================================
-subroutine write_seismograms(sisEx,sisEy,nt,nrec,DELTAT)
+!==============================================================================
+subroutine write_image(image_data, nx, ny, it, channel)
 
 implicit none
 
-integer, parameter :: dp=kind(0.d0)
-integer nt,nrec
-real(kind=dp) DELTAT
+integer, parameter :: dp = kind(0.d0)
+integer :: nx, ny, it
+real(kind=dp) :: image_data(nx, ny)
+character(len=2) :: channel
+character(len=100) :: filename
 
-real(kind=dp) sisEx(nt,nrec)
-real(kind=dp) sisEy(nt,nrec)
+WRITE (filename, "(a2, i6.6, '.dat')" ) channel, it
 
-integer irec,it
+open(unit = 10, form = 'unformatted', file = trim(filename) )
+write(10) image_data
 
-character(len=100) file_name
+close(unit = 10)
 
-! X component
-do irec=1,nrec
-  write(file_name,"('Ex_file_',i3.3,'.dat')") irec
-  open(unit=11,file=file_name,status='unknown')
-  do it=1,nt
-    write(11,*) sngl(dble(it-1)*DELTAT),',',sngl(sisEx(it,irec))
-  end do
-    close(11)
-enddo
+end subroutine write_image
 
-! Y component
-do irec=1,nrec
-  write(file_name,"('Ey_file_',i3.3,'.dat')") irec
-  open(unit=11,file=file_name,status='unknown')
-  do it=1,nt
-    write(11,*) sngl(dble(it-1)*DELTAT),',',sngl(sisEy(it,irec))
-  end do
-  close(11)
-end do
-
-end subroutine write_seismograms
 
 
 !==============================================================================

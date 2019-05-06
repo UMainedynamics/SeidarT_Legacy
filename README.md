@@ -7,7 +7,8 @@ Seismic and radar modeling using staggered grid finite differences (FDTD)
 [Introduction](#introduction)  
 [Installation](#install)  
 [Getting Started](#getting_started)  
-    [Examples](#examples)  
+[Examples](#examples)  
+[Routines](#routines)  
 [Appendix](#appendix)  
 [References](#references)  
 
@@ -60,7 +61,11 @@ bash install.sh
 When the compilation is finished, we can add the folder to the path directory and the python path directory. Currently, this software is supported with **bash** so append the following lines to the *.bashrc* if using Ubuntu or in the */etc/path* for Mac.
 
 ~~~
-placeholder/for/now
+PATH=$PATH:/path/to/SeidarT/
+export $PATH
+
+PYTHONPATH=$PYTHONPATH:/path/to/SeidarT
+export PYTHONPATH
 ~~~
 
 There are a variety of ways to edit the documents but for simplicity change directories to the home folder 
@@ -100,15 +105,19 @@ To get started on a new project create a new folder and save the image to the fo
 prjbuild -i /path/to/geometry/image.png -o project_filename.prj
 ~~~
 
-The project filename is optional if the -o option is omitted and the default file *jordan_downs.prj* will be generated. For any of the executables the -h or --help option will provide 
+The project filename is optional if the -o option is omitted and the default text file *jordan_downs.prj* will be generated. For any of the executables the -h or --help option will provide a quick reference to any positional, optional or required arguments.
 
-[comment]: ======================================================================
-
-
+Using the text editor of choice, you can edit the .prj file. 
 
 
 [comment]: ======================================================================
 
+
+
+
+[comment]: ======================================================================
+
+## Routines <a name="routines"></a>
 
 
 
