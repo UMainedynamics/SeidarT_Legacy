@@ -60,6 +60,7 @@ class Domain:
     	self.dy = None
     	self.dz = None
     	self.cpml = None
+    	self.write = None
     	self.exit_status = 1
 
     	# Flag to specify whether the all inputs are fulfilled
@@ -99,6 +100,7 @@ class Domain:
     		domain.dx = float(domain.dx[0])
     		domain.dz = float(domain.dz[0])
     		domain.cpml = int(domain.cpml[0])
+    		domain.write = int(domain.write[0])
     	else:
     		print('\n Domain inputs are not satisfied. I can"t go on anymore. \n')
     		# quit()
@@ -322,6 +324,9 @@ for line in f:
 			domain.dz = temp[2].rsplit()
 		if temp[1] == 'cpml':
 			domain.cpml = temp[2].rsplit()
+		if temp[1] == 'write':
+			domain.write = temp[2].rsplit()
+
 
 	if line[0] == 'S':
 		temp = line.split(',')
@@ -370,9 +375,7 @@ for line in f:
 			material.material_list = np.row_stack( (material.material_list, temp[1:]))
 
 	if line[0] == 'C':
-
 		temp = line.split(',')
-
 		# We need to remove the '\n' at the end. Whether the coefficients are 
 		# given results in a different string
 		try:
@@ -386,14 +389,11 @@ for line in f:
 			seismic.tensor_coefficients = np.row_stack( (seismic.tensor_coefficients, temp[1:]))
 
 	if line[0] == 'P':
-
 		temp = line.split(',')
-		
 		try:
 			temp[-1] = temp[-1].rsplit()[0] # An index error will be given if coefficients are provided
 		except:
 			temp[-1] = ''
-
 
 		if temp[1] == '0' or temp[1] == '0.0':
 			electromag.tensor_coefficients = temp[1:]
@@ -444,7 +444,7 @@ if seismic.exit_status == 0 and not seismic.compute_coefficients:
 
 		seis2d.seismicfdtd2d.doall(domain.geometry+1, seismic.tensor_coefficients, 
 			domain.dx, domain.dz, domain.cpml, src, seismic.f0, 
-			seismic.time_steps, 64, seismic.theta)
+			seismic.time_steps, domain.write, seismic.theta)
 
 elif seismic.exit_status == 0 and seismic.compute_coefficients and material.material_flag:
 	# The coefficients aren't provided but the materials are so we can compute them
@@ -486,7 +486,7 @@ if electromag.exit_status == 0 and not electromag.compute_coefficients:
 	if model_type == 'e' or model_type == 'b':
 		em2d.electromagfdtd2d.doall(domain.geometry+1, electromag.tensor_coefficients, 
 			domain.dx, domain.dz, domain.cpml, src, electromag.f0, 
-			electromag.time_steps, 64, electromag.theta)
+			electromag.time_steps, domain.write, electromag.theta)
 
 elif electromag.exit_status == 0 and electromag.compute_coefficients and material.material_flag:
 	

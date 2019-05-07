@@ -145,6 +145,7 @@ dz = 'D,dz,'
 cpml = 'D,cpml,20'
 nmat = 'D,nmats,' + str(len( np.unique(im) ))
 tfile = 'D,tfile,'
+rundur = 'D,write,64'
 with open(project_file, 'a') as prj:
 	prj.write(dim+new_line)
 	prj.write(nx+new_line)
@@ -156,6 +157,7 @@ with open(project_file, 'a') as prj:
 	prj.write(cpml+new_line)
 	prj.write(nmat+new_line)
 	prj.write(tfile + new_line)
+	prj.write(rundur + new_line)
 	prj.write(new_line)
 
 

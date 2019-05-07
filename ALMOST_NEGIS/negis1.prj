@@ -60,6 +60,7 @@ D,dy,n/a
 D,dz,2
 D,cpml,20
 D,nmats,4
+D,write,32
 
 # number, id, R/G/B, Temperature, Attenuation, Density, Porosity, Water_Content, Anisotropic, ANG_File
 M,0,granite,137/198/75,-15.0,2.0,2500,0.0,0.0,False,
@@ -69,7 +70,7 @@ M,3,ice1h,237/31/62,-10.0,2.0,910,0.0,0.0,False,
 
 # The source parameters for the seismic model
 S,dt,
-S,time_steps,3000
+S,time_steps,9000
 S,x,60
 S,y,0
 S,z,60
@@ -85,7 +86,7 @@ C,3.0,10677240192.01,5338620096.01,5338620096.01,10677240192.01,5338620096.01,10
 
 # The source parameters for the elecromagnetic model
 E,dt,
-E,time_steps,8000
+E,time_steps,9000
 E,x,40
 E,y,
 E,z,40
