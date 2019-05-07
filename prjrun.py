@@ -274,13 +274,6 @@ def append_coefficients(prjfile, tensor, CP = None ):
 
 	call('mv ' + newfile + ' ' + prjfile, shell = True)
 
-# -----------------------------------------------------------------------------
-
-def write_post(filename, dt,rx, rz, channel, nx, nz):
-	
-	postfile = open(filename, 'w')
-
-	
 
 
 # =============================================================================

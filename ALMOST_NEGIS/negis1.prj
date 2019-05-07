@@ -69,7 +69,7 @@ M,3,ice1h,237/31/62,-10.0,2.0,910,0.0,0.0,False,
 
 # The source parameters for the seismic model
 S,dt,
-S,time_steps,8000
+S,time_steps,3000
 S,x,60
 S,y,0
 S,z,60
