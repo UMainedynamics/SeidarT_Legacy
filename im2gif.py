@@ -12,9 +12,6 @@ import matplotlib.image as mpimg
 import matplotlib.animation as anim
 from scipy.io import FortranFile
 
-import display_functions as df
-
-
 # -------------------------- Command Line Arguments ---------------------------
 parser = argparse.ArgumentParser(description="""This program builds a gif from 
 	the set of image output of the FDTD modeling. The images can be in csv or 
@@ -66,9 +63,9 @@ class AnimatedGif:
 		plt_txt = plt.text(extent[0] + 20, extent[3]+20, label+"%.3g", color='red') # Lower left corner
 		self.images.append([plt_im, plt_bg, plt_txt])
 
-	def save(self, filename, fps=1):
-		animation = anim.ArtistAnimation(self.fig, self.images)
-		animation.save(filename, writer='imagemagick', fps=fps)
+	def save(self, filename, frame_rate = 50):
+		animation = anim.ArtistAnimation(self.fig, self.images, interval = frame_rate)
+		animation.save(filename, writer='imagemagick')
 
 
 # ------------------------------ Run the program ------------------------------
@@ -102,6 +99,8 @@ for line in f:
 
 	if line[0] == 'S':
 		temp = line.split(',')
+		if temp[1] == 'dt':
+			sdt = float(temp[2].rsplit()[0])
 		if temp[1] == 'x':
 			sx = float(temp[2].rsplit()[0])
 		if temp[1] == 'z':
@@ -109,6 +108,8 @@ for line in f:
 
 	if line[0] == 'E':
 		temp = line.split(',')
+		if temp[1] == 'dt':
+			edt = float(temp[2].rsplit()[0])
 		if temp[1] == 'x':
 			ex = float(temp[2].rsplit()[0])
 		if temp[1] == 'z':
@@ -117,17 +118,17 @@ for line in f:
 
 f.close()
 
-clight = 2.99792458e8
-
 # Define some plotting inputs
 nx = nx + 2*cpml
 nz = nz + 2*cpml
-dt = min( (dx, dz) )/(2*clight)
 x = np.linspace(1, nx, num = nx)*dx
 z = np.linspace(nz, 1, num = nz)*dz
 extent = (cpml, nx-cpml, nz-cpml, cpml)
 
-
+ex = (ex + cpml+1)/dx
+ez = (ez + cpml+1)/dz
+sx = (sx + cpml+1)/dx
+sz = (sz + cpml+1)/dz
 
 # Create the gif object
 animated_gif = AnimatedGif( size=(nx, nz) ) 
@@ -138,8 +139,10 @@ animated_gif.background = mpimg.imread(imfile)
 # Add the source location to plot
 if channel == 'Ex' or channel == 'Ez':
 	animated_gif.source_location = np.array([ex, ez]) 
+	dt = edt
 else:
 	animated_gif.source_location = np.array([sx, sz])
+	dt = sdt
 
 print('Creating GIF.')
 # Proceed accordingly to the channel flag
@@ -167,8 +170,8 @@ if channel:
 		
 	else:
 		ind = 0
+		files.sort()
 		for fn in files:
-			files.sort()
 			f = FortranFile(fn, 'r')
 			dat = f.read_reals(dtype = 'float64')
 			dat = dat.reshape(nz, nx)

@@ -28,14 +28,11 @@ parser.add_argument( '-d', '--delete', nargs=1, type=int, required=False,
 					help = """Specify whether to delete (1) the .dat files 
 					following the routines""", default = 0)
 
-
 # Get the arguments
 args = parser.parse_args()
 project_file = ''.join(args.project_file)
 fmt = ''.join(args.output)
 rm = args.delete[0]
-
-
 
 # =========================== Function Definitions ============================
 
@@ -66,7 +63,6 @@ def read_dat(fn, nx, ny):
 	f.close()
 
 	return(dat)
-
 
 # ============================== Run the program ==============================
 

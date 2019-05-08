@@ -89,7 +89,3 @@ def modelplt(imfile, rcx=False):
 		pass
 
 
-def plot_image(csvfile):
-	d = np.genfromtxt(csvfile, delimiter=',')
-	plt.imshow(d)
-	plt.show()

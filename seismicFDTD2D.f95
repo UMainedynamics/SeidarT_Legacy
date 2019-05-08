@@ -311,7 +311,7 @@ jsource = src(2)+npoints_pml
  ! dx/minval( (/ c11/rho, c22/rho, c12/rho, c66/rho /) )
 
 t0 = 1.0d0/f0
-DT = dx/ ( 2.0* sqrt( ( maxval( (/ c11/rho, c22/rho, c12/rho, c66/rho /) ) ) ) )!dx/(256*f0)!dt)
+DT = minval(dx,dy)/ ( 2.0* sqrt( ( maxval( (/ c11/rho, c22/rho, c12/rho, c66/rho /) ) ) ) )!dx/(256*f0)!dt)
 ALPHA_MAX_PML = PI*f0 ! from Festa and Vilotte
 ! ----------------------------------------------------------------------
 !---
@@ -634,8 +634,8 @@ do it = 1,NSTEP
   velocnorm = maxval(sqrt(vx**2 + vy**2))
   print *,'Time step # ',it,' out of ',NSTEP
   print *,'Time: ',sngl((it-1)*DT),' seconds'
-  print *,'Max norm velocity vector V (m/s) = ',velocnorm
-  print *
+  ! print *,'Max norm velocity vector V (m/s) = ',velocnorm
+  ! print *
   ! check stability of the code, exit if unstable
   if (velocnorm > STABILITY_THRESHOLD) stop 'code became unstable and blew up'
 

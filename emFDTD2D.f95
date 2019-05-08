@@ -304,7 +304,7 @@ jsource = int(src(2)) + npoints_pml
 !   sisEy(nstep, nrec ) )
 
 ! Define the 
-DT = dx / ( 2.d0 * Clight)!/sqrt( minval( (/ epsilonx, epsilony /) ) ) )  ! 0.9/( 2 * Clight/sqrt( minval( (/ epsilonx, epsilony /) ) ) ) ! 0.99/(Clight*dx) ! dx/(2*Clight) ! min(dx,dy)/(2*Clight)  ! 
+DT = minval(dx, dy)/ ( 2.d0 * Clight)!/sqrt( minval( (/ epsilonx, epsilony /) ) ) )  ! 0.9/( 2 * Clight/sqrt( minval( (/ epsilonx, epsilony /) ) ) ) ! 0.99/(Clight*dx) ! dx/(2*Clight) ! min(dx,dy)/(2*Clight)  ! 
 t0 = 1.0d0/f0
 tw = 4.0d0*t0
 
@@ -628,8 +628,8 @@ do it = 1,NSTEP
     velocnorm = maxval(sqrt(Ex**2 + Ey**2))
     print *,'Time step # ',it,' out of ',NSTEP
     print *,'Time: ',sngl((it-1)*DT),' seconds'
-    print *,'Max norm electric field vector = ',maxval(Ex), maxval(Ey), maxval(Hz)
-    print *
+    ! print *,'Max norm electric field vector = ',maxval(Ex), maxval(Ey), maxval(Hz)
+    ! print *
     ! check stability of the code, exit if unstable
     if (velocnorm > STABILITY_THRESHOLD) stop 'code became unstable and blew up'
 

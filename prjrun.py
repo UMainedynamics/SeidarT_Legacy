@@ -9,7 +9,7 @@ import argparse
 import os.path
 import numpy as np
 import matplotlib.image as mpimg
-
+from subprocess import call
 import material_functions as mf
 
 # Modeling modules
@@ -256,7 +256,7 @@ def image2int(imfilename):
 # file. In order to do this, we need to create a new file then move it to the 
 # original file
 
-def append_coefficients(prjfile, tensor, CP = None ):
+def append_coefficients(prjfile, tensor, CP = None, dt=1 ):
 	# CP is the line identifier (C - stiffness, P - permittivity). This has the
 	# ability to be optional since there will is a difference between a 2nd 
 	# order tensor and a 4th order tensor in regards to length but we might
@@ -265,14 +265,27 @@ def append_coefficients(prjfile, tensor, CP = None ):
 
 	ogprj = open(prjfile, 'r')
 	temp = open(newfile, 'a')
-	
+	# We need to append the dt for each modeling type
+	if CP == 'C':
+		mt = 'S'
+	else:
+		mt = 'E'
+
 	for line in ogprj.readlines():
 		if line[0] == CP:
-
 			line = line.split(',')
 			temp.write( CP + ',' + ','.join( tensor[ int(float(line[1])),:].astype(str) ) + '\n' )
+		elif line[0] == mt and line[2:4] == 'dt':
+			temp.write( mt + ',dt,' + str(dt) + '\n' )
 		else:
 			temp.write(line)
+
+		# if line[0] == mt:
+		# 	line = line.split(',')
+		# 	if line[1] == 'dt':
+		# 		temp.write( mt + ',dt,' + str(dt) + '\n' )
+
+
 
 	call('mv ' + newfile + ' ' + prjfile, shell = True)
 
@@ -459,31 +472,54 @@ elif seismic.exit_status == 0 and seismic.compute_coefficients and material.mate
 	# Before we append the coefficients to the text file let's round to the second decimal
 	tensor = np.round(tensor, 2)
 
+	ind = np.where(tensor.max() == tensor)
+	max_rho = tensor[ ind[0][0], -1]
+	dt = np.min([domain.dx, domain.dz])/(2.0*np.sqrt(tensor.max()/max_rho ))
+
 	# We're going to find the lines marked 'C' and input the values there
-	append_coefficients(project_file, tensor, CP = 'C')
+	append_coefficients(project_file, tensor, CP = 'C', dt = dt)
 	print("Finished. Appending to project file.\n")
 	
+	if model_type == 's' or model_type == 'b':
+		seismic.time_steps = int(seismic.time_steps[0])
+		seismic.f0 = float(seismic.f0[0])
+		seismic.theta = float(seismic.theta[0])
+		seismic.x = float(seismic.x[0])
+		seismic.z = float(seismic.z[0])
+		seismic.tensor_coefficients = tensor
+
+		src = np.array([seismic.x/domain.dx, seismic.z/domain.dz]).astype(int)
+		print('Modeling the seismic wavefield.\n')
+
+		seis2d.seismicfdtd2d.doall(domain.geometry+1, seismic.tensor_coefficients, 
+			domain.dx, domain.dz, domain.cpml, src, seismic.f0, 
+			seismic.time_steps, domain.write, seismic.theta)
 else:
 	# We don't have the materials or the coefficients
 	print('Unable to model seismic. Check your project file for errors.\n')
 
 # -----------------------------------------------------------------------------
+
+clight = 2.99792458e8
+
+
 # Now let's see if we can do some em modeling	
 if electromag.exit_status == 0 and not electromag.compute_coefficients:
 	# The coefficients are provided. We don't need the material
 	print('Electromagnetic coefficients are given.')
 
-	electromag.time_steps = int(electromag.time_steps[0])
-	electromag.f0 = float(electromag.f0[0])
-	electromag.theta = float(electromag.theta[0])
-	electromag.x = float(electromag.x[0])
-	electromag.z = float(electromag.z[0])
-	electromag.tensor_coefficients = electromag.tensor_coefficients.astype(float)
-
-	src = np.array([electromag.x/domain.dx, electromag.z/domain.dz]).astype(int)
-	print('Modeling the electromagnetic wavefield.\n')
-
 	if model_type == 'e' or model_type == 'b':
+
+		electromag.time_steps = int(electromag.time_steps[0])
+		electromag.f0 = float(electromag.f0[0])
+		electromag.theta = float(electromag.theta[0])
+		electromag.x = float(electromag.x[0])
+		electromag.z = float(electromag.z[0])
+		electromag.tensor_coefficients = electromag.tensor_coefficients.astype(float)
+
+		src = np.array([electromag.x/domain.dx, electromag.z/domain.dz]).astype(int)
+		print('Modeling the electromagnetic wavefield.\n')
+
 		em2d.electromagfdtd2d.doall(domain.geometry+1, electromag.tensor_coefficients, 
 			domain.dx, domain.dz, domain.cpml, src, electromag.f0, 
 			electromag.time_steps, domain.write, electromag.theta)
@@ -496,8 +532,26 @@ elif electromag.exit_status == 0 and electromag.compute_coefficients and materia
 	tensor = material.functions.get_perm(temp = material.temp, pore = material.pore,
 		wc = material.wc, abool = material.abool, angfile = material.angfiles, 
 		material_name = material.material)
-	append_coefficients(project_file, tensor, CP = 'P')
+	dt = np.min([domain.dx, domain.dz])/(2.0*clight)
+
+	append_coefficients(project_file, tensor, CP = 'P', dt = dt)
 	print("Finished. Appending to project file.\n")
+
+	if model_type == 'e' or model_type == 'b':
+
+		electromag.time_steps = int(electromag.time_steps[0])
+		electromag.f0 = float(electromag.f0[0])
+		electromag.theta = float(electromag.theta[0])
+		electromag.x = float(electromag.x[0])
+		electromag.z = float(electromag.z[0])
+		electromag.tensor_coefficients = tensor
+
+		src = np.array([electromag.x/domain.dx, electromag.z/domain.dz]).astype(int)
+		print('Modeling the electromagnetic wavefield.\n')
+		
+		em2d.electromagfdtd2d.doall(domain.geometry+1, electromag.tensor_coefficients, 
+			domain.dx, domain.dz, domain.cpml, src, electromag.f0, 
+			electromag.time_steps, domain.write, electromag.theta)
 
 else:
 	# We don't have the materials neither the coefficients
