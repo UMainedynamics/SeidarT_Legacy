@@ -34,6 +34,13 @@ parser.add_argument( '-d', '--delta', nargs = 1, type = float, required = True,
 parser.add_argument( '-c', '--channel', nargs = 1, type = str, required = True,
 	help = """The channel to query. """)
 
+parser.add_argument('-g', '--gain', nargs = 1, type = int, required = False,
+	help = "Apply an exponential gain function (1/0)", default = [0])
+
+parser.add_argument('-L', '--layout', nargs = 1, type = int, required = False,
+	help = """Plot the reciever layout (1/0). This suppresses generating the 
+	t-x timeseries plot.""", default = [0])
+
 # Get the arguments
 args = parser.parse_args()
 project_file = ''.join(args.project_file)
@@ -41,12 +48,9 @@ channel = ''.join(args.channel)
 
 initial_coords = np.array(args.initial)
 final_coords = np.array(args.final)
-delta = np.array(args.final)
-
-print( (initial_coords) )
-
-
-
+delta = np.array(args.delta)[0]
+gain = args.gain[0]
+layout = args.layout[0] == 1
 
 # ---
 # ---
@@ -68,6 +72,7 @@ class Array:
 		self.initial_position = None
 		self.final_position = None
 		self.reciever_locations = None
+		self.modelfile = None
 		self.dr = None
 		self.timeseries = None
 		self.t = None
@@ -76,7 +81,6 @@ class Array:
 		self.nx = None
 		self.ny = None
 		self.nz = None
-		self.vertical = False
 
 	# -------------------------- Function Definitions -------------------------
 	def getrcx(self):
@@ -107,25 +111,23 @@ class Array:
 	def tsplot(self):
 		
 		fig, ax = plt.subplots()
-
+		# fig.set_size_inches(8, 10)
 		m,n = self.timeseries.shape 
 		self.t = np.linspace(1, m, m)*self.dt 
 
-		im = ax.imshow(self.timeseries, cmap = 'Greys')
+		# extent = (1, n, self.t[-1], self.t[0])
+		if gain:
+			gain_function = np.zeros([m,n])
+			for j in range(0, m):
+				gain_function[j,:] = np.exp(-j/(2**7))
+			im = ax.imshow(self.timeseries/gain_function, cmap = 'Greys', 
+				vmin = self.timeseries.min(), vmax = self.timeseries.max() )
+		else:
+			im = ax.imshow(self.timeseries, cmap = 'Greys', 
+				vmin = self.timeseries.min(), vmax = self.timeseries.max() )
 
-		# if self.vertical:
-		# 	for offset in range(0, n):
-		# 		y = self.timeseries[:,offset] + offset
-		# 		ax.plot(y, self.t, 'k-')
-		# 		ax.fill_between(self.t, offset, y, where = (y > offset), color = 'k')
-		# else:
-
-		# 	for offset in range(0, n):
-		# 		y = self.timeseries[:,offset] + offset
-
-		# 		ax.plot(self.t, y, 'k-')
-		# 		ax.fill_between(self.t, offset, y, where = (y > offset), color = 'k')
-
+		ax.set_xlabel(r"Reciever #")
+		ax.set_aspect(aspect = 0.35)
 		plt.show()
 
 
@@ -134,17 +136,41 @@ class Array:
 		# Calculate the length
 		rcx_len = np.sqrt( sum( (self.final_position - self.initial_position)**2) )
 		nrcx = np.floor(rcx_len/self.dr)
-
-
 		xz = np.zeros([nrcx.astype(int),2]) 
+
 		xz[:,0] = np.linspace(self.initial_position[0], 
 			self.final_position[0], nrcx)/self.dx
 		xz[:,1] = np.linspace(self.initial_position[2], 
 			self.final_position[2], nrcx)/self.dz
 
+
 		self.reciever_locations = xz.astype(int) + self.cpml
 
 
+	def plot_layout(self):
+
+		figmod, axmod = plt.subplots()
+
+		img = mpimg.imread(self.modelfile)
+		axes_extent = [0, img.shape[1],img.shape[0], 0 ]
+
+		implot = axmod.imshow(img, extent = extent)
+
+		# add white upside down triangle recievers
+		axmod.scatter(self.reciever_locations[:,0]- self.cpml, 
+			self.reciever_locations[:,1] - self.cpml, 
+			marker = 'v', s = 30, c = (0.8, 0.8, 0.8, 1), 
+		    linewidths = 0.5, edgecolor = (0.2, 0.2, 0.2, 1 ) )
+
+		# add white star source
+		axmod.scatter(self.source_location[0], self.source_location[1], 
+			marker = '*', s = 30, c = (0.8, 0.8, 0.8, 1 ), 
+		    linewidths = 1, edgecolor = (0.2, 0.2, 0.2, 1 ) )
+
+		axmod.set_ylabel("z-indice")
+		axmod.set_xlabel("x-indice")
+
+		plt.show()
 
 
 # --------------------------- Query the project file --------------------------
@@ -163,7 +189,7 @@ for line in f:
 	# Get the image file
 	if line[0] == 'I':
 		# There's a trailing new line value
-		imfile = line[2:-1]
+		array.modelfile = line[2:-1]
 
 	# All domain inputs must be input except for nz and dy
 	if line[0] == 'D':
@@ -234,7 +260,8 @@ array.arraybuild()
 # Get the timeseries for each reciever
 array.getrcx()
 
-array.tsplot()
-
-
+if layout:
+	array.plot_layout()
+else:
+	array.tsplot()
 

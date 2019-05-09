@@ -35,7 +35,7 @@ parser.add_argument( '-f', '--frames_per_second', nargs = 1, type = int,
 args = parser.parse_args()
 project_file = ''.join(args.project_file)
 channel = ''.join(args.channel)
-frame_rate = args.frames_per_second
+frame_rate = args.frames_per_second[0]
 
 
 # ===
@@ -60,7 +60,7 @@ class AnimatedGif:
 			marker = '*', s = 30, linewidths = 1, 
 			edgecolor = (0.2, 0.2, 0.2, 1 ) )
 		
-		plt_txt = plt.text(extent[0] + 20, extent[3]+20, label+"%.3g", color='red') # Lower left corner
+		plt_txt = plt.text(extent[0] + 20, extent[2] + 20, label, color='red') # Lower left corner
 		self.images.append([plt_im, plt_bg, plt_txt])
 
 	def save(self, filename, frame_rate = 50):
@@ -153,19 +153,20 @@ if channel:
 
 	# if they aren't then get the csv files
 	if not files:
-		files = glob.glob(channel+'*.csv')
-		files.sort()
-		ind = 0
-		for fn in files:
-			dat = np.genfromtxt(fn, delimiter = ',')
+		pass
+		# files = glob.glob(channel+'*.csv')
+		# files.sort()
+		# ind = 0
+		# for fn in files:
+		# 	dat = np.genfromtxt(fn, delimiter = ',')
 			
-			duration = dt*ind
-			time_label = 'Time (s): ' + str(duration)
-			animated_gif.add(dat, time_label, extent)
+		# 	duration = dt*ind
+		# 	time_label = 'Time (s): ' + str(np.round(duration, 5) )
+		# 	animated_gif.add(dat, time_label, extent)
 			
-			ind = ind + write
+		# 	ind = ind + write
 
-		animated_gif.save(channel + '.gif', fps = frame_rate)
+		# animated_gif.save(channel + '.gif', fps = frame_rate)
 
 		
 	else:
@@ -177,12 +178,12 @@ if channel:
 			dat = dat.reshape(nz, nx)
 
 			duration = dt*ind
-			time_label = 'Time (s): ' + str(duration)
+			time_label = 'Time (s): ' + str(np.round(duration, 5) )
 			animated_gif.add(dat, time_label, extent)
 
-			ind = ind + 64
+			ind = ind + write
 
-		animated_gif.save(channel + '.gif')
+		animated_gif.save(channel + '.gif', frame_rate = frame_rate)
 
 else:
 
