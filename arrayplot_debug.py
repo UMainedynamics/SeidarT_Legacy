@@ -11,52 +11,16 @@ from scipy.io import FortranFile
 
 import io_functions as iof
 
-# -------------------------- Command Line Arguments ---------------------------
-parser = argparse.ArgumentParser(description="""This program creates an equally
-	spaced array of recievers given the x, y, and z coordinates. If the model 
-	isn't specified as 2.5d in the project file then """ )
+# ------------
+project_file = 'negis1.prj'
+channel = 'Vx'
 
-parser.add_argument( 'project_file', nargs=1, type=str, 
-						help='the full file path for the project file', 
-						default=None)
+initial_coords = np.array([90, 0, 70])
+final_coords = np.array([490, 0, 70])
+delta = 4
+gain = True
+layout = False
 
-parser.add_argument( '-i', '--initial', nargs = 3, type = float, required = True,
-	help = """ Initial x y z coordinates of the reciever given in meters.""")
-
-parser.add_argument( '-f', '--final', nargs = 3, type = float, required = True, 
-	help = """ Final x y z coordinates of the reciever given in meters.""")
-
-parser.add_argument( '-d', '--delta', nargs = 1, type = float, required = True, 
-	help = """ Reciever spacing in meters for each of the coordinates. The 
-	slope between the final and initial points is calculated then used to 
-	find the coordinates for each of the recievers.""")
-
-parser.add_argument( '-c', '--channel', nargs = 1, type = str, required = True,
-	help = """The channel to query. """)
-
-parser.add_argument('-g', '--gain', nargs = 1, type = int, required = False,
-	help = "Apply an exponential gain function (1/0)", default = [0])
-
-parser.add_argument('-L', '--layout', nargs = 1, type = int, required = False,
-	help = """Plot the reciever layout (1/0). This suppresses generating the 
-	t-x timeseries plot.""", default = [0])
-
-parser.add_argument('-S', '--suppress_plotting', nargs = 1, type = int, 
-	help = """Suppress all plotting (1/0). The reciever outputs will be located in 
-	the reciever_array.csv file.""", required = False, default = [0])
-	
-
-# Get the arguments
-args = parser.parse_args()
-project_file = ''.join(args.project_file)
-channel = ''.join(args.channel)
-
-initial_coords = np.array(args.initial)
-final_coords = np.array(args.final)
-delta = np.array(args.delta)[0]
-gain = args.gain[0]
-layout = args.layout[0] == 1
-showplots = args.suppress_plotting[0] == 1
 # ---
 # ---
 # ======================= Create the class variables ==========================
@@ -120,7 +84,7 @@ class Array:
 		m,n = self.timeseries.shape 
 		self.t = np.linspace(1, m, m)*self.dt 
 
-		# extent = (1, n, self.t[-1], self.t[0])
+		extent = (1, n, self.t[-1], self.t[0])
 		if gain:
 			gain_function = np.zeros([m,n])
 			for j in range(0, m):
@@ -128,10 +92,11 @@ class Array:
 			im = ax.imshow(self.timeseries/gain_function, cmap = 'Greys', 
 				vmin = self.timeseries.min(), vmax = self.timeseries.max() )
 		else:
-			im = ax.imshow(self.timeseries, cmap = 'Greys', 
+			im = ax.imshow(self.timeseries, cmap = 'Greys', #extent = extent, 
 				vmin = self.timeseries.min(), vmax = self.timeseries.max() )
 
 		ax.set_xlabel(r"Reciever #")
+		ax.set_ylabel(r"Time Step")
 		ax.set_aspect(aspect = 0.35)
 		plt.show()
 
@@ -141,8 +106,9 @@ class Array:
 		# Calculate the length
 		rcx_len = np.sqrt( sum( (self.final_position - self.initial_position)**2) )
 		nrcx = np.floor(rcx_len/self.dr)
-		xz = np.zeros([nrcx.astype(int),2]) 
 
+
+		xz = np.zeros([nrcx.astype(int),2]) 
 		xz[:,0] = np.linspace(self.initial_position[0], 
 			self.final_position[0], nrcx)/self.dx
 		xz[:,1] = np.linspace(self.initial_position[2], 
@@ -269,4 +235,8 @@ if layout:
 	array.plot_layout()
 else:
 	array.tsplot()
+
+
+
+
 
