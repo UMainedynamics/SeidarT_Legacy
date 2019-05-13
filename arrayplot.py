@@ -140,7 +140,12 @@ class Array:
 		
 		# Calculate the length
 		rcx_len = np.sqrt( sum( (self.final_position - self.initial_position)**2) )
-		nrcx = np.floor(rcx_len/self.dr)
+		
+		if rcx_len == 0:
+			rxc_len = 1 # This is for common offset
+		else:
+			nrcx = np.floor(rcx_len/self.dr)
+		
 		xz = np.zeros([nrcx.astype(int),2]) 
 
 		xz[:,0] = np.linspace(self.initial_position[0], 

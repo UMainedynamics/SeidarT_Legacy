@@ -32,7 +32,7 @@ and additionally, the **Python** dependencies:
 
 *numpy*, *scipy*, *glob3*, *matplotlib*.
 
-Installation of these packages is different between MacOSx and Linux distributions. [*Anaconda*](https://docs.continuum.io/anaconda/) provides a convenient **Python** environment for installing and developing programs, however, Anaconda doesn't provide *GCC-7* or later so compilation of the **Fortran** code will return an error. This can be remedied by uninstalling **GCC** from *Anaconda* and upgrading via *apt* to *GCC-7* or greater. 
+Installation of these packages is different between MacOSx and Linux distributions. [*Anaconda*](https://docs.continuum.io/anaconda/) provides a convenient **Python** environment for installing and developing programs, however, Anaconda doesn't provide *GCC-7* or later so compilation of the **Fortran** code will return an error. This can be remedied by uninstalling **GCC** from *Anaconda* and upgrading via *apt* to *GCC-7* or greater. For *Anaconda* users, it's necessary to 
 
 To download the software, open a terminal (*Ctrl-Alt-t* for Ubuntu and *Ctrl-Opt-Shift-t* for Mac) and change directories
 
@@ -58,14 +58,18 @@ and run the install file
 bash install.sh
 ~~~
 
-When the compilation is finished, we can add the folder to the path directory and the python path directory. Currently, this software is supported with **bash** so append the following lines to the *.bashrc* if using Ubuntu or in the */etc/path* for Mac.
-
+When the compilation is finished, we can add the folder to the path directory and the python path directory. Currently, this software is supported with **bash** so append the following lines to the *.bashrc* if using Ubuntu 
 ~~~
 PATH=$PATH:/path/to/SeidarT/
 export $PATH
 
 PYTHONPATH=$PYTHONPATH:/path/to/SeidarT
 export PYTHONPATH
+~~~
+
+or in the */etc/path* for Mac.
+~~~
+
 ~~~
 
 There are a variety of ways to edit the documents but for simplicity change directories to the home folder 

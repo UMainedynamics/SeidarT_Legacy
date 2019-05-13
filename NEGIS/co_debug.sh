@@ -1,8 +1,22 @@
 #!/bin/bash
 
-# The final position (-F --final) require 3 positional arguments x y z
+: '
+COMMON_OFFSET.SH is a wrapper script to create a common offset survey using the
+SeidarT programs. The survey is along the x-direction, but can be extended to 
+other directions.
+
+INPUT
+	-f, --project 	Project file path
+	-F, --final		The final coordinates of the source. Requires 3
+					arguments  x y z
+	-o, --offset 	Source and reciever offset distance (meters)
+	-d, --delta		Source and reciever step length (meters)
+	-s, --seismic 	(OPTIONAL) Specifier to run seismic common offset 
 
 
+'
+
+cofile='common_offset.csv' # The output file
 wild='*.*'
 
 
@@ -50,29 +64,61 @@ elif [[ -z $xf || $xy || $xz ]]; then
 	echo ERROR: Missing final coordinates
 	exit 1
 else
-	echo All input arguments satisfied.
+	echo 
 fi
-
-
 
 # ================================ Get to work ================================
 
 if [ $seismic ]; then
 	xstring='S,x,'
+	ystring='S,y,'
 	zstring='S,z,'
+	c1='Vx'
+	c2='Vz'
 else
 	xstring='E,x,'
+	ystring='E,y,'
 	zstring='E,z,'
+	c1='Ex'
+	c2='Ez'
 fi
 
 # Get the initial reciever location
-x=`grep -F "S,x" $prjfile`
+x=`grep -F $xstring $prjfile`
 x=$(echo $x | cut -f3 -d,)
 
-# sed -i 's/S,x,*.*/S,x,replacedline/' negis1.prj
+y=`grep -F $ystring $prjfile`
+y=$(echo $x | cut -f3 -d,)
 
-# Read the line that is 
+z=`grep -F $zstring $prjfile`
+z=$(echo $x | cut -f3 -d,)
 
-echo $x
 
-# sed -i 's/$xstring$wild/$xstring$newval/' negis1.prj
+# Create the initial reciever location
+rx=`echo "$x + $offset" | bc`
+ry=$y
+rz=$z
+
+# Create the common offset file
+touch $cofile
+
+while [ $rx -lt $xf ]; do
+	# Run the first simulation
+	python3 -m prjrun $prjfile --model s
+
+	# Get the reciever timeseries
+	python3 -m arrayplot $prjfile -c $c1 -i $rx $ry $rz -f $rx $ry $rz -d 1 -g 0
+
+	# append the timeseries to the others
+	paste -d' ' $cofile reciever_array.csv > temp.csv
+	mv temp.csv $cofile
+
+	# Shift the source
+	newsrc=`echo "$x + $ds" | bc`
+	sed -i 's/$xstring$wild/$xstring$newsrc/' negis1.prj
+
+	# Shift the reciever
+	rx=`echo "$rx + $ds" | bc`
+	
+done
+
