@@ -441,8 +441,6 @@ material.para_check()
 # Let's see if we can do some seismic modeling
 if seismic.exit_status == 0 and not seismic.compute_coefficients:
 	# The coefficients are provided. We don't need the material
-	print('Seismic coefficients are given.\n')
-
 
 	if model_type == 's' or model_type == 'b':
 		seismic.time_steps = int(seismic.time_steps[0])
@@ -506,7 +504,6 @@ clight = 2.99792458e8
 # Now let's see if we can do some em modeling	
 if electromag.exit_status == 0 and not electromag.compute_coefficients:
 	# The coefficients are provided. We don't need the material
-	print('Electromagnetic coefficients are given.')
 
 	if model_type == 'e' or model_type == 'b':
 

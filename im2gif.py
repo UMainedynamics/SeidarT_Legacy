@@ -174,7 +174,7 @@ if channel:
 		files.sort()
 		for fn in files:
 			f = FortranFile(fn, 'r')
-			dat = f.read_reals(dtype = 'float64')
+			dat = f.read_reals(dtype = 'float32')
 			dat = dat.reshape(nz, nx)
 
 			duration = dt*ind

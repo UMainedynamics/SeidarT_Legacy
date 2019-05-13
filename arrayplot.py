@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from scipy.io import FortranFile
 
-import io_functions as iof
+# import io_functions as iof
 
 # -------------------------- Command Line Arguments ---------------------------
 parser = argparse.ArgumentParser(description="""This program creates an equally
@@ -20,10 +20,10 @@ parser.add_argument( 'project_file', nargs=1, type=str,
 						help='the full file path for the project file', 
 						default=None)
 
-parser.add_argument( '-i', '--initial', nargs = 3, type = float, required = True,
+parser.add_argument( '-I', '--initial', nargs = 3, type = float, required = True,
 	help = """ Initial x y z coordinates of the reciever given in meters.""")
 
-parser.add_argument( '-f', '--final', nargs = 3, type = float, required = True, 
+parser.add_argument( '-F', '--final', nargs = 3, type = float, required = True, 
 	help = """ Final x y z coordinates of the reciever given in meters.""")
 
 parser.add_argument( '-d', '--delta', nargs = 1, type = float, required = True, 
@@ -34,8 +34,8 @@ parser.add_argument( '-d', '--delta', nargs = 1, type = float, required = True,
 parser.add_argument( '-c', '--channel', nargs = 1, type = str, required = True,
 	help = """The channel to query. """)
 
-parser.add_argument('-g', '--gain', nargs = 1, type = int, required = False,
-	help = "Apply an exponential gain function (1/0)", default = [0])
+parser.add_argument('-g', '--gain', nargs = 1, type = float, required = False,
+	help = "The exponential value for 2^m of the gain function (default=None)", default = None)
 
 parser.add_argument('-L', '--layout', nargs = 1, type = int, required = False,
 	help = """Plot the reciever layout (1/0). This suppresses generating the 
@@ -57,6 +57,7 @@ delta = np.array(args.delta)[0]
 gain = args.gain[0]
 layout = args.layout[0] == 1
 showplots = args.suppress_plotting[0] == 1
+
 # ---
 # ---
 # ======================= Create the class variables ==========================
@@ -101,9 +102,9 @@ class Array:
 
 		i = 0
 		for fn in all_files:
-			npdat = iof.read_dat(fn, self.nx, self.nz)
-
+			npdat = read_dat(fn, self.nx, self.nz)
 			for j in range(0, n):
+				pass
 				# Don't forget x is columns and z is rows
 				self.timeseries[i,j] = npdat[ self.reciever_locations[j,1], self.reciever_locations[j,0] ]	
 			
@@ -124,15 +125,13 @@ class Array:
 		if gain:
 			gain_function = np.zeros([m,n])
 			for j in range(0, m):
-				gain_function[j,:] = np.exp(-j/(2**7))
-			im = ax.imshow(self.timeseries/gain_function, cmap = 'Greys', 
-				vmin = self.timeseries.min(), vmax = self.timeseries.max() )
+				gain_function[j,:] = np.exp(-j/(2**gain))
+			im = ax.imshow(self.timeseries/gain_function, cmap = 'Greys' )
 		else:
-			im = ax.imshow(self.timeseries, cmap = 'Greys', 
-				vmin = self.timeseries.min(), vmax = self.timeseries.max() )
+			im = ax.imshow(self.timeseries, cmap = 'Greys')
 
 		ax.set_xlabel(r"Reciever #")
-		ax.set_aspect(aspect = 0.35)
+		ax.set_aspect(aspect = 0.1)
 		plt.show()
 
 
@@ -143,16 +142,18 @@ class Array:
 		
 		if rcx_len == 0:
 			rxc_len = 1 # This is for common offset
+			nrcx = 1
+			xz = np.zeros([nrcx, 2])
 		else:
 			nrcx = np.floor(rcx_len/self.dr)
+			xz = np.zeros([nrcx.astype(int),2])
 		
-		xz = np.zeros([nrcx.astype(int),2]) 
+		 
 
 		xz[:,0] = np.linspace(self.initial_position[0], 
 			self.final_position[0], nrcx)/self.dx
 		xz[:,1] = np.linspace(self.initial_position[2], 
 			self.final_position[2], nrcx)/self.dz
-
 
 		self.reciever_locations = xz.astype(int) + self.cpml
 
@@ -182,6 +183,15 @@ class Array:
 
 		plt.show()
 
+# -------------
+
+def read_dat(fn, nx, ny):
+	f = FortranFile(fn, 'r')
+	dat = f.read_reals(dtype = 'float32')
+	dat = dat.reshape(ny, nx)
+	f.close()
+
+	return(dat)
 
 # --------------------------- Query the project file --------------------------
 array = Array()
@@ -269,6 +279,9 @@ array.arraybuild()
 
 # Get the timeseries for each reciever
 array.getrcx()
+
+if showplots:
+	quit()
 
 if layout:
 	array.plot_layout()

@@ -311,7 +311,7 @@ jsource = src(2)+npoints_pml
  ! dx/minval( (/ c11/rho, c22/rho, c12/rho, c66/rho /) )
 
 t0 = 1.0d0/f0
-DT = minval(dx,dy)/ ( 2.0* sqrt( ( maxval( (/ c11/rho, c22/rho, c12/rho, c66/rho /) ) ) ) )!dx/(256*f0)!dt)
+DT = minval( (/dx,dy/) )/ ( 2.0* sqrt( ( maxval( (/ c11/rho, c22/rho, c12/rho, c66/rho /) ) ) ) )!dx/(256*f0)!dt)
 ALPHA_MAX_PML = PI*f0 ! from Festa and Vilotte
 ! ----------------------------------------------------------------------
 !---
@@ -634,15 +634,8 @@ do it = 1,NSTEP
   velocnorm = maxval(sqrt(vx**2 + vy**2))
   print *,'Time step # ',it,' out of ',NSTEP
   print *,'Time: ',sngl((it-1)*DT),' seconds'
-  ! print *,'Max norm velocity vector V (m/s) = ',velocnorm
-  ! print *
-  ! check stability of the code, exit if unstable
-  if (velocnorm > STABILITY_THRESHOLD) stop 'code became unstable and blew up'
 
-  ! call create_color_image(vx,NX,NY,it,ISOURCE,JSOURCE, &
-  !                      NPOINTS_PML,1)
-  ! call create_color_image(vy,NX,NY,it,ISOURCE,JSOURCE, &
-  !                      NPOINTS_PML,2)
+  if (velocnorm > STABILITY_THRESHOLD) stop 'code became unstable and blew up'
 
   call write_image(vx, nx, ny, it, 'Vx')
   call write_image(vy, nx, ny, it, 'Vz')
@@ -673,180 +666,12 @@ character(len=100) :: filename
 WRITE (filename, "(a2, i6.6, '.dat')" ) channel, it
 
 open(unit = 10, form = 'unformatted', file = trim(filename) )
-write(10) image_data
+write(10) sngl(image_data)
 
 close(unit = 10)
 
 end subroutine write_image
 
-!==============================================================================
-! subroutine write_seismograms(sisvx,sisvy,nt,nrec,DELTAT)
-
-! implicit none
-
-! integer, parameter :: dp=kind(0.d0)
-! integer nt,nrec
-! real(kind=dp) DELTAT
-
-! real(kind=dp) sisvx(nt,nrec)
-! real(kind=dp) sisvy(nt,nrec)
-
-! integer irec,it
-
-! character(len=100) file_name
-
-! ! X component
-! do irec=1,nrec
-!   write(file_name,"('Vx_file_',i3.3,'.dat')") irec
-!   open(unit=11,file=file_name,status='unknown')
-!   do it=1,nt
-!     write(11,*) sngl(dble(it-1)*DELTAT),',',sngl(sisvx(it,irec))
-!   end do
-!     close(11)
-! enddo
-
-! ! Y component
-! do irec=1,nrec
-!   write(file_name,"('Vy_file_',i3.3,'.dat')") irec
-!   open(unit=11,file=file_name,status='unknown')
-!   do it=1,nt
-!     write(11,*) sngl(dble(it-1)*DELTAT),',',sngl(sisvy(it,irec))
-!   end do
-!   close(11)
-! end do
-
-! end subroutine write_seismograms
-
-!==============================================================================
-!----
-!----  routine to create a color image of a given vector component
-!----  the image is created in PNM format and then converted to GIF
-!----
-
-subroutine create_color_image(image_data_2D,NX,NY,it,ISOURCE,JSOURCE, &
-            NPOINTS_PML,field_number)
-
-implicit none
-integer, parameter :: dp = kind(0.d0)
-
-! non linear display to enhance small amplitudes for graphics
-real(kind=dp), parameter :: POWER_DISPLAY = 0.30d0
-
-! amplitude threshold above which we draw the color point
-real(kind=dp), parameter :: cutvect = 1.0d-1
-
-! use black or white background for points that are below the threshold
-logical, parameter :: WHITE_BACKGROUND = .true.
-
-! size of cross and square in pixels drawn to represent the source and the receivers
-integer, parameter :: width_cross = 5, thickness_cross = 1, size_square = 3
-
-integer NX,NY,it,field_number,ISOURCE,JSOURCE,NPOINTS_PML
-
-real(kind=dp), dimension(NX,NY) :: image_data_2D
-
-integer :: ix,iy
-
-character(len=100) :: file_name,system_command
-
-integer :: R, G, B
-
-real(kind=dp) :: normalized_value,max_amplitude
-
-! open image file and create system command to convert image to more convenient format
-! use the "convert" command from ImageMagick http://www.imagemagick.org
-if (field_number == 1) then
-  write(file_name,"('image',i6.6,'_Vx.pnm')") it
-  write(system_command,"('convert image',i6.6,'_Vx.pnm image',i6.6,'_Vx.gif ; rm image',i6.6,'_Vx.pnm')") it,it,it
-else if (field_number == 2) then
-  write(file_name,"('image',i6.6,'_Vz.pnm')") it
-  write(system_command,"('convert image',i6.6,'_Vz.pnm image',i6.6,'_Vz.gif ; rm image',i6.6,'_Vz.pnm')") it,it,it
-endif
-
-open(unit=27, file=file_name, status='unknown')
-
-write(27,"('P3')") ! write image in PNM P3 format
-
-write(27,*) NX,NY ! write image size
-write(27,*) '255' ! maximum value of each pixel color
-
-! compute maximum amplitude
-max_amplitude = maxval(abs(image_data_2D))
-
-! image starts in upper-left corner in PNM format
-do iy=NY,1,-1
-  do ix=1,NX
-
-! define data as vector component normalized to [-1:1] and rounded to nearest integer
-! keeping in mind that amplitude can be negative
-  normalized_value = image_data_2D(ix,iy) / max_amplitude
-
-! suppress values that are outside [-1:+1] to avoid small edge effects
-  if (normalized_value < -1.d0) normalized_value = -1.d0
-  if (normalized_value > 1.d0) normalized_value = 1.d0
-
-! draw an orange cross to represent the source
-  if ((ix >= ISOURCE - width_cross .and. ix <= ISOURCE + width_cross .and. &
-      iy >= JSOURCE - thickness_cross .and. iy <= JSOURCE + thickness_cross) .or. &
-     (ix >= ISOURCE - thickness_cross .and. ix <= ISOURCE + thickness_cross .and. &
-      iy >= JSOURCE - width_cross .and. iy <= JSOURCE + width_cross)) then
-    R = 255
-    G = 157
-    B = 0
-
-! display two-pixel-thick black frame around the image
-else if (ix <= 2 .or. ix >= NX-1 .or. iy <= 2 .or. iy >= NY-1) then
-    R = 0
-    G = 0
-    B = 0
-
-! display edges of the PML layers
-else if ((ix == NPOINTS_PML) .or. &
-        (ix == NX - NPOINTS_PML) .or. &
-        (iy == NPOINTS_PML) .or. &
-        (iy == NY - NPOINTS_PML)) then
-    R = 255
-    G = 150
-    B = 0
-
-! suppress all the values that are below the threshold
-  else if (abs(image_data_2D(ix,iy)) <= max_amplitude * cutvect) then
-
-! use a black or white background for points that are below the threshold
-    if (WHITE_BACKGROUND) then
-      R = 255
-      G = 255
-      B = 255
-    else
-      R = 0
-      G = 0
-      B = 0
-    endif
-
-! represent regular image points using red if value is positive, blue if negative
-  else if (normalized_value >= 0.d0) then
-    R = nint(255.d0*normalized_value**POWER_DISPLAY)
-    G = 0
-    B = 0
-  else
-    R = 0
-    G = 0
-    B = nint(255.d0*abs(normalized_value)**POWER_DISPLAY)
-  endif
-
-! write color pixel
-  write(27,"(i3,' ',i3,' ',i3)") R,G,B
-
-  enddo
-enddo
-
-! close file
-close(27)
-
-! call the system to convert image to Gif (can be commented out if "call system" is missing in your compiler)
-! call system(system_command)
-
-end subroutine create_color_image
 
 
 end module seismicFDTD2d
