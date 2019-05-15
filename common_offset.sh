@@ -60,7 +60,7 @@ elif [ -z $offset ]; then
 elif [ -z $ds ]; then
 	echo ERROR: Missing step value for source
 	exit 1
-elif [[ -z $xf || $xy || $xz ]]; then
+elif [[ -z $xf || -z $yf || -z $zf ]]; then
 	echo ERROR: Missing final coordinates
 	exit 1
 else
