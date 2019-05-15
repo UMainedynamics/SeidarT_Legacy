@@ -73,6 +73,6 @@ else:
 
 ax.set_xlabel(r"Normalized Distance (m)")
 ax.set_ylabel(r"Normalized Time")
-ax.set_aspect(aspect = 0.01)
+ax.set_aspect(aspect = 0.3)
 plt.show()
 

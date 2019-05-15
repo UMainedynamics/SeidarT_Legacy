@@ -1,14 +1,13 @@
 # SeidarT
 
-Seismic and radar modeling using staggered grid finite differences (FDTD) 
-
+Seismic and radar modeling using staggered grid finite differences (FDTD) and convolutional perfectly matched boundaries (CPML)
 
 ### Table of Contents
 [Introduction](#introduction)  
 [Installation](#install)  
 [Getting Started](#getting_started)  
-[Examples](#examples)  
 [Routines](#routines)  
+[Examples](#examples)  
 [Appendix](#appendix)  
 [References](#references)  
 
@@ -99,7 +98,7 @@ echo $PYTHONPATH
 
 [comment]: ======================================================================
 
-## Getting Started <a name="getting_started"></a>
+# Getting Started <a name="getting_started"></a>
 
 Geometries are initiated with a PNG image and the program identifies unique RGB values. Everyone has their preferences to generate images but [*GIMP*](https://www.gimp.org/downloads/install_help.html) and [*Inkscape*](http://wiki.inkscape.org/wiki/index.php/Installing_Inkscape) provide free and open software that are more than sufficient. When creating a PNG anti-aliasing must be turned off to avoid color boundary gradients. 
 
@@ -122,6 +121,56 @@ Using the text editor of choice, you can edit the .prj file.
 [comment]: ======================================================================
 
 ## Routines <a name="routines"></a>
+
+*prjbuild.py*  
+constructs a template and assigns default values from a PNG image.  
+
+*prjrun.py*  
+reads the project file assigns coefficients given that all the required fields are satisfied then runs the specified 2D forward model. You can suppress modeling and edit the stiffness and/or permittivity and conductivity coefficients. Once they are provided in the project file, they won't be computed or overwritten from the material values. If you would like to change the material values and recompute the tensor coefficients, you need to delete the existing tensor coefficients if included in the project file. 
+
+*im2gif.py*  
+Create a gif from the model outputs. Currently, this takes some time to run which you can speed up by increasing the 'write' value in the project file. 
+
+*arrayplot.py*  
+Plot the seismograms or radargrams for the wide angle survey. You can suppress plotting which will return a .csv file. A simple exponential gain function can be called and applied to each of the time series. 
+
+
+*codisplay.py*  
+Display the outputs of the common offset survey. This is also called to display the common midpoint survey. Similar to arrayplot.py, the gain function can be called.
+
+<u>Wrappers</u>
+
+*wide_angle.sh*  
+Script to model and display an equally spaced reciever array. If the .dat files are not deleted, any node within the model domain can be called. The time series for the recievers are saved as 'reciever_array.csv'. A default gain is set in the script file but can be varied by editing the appropriate line. 
+
+*common_offset.sh*  
+This is a wrapper that shifts the source and queries the respective reciever location over a given distance and assembles the subsequent time series into a common offset image. The reciever trails the source so leave space for the reciever location. The initial source location is given in the corresponding .prj file. During the routine this value is changed each iteration then restored to the original value when it is complete. A default gain is set in the script file but can be varied by editing the appropriate line. 
+
+*common_midpoint.sh*  
+This is similar to the common offset survey but it shifts the source and reciever away from a common midpoint. The midpoint is specified by the source location in the project file. By default the source will be to the viewer's right of the midpoint but to flip the location of the source and reciever, set the midpoint x-value to negative. A default gain is set in the script file but can be varied by editing the appropriate line. 
+
+####*Note: The aspect ratio for the wide angle, common offset and common midpoint surveys determines the axis exaggeration. This will be updated in the future to be easier to adjust but to change this value edit the line 'ax.set_aspect(aspect=??)' in arrayplot.py and codisplay.py then run the plotting scripts individually not the wrapper scripts. 
+
+
+
+[comment]: ======================================================================
+
+## Examples <a name="examples"></a>
+
+#### Dipping Bed Model  
+
+This is a small simple model to introduce the routines. After running the install script without errors then adding the program file parent directy to the path, open a terminal and change directories into the EXAMPLES folder. Input into the command line
+
+~~~
+python3 -m prjbuild -i dipping_bed.png -o dipping_bed.prj
+~~~
+
+Fill in the modeling 
+
+
+
+
+
 
 
 

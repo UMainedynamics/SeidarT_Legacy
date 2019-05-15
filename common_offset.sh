@@ -68,7 +68,6 @@ else
 fi
 
 # ================================ Get to work ================================
-echo $seismic
 
 if [ $seismic ]; then
 	xstring='S,x,'
@@ -173,6 +172,8 @@ else # Moving left
 	done
 fi
 
+# Restore the initial source location
+sed -i "s/$xstring.*/$xstring$xorig/" $prjfile
 
 # Display the results for the Ex field. We can do the same for Ez if we like
 python3 -m codisplay $prjfile -s $cofilex -d $ds -m e
