@@ -149,7 +149,7 @@ This is a wrapper that shifts the source and queries the respective reciever loc
 *common_midpoint.sh*  
 This is similar to the common offset survey but it shifts the source and reciever away from a common midpoint. The midpoint is specified by the source location in the project file. By default the source will be to the viewer's right of the midpoint but to flip the location of the source and reciever, set the midpoint x-value to negative. A default gain is set in the script file but can be varied by editing the appropriate line. 
 
-####*Note: The aspect ratio for the wide angle, common offset and common midpoint surveys determines the axis exaggeration. This will be updated in the future to be easier to adjust but to change this value edit the line 'ax.set_aspect(aspect=??)' in arrayplot.py and codisplay.py then run the plotting scripts individually not the wrapper scripts. 
+#### *Note: The aspect ratio for the wide angle, common offset and common midpoint surveys determines the axis exaggeration. This will be updated in the future to be easier to adjust but to change this value edit the line 'ax.set_aspect(aspect=??)' in arrayplot.py and codisplay.py then run the plotting scripts individually not the wrapper scripts. 
 
 
 
@@ -165,7 +165,7 @@ This is a small simple model to introduce the routines. After running the instal
 python3 -m prjbuild -i dipping_bed.png -o dipping_bed.prj
 ~~~
 
-Fill in the modeling 
+Fill in the domain values and material values as
 
 
 
