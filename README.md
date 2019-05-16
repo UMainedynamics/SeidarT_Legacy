@@ -159,8 +159,12 @@ This is similar to the common offset survey but it shifts the source and recieve
 
 #### Dipping Bed Model  
 
+*Seismic and Electromagnetic Wavefields*
+
+These are small, simple models to introduce the routines. 
+
 ![Alt text](EXAMPLES/dipping_bed.png)  
-This is a small simple model to introduce the routines. After running the install script without errors then adding the program file parent directy to the path, open a terminal and change directories into the EXAMPLES folder. Input into the command line
+After running the install script without errors then adding the program file parent directy to the path, open a terminal and change directories into the EXAMPLES folder. Input into the command line
 
 ~~~
 python3 -m prjbuild -i dipping_bed.png -o dipping_bed.prj
@@ -232,6 +236,7 @@ python3 -m im2gif dipping_bed.prj -c Vx -f 30
 then repeat when the command line returns but change the '-c' option to 'Vz', 'Ex', or 'Ez'. Alternatively, you could change the frame rate (-f) to a higher or smaller number to adjust the speed of the GIF. We specified the 'D,write' parameter to 10 which is a little undersampled to view seismograms or radargrams but creating the GIF takes some time and we don`t need that much resolution. If you would like to create the seismograms decrease the write parameter between 2-4. 
 
 
+*Common Offset Survey*
 
 
 

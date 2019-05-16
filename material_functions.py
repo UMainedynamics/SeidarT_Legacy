@@ -68,8 +68,8 @@ isotropic_materials = {
 
 # ======================================
 # Just a check to make sure it's working
-def print_vals(self):
-    pass
+# def print_vals(self):
+#     pass
     # p = ice_permittivity(-2)
     # s = ice_stiffness(-10, 3)
     # print(s)
