@@ -136,7 +136,7 @@ while [[ total_offset -lt total ]]; do
 	python3 -m prjrun $prjfile --model $mod
 
 	# Get the reciever timeseries for the x-direction
-	python3 -m arrayplot $prjfile -c $c1 -I $xr $yr $zr -F $xr $yr $zr -d 1 -g 0 -S 1
+	python3 -m arrayplot $prjfile -c $c1 -I $xr $yr $zr -F $xr $yr $zr -d 1 -g 0 -S 1 -e 0.1
 
 	# append the timeseries to the others
 	paste -d' ' $cmpfilex reciever_array.csv > temp.csv
@@ -144,7 +144,7 @@ while [[ total_offset -lt total ]]; do
 	rm reciever_array.csv
 
 	# Get the reciever timeseries for the z-direction
-	python3 -m arrayplot $prjfile -c $c2 -I $xr $yr $zr -F $xr $yr $zr -d 1 -g 0 -S 1
+	python3 -m arrayplot $prjfile -c $c2 -I $xr $yr $zr -F $xr $yr $zr -d 1 -g 0 -S 1 -e 0.1
 
 	# append the timeseries to the others
 	paste -d' ' $cmpfilez reciever_array.csv > temp.csv
@@ -165,5 +165,5 @@ sed -i "s/$xstring$wild/$xstring$xorig/" $prjfile
 
 
 # Display the results for the Ex field. We can do the same for Ez if we like
-python3 -m codisplay $prjfile -s $cmpfilex -d $ds -m e
+python3 -m codisplay $prjfile -s $cmpfilex -d $ds -m e 0.15
 

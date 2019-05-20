@@ -11,11 +11,9 @@ INPUT
 					arguments x y z
 	-F, --final		The final coordinates of the source. Requires 3
 					arguments  x y z
-	-o, --offset 	Source and reciever offset distance (meters)
 	-d, --delta		Reciever spacing (meters)
 	-m, --model 	(OPTIONAL) Specifier to run model; s-seismic, e-electromag,
 					b-both seismic and electromag, n-none (default) 
-
 
 '
 

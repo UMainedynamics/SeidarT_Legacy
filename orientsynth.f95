@@ -18,7 +18,7 @@ contains
 
 !------------------------------------------------------------------------------
 subroutine fabric_ortosynth(trend, plunge, anglemin, anglemax, npts, &
-	euler_list, end_orientation)
+	euler_list, orientation_tensor)
 ! FABRIC_ORTOSYNTH computes the euler angles of a fabric from its statistical
 ! description trend, plunge, anglemin and anglemax. Angles are input as 
 ! degrees. The number of points (npts) corresponds to the number of equal sized 
@@ -53,12 +53,14 @@ real(kind=sp),dimension(1) :: RND,RND1,RND2,angle
 
 ! Define arrays
 real(kind=sp),dimension(3) :: euler_avg, euler_dev
-real(kind=sp),dimension(3,3) :: euler_axis_rot, euler_dev_rot, composite_rot,R
-real(kind=sp),intent(out) :: end_orientation(npts,3), euler_list(npts,3) 
+real(kind=sp),dimension(3,3) :: euler_axis_rot, euler_dev_rot, composite_rot
+real(kind=sp), dimension(npts,3) :: end_orientation
+real(kind=sp),intent(out) :: orientation_tensor(3,3)
+real(kind=sp),intent(out) :: euler_list(npts,3) 
 
 ! Make this a python module
 !f2py3 intent(in) :: trend, plunge, anglemax, anglemin, filename
-!f2py3 intent(out) :: euler_list, end_orientation
+!f2py3 intent(out) :: euler_list, orientation_tensor
 
 ! -----------------------------------------------------------------------------
 
@@ -74,7 +76,7 @@ anglemin = anglemin*pi/180.0
 anglemax = anglemax*pi/180.0
 
 ! Get the rotation matrix from the euler_avg
-euler_axis_rot = rotator(euler_avg(1), euler_avg(2), euler_avg(3) )
+euler_axis_rot = transpose( rotator(euler_avg(1), euler_avg(2), euler_avg(3) ) )
 
 ! start the counter
 rownum=1
@@ -92,20 +94,22 @@ do while( rownum .LE. npts)
 
 		! Assign the angles then create the rotation matrix 
 		euler_dev(:) = (/ RND1*2.0*pi, angle, RND2*2.0*pi /)
-		euler_dev_rot = rotator( euler_dev(1), euler_dev(2), euler_dev(3) )
+		euler_dev_rot = transpose( rotator( euler_dev(1), euler_dev(2), euler_dev(3) ) )
 
 		! Matrix multiplication of the two rotation matrices
-		composite_rot = matmul(euler_dev_rot, euler_axis_rot)
-		end_orientation(rownum,:) = composite_rot(3,:)
+		composite_rot = matmul(euler_axis_rot, euler_dev_rot)
 
-		if (end_orientation(rownum,3) .gt.0) then 
-			end_orientation(rownum,:) = -end_orientation(rownum,:)
+		if ( composite_rot(3,3) .GT. 0.0) then 
+			end_orientation(rownum,:) = -composite_rot(:,3)
+		else
+			end_orientation(rownum,:) = composite_rot(:,3)
 		end if
+
 
 		! Assign the euler_list values
 		euler_list(rownum,2) = acos( composite_rot(3,3) )
 
-		if( composite_rot(3,3).LT.0 ) then 
+		if( composite_rot(3,3) .LT. 0.0 ) then 
 			euler_list(rownum,1) = pi + atan2(-composite_rot(1,3),&
 				-composite_rot(2,3) )
 			euler_list(rownum,3) = atan2(-composite_rot(3,1), &
@@ -117,18 +121,20 @@ do while( rownum .LE. npts)
 				-composite_rot(3,2) )
 		end if 
 
-
 		rownum = rownum + 1
 	end if
 end do 
 
 
-	! Get the orientation tensor
-	R = rotten(end_orientation) 
+euler_list(:,1) = -( euler_list(:,1) + pi/2)
+
+! Get the orientation tensor
+orientation_tensor = orten(end_orientation) 
 
 end subroutine fabric_ortosynth
 
 
+! -----------------------------------------------------------------------------
 
 function rotator(phi,theta,psi)
 ! get the z-x-z rotation matrix from three angles
@@ -136,18 +142,17 @@ function rotator(phi,theta,psi)
 real :: phi, theta, psi
 real,dimension(3,3) :: D,C,B,rotator 
 
-D(:,:) = reshape( (/  cos(phi), -sin(phi), 0.0, &
-	sin(phi), cos(phi), 0.0, &
-	0.0, 0.0, 1.0 /), shape(D) )
+D(1,:) = (/ cos(phi), -sin(phi), 0.0 /)
+D(2,:) = (/sin(phi), cos(phi), 0.0 /)
+D(3,:) = (/0.0, 0.0, 1.0 /)
 
-C(:,:) = reshape( (/ 1.0, 0.0, 0.0, &
-	0.0, cos(theta), -sin(theta), &
-	0.0, sin(theta), cos(theta) /), shape(C) )
+C(1,:) = (/ 1.0, 0.0, 0.0 /)
+C(2,:) = (/ 0.0, cos(theta), -sin(theta) /)
+C(3,:) = (/ 0.0, sin(theta), cos(theta) /)
 
-B(:,:) = reshape( (/ cos(psi), -sin(psi), 0.0, & 
-	sin(phi), cos(phi), 0.0, &
-	0.0, 0.0, 1.0 /), shape(B) )
-
+B(1,:) = (/ cos(psi), -sin(psi), 0.0 /)
+B(2,:) = (/sin(psi), cos(psi), 0.0 /)
+B(3,:) = (/0.0, 0.0, 1.0 /)
 
 B = matmul(C, B)
 rotator = matmul(D, B)
@@ -158,7 +163,7 @@ end function rotator
 
 ! -----------------------------------------------------------------------------
 
-function rotten(end_orientation)
+function orten(end_orientation)
 
 implicit none
 
@@ -166,7 +171,7 @@ implicit none
 integer :: npts
 real :: end_orientation(:,:) 
 real,allocatable :: ortho_comp(:,:)
-real,dimension(3,3) :: rotten 
+real,dimension(3,3) :: orten 
 
 npts = size(end_orientation, 1)
 
@@ -182,17 +187,17 @@ ortho_comp(:,8) = end_orientation(:,2)*end_orientation(:,3)
 ortho_comp(:,9) = end_orientation(:,3)*end_orientation(:,3)
 
 
-rotten(1,:) = (/ sum(ortho_comp(:,4) ), sum(ortho_comp(:,5) ), sum(ortho_comp(:,6) ) /)
-rotten(2,:) = (/ sum(ortho_comp(:,5) ), sum(ortho_comp(:,7) ), sum(ortho_comp(:,8) ) /)
-rotten(3,:) = (/ sum(ortho_comp(:,6) ), sum(ortho_comp(:,8) ), sum(ortho_comp(:,9) ) /)
+orten(1,:) = (/ sum(ortho_comp(:,4) ), sum(ortho_comp(:,5) ), sum(ortho_comp(:,6) ) /)
+orten(2,:) = (/ sum(ortho_comp(:,5) ), sum(ortho_comp(:,7) ), sum(ortho_comp(:,8) ) /)
+orten(3,:) = (/ sum(ortho_comp(:,6) ), sum(ortho_comp(:,8) ), sum(ortho_comp(:,9) ) /)
 
-rotten = rotten/npts 
+orten = orten/npts 
 
-print*,rotten(1,1),rotten(1,2),rotten(1,3)
-print*,rotten(2,1),rotten(2,2),rotten(2,3)
-print*,rotten(3,1),rotten(3,2),rotten(3,3)
+print*,orten(1,1),orten(1,2),orten(1,3)
+print*,orten(2,1),orten(2,2),orten(2,3)
+print*,orten(3,1),orten(3,2),orten(3,3)
 
-end function rotten
+end function orten
 
 
 ! -----------------------------------------------------------------------

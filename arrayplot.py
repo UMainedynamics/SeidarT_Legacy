@@ -44,7 +44,11 @@ parser.add_argument('-L', '--layout', nargs = 1, type = int, required = False,
 parser.add_argument('-S', '--suppress_plotting', nargs = 1, type = int, 
 	help = """Suppress all plotting (1/0). The reciever outputs will be located in 
 	the reciever_array.csv file.""", required = False, default = [0])
-	
+
+parser.add_argument('-e', '--exaggeration', nargs=1, type = float, required = False,
+	help = """Set the aspect ratio between the x and y axes for 
+	plotting. Default is 0.5""", default = [0.5])
+
 
 # Get the arguments
 args = parser.parse_args()
@@ -57,6 +61,7 @@ delta = np.array(args.delta)[0]
 gain = args.gain[0]
 layout = args.layout[0] == 1
 showplots = args.suppress_plotting[0] == 1
+exaggeration = args.exaggeration[0]
 
 # ---
 # ---
@@ -131,7 +136,7 @@ class Array:
 			im = ax.imshow(self.timeseries, cmap = 'Greys')
 
 		ax.set_xlabel(r"Reciever #")
-		ax.set_aspect(aspect = 0.1)
+		ax.set_aspect(aspect = exaggeration	)
 		plt.show()
 
 

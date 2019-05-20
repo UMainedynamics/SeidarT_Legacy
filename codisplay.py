@@ -18,9 +18,13 @@ parser.add_argument( 'project_file', nargs=1, type=str,
 parser.add_argument( '-s', '--survey_file', nargs=1, type=str, required = True,
 						help='the survey .csv file', 
 						default=None)
-parser.add_argument( '-d', '--delta', nargs=1, type=str, required = False,
+parser.add_argument( '-d', '--delta', nargs=1, type=float, required = False,
 	help="""The change in source distance in meters along the profile. The 
 	change in reciever distance is the same.""", default=[1])
+
+parser.add_argument( '-o', '--offset', nargs =1, type = float, required = False,
+	help=""" The initial offset of the source and the reciever from the 
+	midpoint""", default = [5])
 
 parser.add_argument('-g', '--gain', nargs = 1, type = float, required = False,
 	help = "The exponential value for 2^m of the gain function (default=None)", default = None)
@@ -28,12 +32,18 @@ parser.add_argument('-g', '--gain', nargs = 1, type = float, required = False,
 parser.add_argument('-m', '--model_type', nargs=1, type= str, required = False,
 	help = "Specify the type of model; s - seismic; e - electromag (default))")
 
+parser.add_argument('-e', '--exaggeration', nargs=1, type = float, required = False,
+	help = """Set the aspect ratio between the x and y axes for 
+	plotting. Default is 0.5""", default = [0.5])
+
 args = parser.parse_args()
 project_file = ''.join(args.project_file)
 cofile = ''.join(args.survey_file)
 ds = args.delta[0]
+offset = args.offset[0]
 gain = args.gain
 model=args.model_type
+exaggeration = args.exaggeration[0]
 
 if gain:
 	gain = gain[0]
@@ -61,6 +71,12 @@ f.close()
 dat = np.genfromtxt(cofile, delimiter = ' ')
 m,n = dat.shape
 
+time_locations = np.linspace(1, m, 10) 
+time_labels = np.round( time_locations*dt*1e6, 4)
+
+dist_locations = np.round( np.linspace(1, n, 7) )
+dist_labels = 2*dist_locations*ds + offset*2
+dist_labels = dist_labels.astype(int)
 fig, ax = plt.subplots()
 
 if gain:
@@ -71,8 +87,20 @@ if gain:
 else:
 	im = ax.imshow(dat, cmap = 'Greys')
 
-ax.set_xlabel(r"Normalized Distance (m)")
-ax.set_ylabel(r"Normalized Time")
-ax.set_aspect(aspect = 0.3)
+ax.set_xlabel(r"Source-Reciever Distance (m)")
+ax.xaxis.tick_top()
+ax.xaxis.set_label_position('top')
+
+ax.set_ylabel(r"Two way travel time (s)")
+
+ax.set_aspect(aspect = exaggeration)
+
+# Label the y axis
+plt.yticks(ticks=time_locations, labels = time_labels.astype(str) )
+plt.figtext(0.30, 0.07, 'x $10^{-6}$')
+
+# Label the x axis
+plt.xticks(ticks = dist_locations, labels = dist_labels.astype(str) )
+
 plt.show()
 
