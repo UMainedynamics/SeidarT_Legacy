@@ -27,11 +27,22 @@ The dynamical programming language of **Python3** is used as a front end to run 
 
 **Python3, Fortran95, GCC, pip, git, ghostscript, imageMagick**
 
-and additionally, the **Python** dependencies:
+and additionally, the **Python** dependencies: *numpy*, *scipy*, *glob3*, *matplotlib*, *mplstereonet* (optional for viewing fabric distributions). This can be done via **apt** with 
+~~~
+sudo apt update
+sudo apt upgrade
+pip3 install numpy matplotlib scipy glob mplstereonet
+~~~
 
-*numpy*, *scipy*, *glob3*, *matplotlib*, *mplstereonet* (optional for viewing fabric distributions)
+and with homebrew using the command 
 
-Installation of these packages is different between MacOSx and Linux distributions. [*Anaconda*](https://docs.continuum.io/anaconda/) provides a convenient **Python** environment for installing and developing programs, however, Anaconda doesn't provide *GCC-7* or later so compilation of the **Fortran** code will return an error. This can be remedied by uninstalling **GCC** from *Anaconda* and upgrading via *apt* to *GCC-7* or greater. For *Anaconda* users, it is necessary to install via **conda** and **pip**
+~~~
+brew update
+brew upgrade
+pip3 install numpy matplotlib scipy glob3 mplstereonet
+~~~
+
+Installation of these packages is different between MacOSx and Linux distributions. [*Anaconda*](https://docs.continuum.io/anaconda/) provides a convenient **Python** environment for installing and developing programs, however, Anaconda doesn't provide *GCC-7* or later so compilation of the **Fortran** code will return an error. This can be remedied by uninstalling **GCC** from *Anaconda* and upgrading via *apt* to *GCC-7* or greater. For *Anaconda* users, it might be necessary to install via **conda** and **pip**.
 
 To download the software, open a terminal (*Ctrl-Alt-t* for Ubuntu and *Ctrl-Opt-Shift-t* for Mac) and change directories
 
@@ -66,10 +77,14 @@ PYTHONPATH=$PYTHONPATH:/path/to/SeidarT
 export PYTHONPATH
 ~~~
 
-or in the */etc/path* for Mac.
-~~~
+Depending on the OS release (El Capitan, High Sierra, Mojave, etc.) and whether you have *Anaconda* installed appending a path might be different. Anaconda may set aliases so troubleshooting on a Mac can be cumbersome. Before editing the */etc/path*, *.bash_profile*, *.profile* or *.bashrc* file it is a good idea to create a backup especially if you are not familiar with either or any of those files. To do this copy the original to a new name. For example,
 
 ~~~
+cp <location/of/path/definitions> <location/of/path/definitions>_original
+~~~
+
+that way you can always revert back to the working script. 
+
 
 There are a variety of ways to edit the documents but for simplicity change directories to the home folder 
 
