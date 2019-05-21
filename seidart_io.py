@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python
 
 # Some basic I/O operations for the SeidarT programs to convert the unformatted
 # Fortran 

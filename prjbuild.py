@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python
 #
 # This script will read an image and build the template project file template
 # to be used in the seisarT program

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python
 
 # Wrapper to generate the euler angles for the plunge and trend 
 # then plot the results

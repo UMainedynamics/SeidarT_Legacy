@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python
 
 # From the set of image outputs, we can build a gif. The images will be in csv 
 # or fortran unformatted binary

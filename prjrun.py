@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python
 #
 # This script will read the parameters given from a project file and run the 
 # specified models. 
