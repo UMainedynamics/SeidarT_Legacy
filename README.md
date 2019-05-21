@@ -69,12 +69,19 @@ bash install.sh
 ~~~
 
 When the compilation is finished, we can add the folder to the path directory and the python path directory. Currently, this software is supported with **bash** so append the following lines to the *.bashrc* if using Ubuntu 
+
 ~~~
 PATH=$PATH:/path/to/SeidarT/
 export $PATH
 
 PYTHONPATH=$PYTHONPATH:/path/to/SeidarT
 export PYTHONPATH
+~~~
+
+and if Python 2 is the default version create an alias in the *.bashrc* file by adding the line in the alias section
+
+~~~
+alias python=python3
 ~~~
 
 Depending on the OS release (El Capitan, High Sierra, Mojave, etc.) and whether you have *Anaconda* installed appending a path might be different. Anaconda may set aliases so troubleshooting on a Mac can be cumbersome. Before editing the */etc/path*, *.bash_profile*, *.profile* or *.bashrc* file it is a good idea to create a backup especially if you are not familiar with either or any of those files. To do this copy the original to a new name. For example,
