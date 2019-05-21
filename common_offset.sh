@@ -111,10 +111,10 @@ if [ $x -lt $xf ]; then # Moving right
 
 	while [ $x -lt $xf ]; do
 
-		python3 -m prjrun $prjfile --model $mod
+		python -m prjrun $prjfile --model $mod
 
 		# Get the reciever timeseries for the x-direction
-		python3 -m arrayplot $prjfile -c $c1 -I $rx $ry $rz -F $rx $ry $rz -d 1 -g 0 -S 1
+		python -m arrayplot $prjfile -c $c1 -I $rx $ry $rz -F $rx $ry $rz -d 1 -g 0 -S 1
 
 		# append the timeseries to the others
 		paste -d' ' $cofilex reciever_array.csv > temp.csv
@@ -122,7 +122,7 @@ if [ $x -lt $xf ]; then # Moving right
 		rm reciever_array.csv
 
 		# Get the reciever timeseries for the z-direction
-		python3 -m arrayplot $prjfile -c $c2 -I $rx $ry $rz -F $rx $ry $rz -d 1 -g 0 -S 1
+		python -m arrayplot $prjfile -c $c2 -I $rx $ry $rz -F $rx $ry $rz -d 1 -g 0 -S 1
 
 		# append the timeseries to the others
 		paste -d' ' $cofilez reciever_array.csv > temp.csv
@@ -142,10 +142,10 @@ else # Moving left
 	
 	while [ $x -gt $xf ]; do
 
-		python3 -m prjrun $prjfile --model $mod
+		python -m prjrun $prjfile --model $mod
 
 		# Get the reciever timeseries for the x-direction
-		python3 -m arrayplot $prjfile -c $c1 -I $rx $ry $rz -F $rx $ry $rz -d 1 -g 0 -S 1
+		python -m arrayplot $prjfile -c $c1 -I $rx $ry $rz -F $rx $ry $rz -d 1 -g 0 -S 1
 
 		# append the timeseries to the others
 		paste -d' ' $cofilex reciever_array.csv > temp.csv
@@ -153,7 +153,7 @@ else # Moving left
 		rm reciever_array.csv
 
 		# Get the reciever timeseries for the z-direction
-		python3 -m arrayplot $prjfile -c $c2 -I $rx $ry $rz -F $rx $ry $rz -d 1 -g 0 -S 1
+		python -m arrayplot $prjfile -c $c2 -I $rx $ry $rz -F $rx $ry $rz -d 1 -g 0 -S 1
 
 		# append the timeseries to the others
 		paste -d' ' $cofilez reciever_array.csv > temp.csv
@@ -176,5 +176,5 @@ fi
 sed -i "s/$xstring.*/$xstring$xorig/" $prjfile
 
 # Display the results for the Ex field. We can do the same for Ez if we like
-python3 -m codisplay $prjfile -s $cofilex -d $ds -m e
+python -m codisplay $prjfile -s $cofilex -d $ds -m e
 

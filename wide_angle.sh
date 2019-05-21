@@ -90,14 +90,14 @@ else
 fi
 
 
-python3 -m prjrun $prjfile --model $mod
+python -m prjrun $prjfile --model $mod
 
 echo Creating reciever array
-python3 -m arrayplot $prjfile -c $c1 -I $xi $yi $zi -F $xf $yf $zf -d $ds -g $gain
-python3 -m arrayplot $prjfile -c $c2 -I $xi $yi $zi -F $xf $yf $zf -d $ds -g $gain
+python -m arrayplot $prjfile -c $c1 -I $xi $yi $zi -F $xf $yf $zf -d $ds -g $gain
+python -m arrayplot $prjfile -c $c2 -I $xi $yi $zi -F $xf $yf $zf -d $ds -g $gain
 
 
 if [[ $gif ]]; then
-	python3 -m im2gif $prjfile -c $c1 -f 30
-	python3 -m im2gif $prjfile -c $c2 -f 30
+	python -m im2gif $prjfile -c $c1 -f 30
+	python -m im2gif $prjfile -c $c2 -f 30
 fi
