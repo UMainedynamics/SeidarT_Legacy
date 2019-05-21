@@ -71,11 +71,9 @@ bash install.sh
 When the compilation is finished, we can add the folder to the path directory and the python path directory. Currently, this software is supported with **bash** so append the following lines to the *.bashrc* if using Ubuntu 
 
 ~~~
-PATH=$PATH:/path/to/SeidarT/
-export $PATH
+export PATH=$PATH:/path/to/SeidarT/bin
 
-PYTHONPATH=$PYTHONPATH:/path/to/SeidarT
-export PYTHONPATH
+export PYTHONPATH=$PYTHONPATH:/path/to/SeidarT/bin
 ~~~
 
 and if Python 2 is the default version create an alias in the *.bashrc* file by adding the line in the alias section
@@ -195,7 +193,7 @@ These are small, simple models to introduce the routines.
 After running the install script without errors then adding the program file parent directy to the path, open a terminal and change directories into the EXAMPLES folder. Input into the command line
 
 ~~~
-python3 -m prjbuild -i dipping_bed.png -o dipping_bed.prj
+prjbuild -i dipping_bed.png -o dipping_bed.prj
 ~~~
 
 Fill in the missing domain values for 1 meter spacing in both directions and an absorbing boundary of 30 pixels as
@@ -240,7 +238,7 @@ For reference, you can use the RGB values to identify the materials so it is imp
 After filling in the domain and material values save then run the command
 
 ~~~
-python3 -m prjrun dipping_bed.prj -M n
+prjrun dipping_bed.prj -M n
 ~~~
 
 Even though we have all the required fields entered the model didn't run because we used the '-M n' option. This is because basalt was inserted as an arbitrary material type in the project file as a placeholder and to output values. We can just as well use 'ice1h' or any other material in the python dictionary. The project file is now updated so we can edit the 'S,5' and 'P,5' coefficients to be between the 'ice1h' values and basalt values. Values closer to ice are reasonable with conductivity values closer to granite or basalt. I chose
@@ -252,13 +250,13 @@ Even though we have all the required fields entered the model didn't run because
 Since large density gradients cause numerical instabilities, the density for air must be increased. A value of 400.0 works until a better formulation of the air-rock interface is implemented. Now you can run the model (both seismic and electromagnetic)
 
 ~~~
-python3 -m prjrun dipping_bed.prj -M b
+prjrun dipping_bed.prj -M b
 ~~~
 
 When that is finished let's build the GIF to view the wavefield. Starting with the seismic wavefield, enter
 
 ~~~
-python3 -m im2gif dipping_bed.prj -c Vx -f 30
+im2gif dipping_bed.prj -c Vx -f 30
 ~~~
 
 then repeat when the command line returns but change the '-c' option to 'Vz', 'Ex', or 'Ez'. Alternatively, you could change the frame rate (-f) to a higher or smaller number to adjust the speed of the GIF. We specified the 'D,write' parameter to 10 which is a little undersampled to view seismograms or radargrams but creating the GIF takes some time and we don`t need that much resolution. If you would like to create the seismograms decrease the write parameter between 2-4. 
