@@ -193,9 +193,9 @@ orten(3,:) = (/ sum(ortho_comp(:,6) ), sum(ortho_comp(:,8) ), sum(ortho_comp(:,9
 
 orten = orten/npts 
 
-print*,orten(1,1),orten(1,2),orten(1,3)
-print*,orten(2,1),orten(2,2),orten(2,3)
-print*,orten(3,1),orten(3,2),orten(3,3)
+! print*,orten(1,1),orten(1,2),orten(1,3)
+! print*,orten(2,1),orten(2,2),orten(2,3)
+! print*,orten(3,1),orten(3,2),orten(3,3)
 
 end function orten
 

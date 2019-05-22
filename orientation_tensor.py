@@ -55,7 +55,8 @@ orten = np.array([])
 euler_list, orten = ot.orientsynth(trend, plunge, amin, amax, npts)
 
 # Save the euler angles
-np.savetxt(output_file, euler_list, delimiter = ',')
+print(type(euler_list) )
+np.savetxt(output_file, euler_list, delimiter = " ")
 
 if plot_bool:
 	fig = plt.figure( figsize = (7, 5) )

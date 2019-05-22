@@ -14,7 +14,6 @@ For isotropic materials we can determine the Lame constants from the equations:
 """
 
 import numpy as np
-import pandas as pd
 
 
 # =============================================================================
@@ -375,13 +374,11 @@ def read_ang(filepath):
     """
     
     # Load the file in as a data frame
-    euler = pd.read_csv(filepath, header = None, sep = " ")
-
-    # convert to a numpy array
-    euler = euler.values
+    euler = np.genfromtxt(filepath, delimiter = " ")
 
     # take only the euler angles...for now
-    euler = euler[:,0:3]
+    if euler.shape[0] > 3 :
+        euler = euler[:,0:3]
 
     # Unfortunately, the space delimiters are inconsistent :(
     # We know there are 10 columns and the rows shouldn't contain all NA's
