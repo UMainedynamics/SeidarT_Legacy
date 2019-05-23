@@ -621,12 +621,6 @@ do it = 1,NSTEP
   vy(:,1) = ZERO
   vy(:,NY) = ZERO
 
-  ! store seismograms
-  ! do irec = 1,NREC
-  !   sisvx(it,irec) = vx(rcx(irec,1),rcx(irec,2))
-  !   sisvy(it,irec) = vy(rcx(irec,1),rcx(irec,2))
-  ! enddo
-
   ! output information
   if (mod(it,IT_DISPLAY) == 0 .or. it == 1) then
 
@@ -644,10 +638,6 @@ do it = 1,NSTEP
 
 enddo   ! end of time loop
 
-
-
-! save seismograms
-! call write_seismograms(sisvx,sisvy,nstep,nrec,DT)
 
 end subroutine seismic_cpml_2d
 
