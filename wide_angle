@@ -20,7 +20,6 @@ INPUT
 # ------------------------------ Input Arguments ------------------------------
 while [[ $# -gt 0 ]]; do
 	key="$1"
-
 	case $key in
 	    -f|--project_file)
 	    prjfile="$2"
@@ -37,19 +36,19 @@ while [[ $# -gt 0 ]]; do
 	    xi="$2"
 	    yi="$3"
 	    zi="$4"
-	    shift;shift;shift;shift # past value
+	    shift;shift;shift;shift # past value 
 	    ;;
-		-d|--delta)
-		ds="$2"
-		shift;shift
+	    -d|--delta)
+	    ds="$2"
+	    shift;shift
 	    ;;
 	    -g|--gif)
-		gif=true
-		shift
-		;;
+	    gif=true
+	    shift
+	    ;;
 	    -s|--seismic)
-		seismic=true
-		shift
+	    seismic=true
+	    shift
 	esac
 done
 
