@@ -119,18 +119,15 @@ rz=$z
 # For the time functions
 elapsed_time=0
 
-
-
 # The reciever will trail the source relative to the direction the source is 
 # moving. Negative direction is viewers left
-if [ $x -lt $xf ]; then # Moving right
+if [[ $(echo "$x<$xf" | bc -l) ]]; then # Moving right
 	rx=`echo "$x - $offset" | bc` 
 	
-	while [ $x -lt $xf ]; do
+	while [[ $(echo "$x<$xf" | bc -l) ]]; do
 		# We will time the blocks so the user knows how long this is taking
 		start=`date +%s`
 		
-
 		prjrun $prjfile --model $mod
 
 		# Get the reciever timeseries for the x-direction
@@ -168,14 +165,14 @@ if [ $x -lt $xf ]; then # Moving right
 		echo $runtime
 		echo 
 		echo "Total elapsed time:"
-		echo $elapsed_time
+		echo $elapsed_time "seconds"
 
 	done
 
 else # Moving left
 	rx=`echo "$x + $offset" | bc` 
 	
-	while [ $x -gt $xf ]; do
+	while [[ $(echo "$x>$xf" | bc -l) ]]; do
 		start=`date +%s`
 		prjrun $prjfile --model $mod
 
