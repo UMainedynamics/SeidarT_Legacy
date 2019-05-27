@@ -77,6 +77,7 @@ else
 	cofilex=$base.$ds.$offset.Ex.co.csv
 	cofilez=$base.$ds.$offset.Ez.co.csv
 fi
+
 # ================================ Get to work ================================
 
 

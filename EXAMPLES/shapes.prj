@@ -61,7 +61,7 @@ D,dz,0.25
 D,cpml,30
 D,nmats,3
 D,tfile,
-D,write,10
+D,write,1
 
 # number, id, R/G/B, Temperature, Attenuation, Density, Porosity, Water_Content, Anisotropic, ANG_File
 M,0,ice1h,120/152/76,-20,2,850,2,0,False,

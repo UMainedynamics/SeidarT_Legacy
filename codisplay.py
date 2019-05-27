@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(description="""CODISPLAY reads the common
 # parser.add_argument( 'project_file', nargs=1, type=str,
 # 	help=""" The project file used to model the common offset survey """)
 
-parser.add_argument( 'survey_file', nargs=1, type=str, required = True,
+parser.add_argument( 'survey_file', nargs=1, type=str,
 						help='the survey .csv file', 
 						default=None)
 
