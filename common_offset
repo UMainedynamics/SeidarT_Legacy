@@ -15,8 +15,6 @@ INPUT
 
 '
 
-cofilex='common_offset_x.csv' # The output file
-cofilez='common_offset_z.csv' # The output file
 wild='.*'
 
 
@@ -67,7 +65,20 @@ else
 	echo 
 fi
 
+# =========================== Create the output File ==========================
+
+# remove the extension of the project file
+base=`echo "$prjfile" | rev | cut -d"." -f2- | rev`
+
+if [ $seismic ]; then
+	cofilex=$base.$ds.$offset.Vx.co.csv
+	cofilez=$base.$ds.$offset.Vz.co.csv
+else
+	cofilex=$base.$ds.$offset.Ex.co.csv
+	cofilez=$base.$ds.$offset.Ez.co.csv
+fi
 # ================================ Get to work ================================
+
 
 if [ $seismic ]; then
 	xstring='S,x,'
@@ -104,12 +115,20 @@ z=$(echo $z | cut -f3 -d,)
 ry=$y
 rz=$z	
 
+# For the time functions
+elapsed_time=0
+
+
+
 # The reciever will trail the source relative to the direction the source is 
 # moving. Negative direction is viewers left
 if [ $x -lt $xf ]; then # Moving right
 	rx=`echo "$x - $offset" | bc` 
-
+	
 	while [ $x -lt $xf ]; do
+		# We will time the blocks so the user knows how long this is taking
+		start=`date +%s`
+		
 
 		prjrun $prjfile --model $mod
 
@@ -117,7 +136,7 @@ if [ $x -lt $xf ]; then # Moving right
 		arrayplot $prjfile -c $c1 -I $rx $ry $rz -F $rx $ry $rz -d 1 -g 0 -S 1
 
 		# append the timeseries to the others
-		paste -d' ' $cofilex reciever_array.csv > temp.csv
+		paste -d',' $cofilex reciever_array.csv > temp.csv
 		mv temp.csv $cofilex
 		rm reciever_array.csv
 
@@ -125,7 +144,7 @@ if [ $x -lt $xf ]; then # Moving right
 		arrayplot $prjfile -c $c2 -I $rx $ry $rz -F $rx $ry $rz -d 1 -g 0 -S 1
 
 		# append the timeseries to the others
-		paste -d' ' $cofilez reciever_array.csv > temp.csv
+		paste -d',' $cofilez reciever_array.csv > temp.csv
 		mv temp.csv $cofilez
 		rm reciever_array.csv
 
@@ -135,20 +154,35 @@ if [ $x -lt $xf ]; then # Moving right
 		# Shift the reciever
 		rx=`echo "$rx + $ds" | bc`
 
+		# Remove the dat files
+		rm *.dat
+
+		# 
+		end=`date +%s`
+
+		runtime=$((end-start))
+		elapsed_time=$((elapsed_time+runtime))
+
+		echo "Elapsed time of last survey point:"
+		echo $runtime
+		echo 
+		echo "Total elapsed time:"
+		echo $elapsed_time
+
 	done
 
 else # Moving left
 	rx=`echo "$x + $offset" | bc` 
 	
 	while [ $x -gt $xf ]; do
-
+		start=`date +%s`
 		prjrun $prjfile --model $mod
 
 		# Get the reciever timeseries for the x-direction
 		arrayplot $prjfile -c $c1 -I $rx $ry $rz -F $rx $ry $rz -d 1 -g 0 -S 1
 
 		# append the timeseries to the others
-		paste -d' ' $cofilex reciever_array.csv > temp.csv
+		paste -d',' $cofilex reciever_array.csv > temp.csv
 		mv temp.csv $cofilex
 		rm reciever_array.csv
 
@@ -156,7 +190,7 @@ else # Moving left
 		arrayplot $prjfile -c $c2 -I $rx $ry $rz -F $rx $ry $rz -d 1 -g 0 -S 1
 
 		# append the timeseries to the others
-		paste -d' ' $cofilez reciever_array.csv > temp.csv
+		paste -d',' $cofilez reciever_array.csv > temp.csv
 		mv temp.csv $cofilez
 		rm reciever_array.csv
 
@@ -169,12 +203,23 @@ else # Moving left
 
 		# remove the .dat files
 		rm *.dat
+
+
+		runtime=$((end-start))
+		elapsed_time=$((elapsed_time+runtime))
+
+		echo "Elapsed time of last survey point:"
+		echo $runtime
+		echo 
+		echo "Total elapsed time:"
+		echo $elapsed_time
 	done
 fi
 
 # Restore the initial source location
 sed -i "s/$xstring.*/$xstring$xorig/" $prjfile
 
+
 # Display the results for the Ex field. We can do the same for Ez if we like
-codisplay $prjfile -s $cofilex -d $ds -m e
+codisplay $cofilex 
 

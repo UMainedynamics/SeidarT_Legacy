@@ -1,8 +1,7 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created by Steven Bernsen
-
 We are given a range of velocities of different materials found empirically. 
 For isotropic materials we can determine the Lame constants from the equations:
     Vp = sqrt( lambda + 2 mu  / rho ),
@@ -10,7 +9,6 @@ For isotropic materials we can determine the Lame constants from the equations:
     c11 = c22 = c33 = lambda + 2 mu,
     c12 = c13 = c23 = lambda,
     c44 = c55 = c66 = mu
-
 """
 
 import numpy as np
@@ -26,17 +24,13 @@ Seismic values can be found in:
       
 Permittivity values can be found in:
         Electrical Properties of Rocks and Minerals
-
-
     The following values are provided by:
         Seismic Velocities - https://pangea.stanford.edu/courses/gp262/Notes/8.SeismicVelocity.pdf
         Permeabilitues - http://www.geo.umass.edu/faculty/wclement/dielec.html
-
         Conductivities - Duba et al. (1977), Duba et al. (1978), Watanabe (1970), 
                     Mohammadi and Mohammadi (2016),
                     https://www.nrcs.usda.gov/INTERNET/FSE_DOCUMENTS/NRCS142P2_053280.PDF,
                     https://en.wikipedia.org/wiki/Electrical_resistivity_and_conductivity
-
     Values are: 
         Vp_min, Vp_max, Vs_min, Vs_max, Rel_Perm_min, Rel_Perm_max, Conductivity_min, Conductivity_max
     
@@ -368,7 +362,6 @@ def read_ang(filepath):
         c8      phase ID
         c9      detector intensity
         c10     fit
-
     Refer to this thread for more description of the aforementioned
         https://www.researchgate.net/post/How_can_I_get_X_Y_position_data_of_a_single_grain_from_EBSD_scan
     """

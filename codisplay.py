@@ -12,41 +12,58 @@ import matplotlib.image as mpimg
 parser = argparse.ArgumentParser(description="""CODISPLAY reads the common 
 	survey file created from common_offset.sh. The """ )
 
-parser.add_argument( 'project_file', nargs=1, type=str,
-	help=""" The project file used to model the common offset survey """)
+# parser.add_argument( 'project_file', nargs=1, type=str,
+# 	help=""" The project file used to model the common offset survey """)
 
-parser.add_argument( '-s', '--survey_file', nargs=1, type=str, required = True,
+parser.add_argument( 'survey_file', nargs=1, type=str, required = True,
 						help='the survey .csv file', 
 						default=None)
-parser.add_argument( '-d', '--delta', nargs=1, type=float, required = False,
-	help="""The change in source distance in meters along the profile. The 
-	change in reciever distance is the same.""", default=[1])
-
-parser.add_argument( '-o', '--offset', nargs =1, type = float, required = False,
-	help=""" The initial offset of the source and the reciever from the 
-	midpoint""", default = [5])
 
 parser.add_argument('-g', '--gain', nargs = 1, type = float, required = False,
 	help = "The exponential value for 2^m of the gain function (default=None)", default = None)
-
-parser.add_argument('-m', '--model_type', nargs=1, type= str, required = False,
-	help = "Specify the type of model; s - seismic; e - electromag (default))")
 
 parser.add_argument('-e', '--exaggeration', nargs=1, type = float, required = False,
 	help = """Set the aspect ratio between the x and y axes for 
 	plotting. Default is 0.5""", default = [0.5])
 
+# ----------------- Delete after debug -------------------
+# parser.add_argument('-m', '--model_type', nargs=1, type= str, required = False,
+# 	help = "Specify the type of model; s - seismic; e - electromag (default))")
+
+
+# parser.add_argument( '-d', '--delta', nargs=1, type=float, required = False,
+# 	help="""The change in source distance in meters along the profile. The 
+# 	change in reciever distance is the same.""", default=[1])
+
+# parser.add_argument( '-o', '--offset', nargs =1, type = float, required = False,
+# 	help=""" The initial offset of the source and the reciever from the 
+# 	midpoint""", default = [5])
+# --------------------------------------------------------
+
+
 args = parser.parse_args()
-project_file = ''.join(args.project_file)
 cofile = ''.join(args.survey_file)
-ds = args.delta[0]
-offset = args.offset[0]
 gain = args.gain
-model=args.model_type
 exaggeration = args.exaggeration[0]
 
 if gain:
 	gain = gain[0]
+
+
+# The filename contains information about the survey
+survey_info = cofile.split('.')
+
+# The file was saved as <basename>.<delta>.<offset>.<channel>.<co/cmp>.csv but 
+# basename could be <yada_yada>.<blah_blah> 
+
+project_file = survey_info[0:-5] + '.prj'
+ds = survey_info[-5]
+offset = survey_info[-4]
+
+if survey_info[-3] == 'Vx' or survey_info[-3] == 'Vz':
+	model = 's'
+
+survey_type = survey_info[-2]
 
 # -----------------------------------------------------------------------------
 # Get the values we need
@@ -68,15 +85,23 @@ for line in f:
 f.close()
 
 
-dat = np.genfromtxt(cofile, delimiter = ' ')
+dat = np.genfromtxt(cofile, delimiter = ',')
 m,n = dat.shape
 
 time_locations = np.linspace(1, m, 10) 
 time_labels = np.round( time_locations*dt*1e6, 4)
 
-dist_locations = np.round( np.linspace(1, n, 7) )
-dist_labels = 2*dist_locations*ds + offset*2
-dist_labels = dist_labels.astype(int)
+
+if survey_type == 'cmp':
+	dist_locations = np.round( np.linspace(1, n, 7) )
+	dist_labels = 2*dist_locations*ds + offset*2
+	dist_labels = dist_labels.astype(int)
+else:
+	dist_location = np.round(0, n-1, 7) * ds 
+	dist_labels = dist_locations.astype(int)
+
+
+
 fig, ax = plt.subplots()
 
 if gain:

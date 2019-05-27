@@ -239,9 +239,6 @@ real(kind=dp), parameter :: PI = 3.141592653589793238462643d0
 ! conversion from degrees to radians
 real(kind=dp), parameter :: DEGREES_TO_RADIANS = PI / 180.d0
 
-! zeros
-real(kind=dp), parameter :: ZERO = 0.d0
-
 ! large value for maximum
 real(kind=dp), parameter :: HUGEVAL = 1.d+30
 
@@ -331,23 +328,23 @@ Rcoef = 0.001d0
   if (NPOWER < 1) stop 'NPOWER must be greater than 1'
 
 
-  d_x(:) = ZERO
-  d_x_half(:) = ZERO
+  d_x(:) = 0.d0
+  d_x_half(:) = 0.d0
   K_x(:) = 1.d0
   K_x_half(:) = 1.d0
-  alpha_x(:) = ZERO
-  alpha_x_half(:) = ZERO
-  a_x(:) = ZERO
-  a_x_half(:) = ZERO
+  alpha_x(:) = 0.d0
+  alpha_x_half(:) = 0.d0
+  a_x(:) = 0.d0
+  a_x_half(:) = 0.d0
 
-  d_y(:) = ZERO
-  d_y_half(:) = ZERO
+  d_y(:) = 0.d0
+  d_y_half(:) = 0.d0
   K_y(:) = 1.d0
   K_y_half(:) = 1.d0
-  alpha_y(:) = ZERO
-  alpha_y_half(:) = ZERO
-  a_y(:) = ZERO
-  a_y_half(:) = ZERO
+  alpha_y(:) = 0.d0
+  alpha_y_half(:) = 0.d0
+  a_y(:) = 0.d0
+  a_y_half(:) = 0.d0
 
 ! damping in the X direction
 
@@ -370,7 +367,7 @@ do i = 1,NX
     !---------- left edge
     ! define damping profile at the grid points
     abscissa_in_PML = xoriginleft - xval
-    if (abscissa_in_PML >= ZERO) then
+    if (abscissa_in_PML >= 0.d0) then
       abscissa_normalized = abscissa_in_PML / thickness_PML_x
       d_x(i) = d0_x * abscissa_normalized**NPOWER
       ! from Stephen Gedney's unpublished class notes for class EE699, lecture 8, slide 8-2
@@ -380,7 +377,7 @@ do i = 1,NX
 
   ! define damping profile at half the grid points
     abscissa_in_PML = xoriginleft - (xval + DX/2.d0)
-    if (abscissa_in_PML >= ZERO) then
+    if (abscissa_in_PML >= 0.d0) then
       abscissa_normalized = abscissa_in_PML / thickness_PML_x
       d_x_half(i) = d0_x * abscissa_normalized**NPOWER
       ! from Stephen Gedney's unpublished class notes for class EE699, lecture 8, slide 8-2
@@ -391,7 +388,7 @@ do i = 1,NX
 !---------- right edge
       ! define damping profile at the grid points
       abscissa_in_PML = xval - xoriginright
-      if (abscissa_in_PML >= ZERO) then
+      if (abscissa_in_PML >= 0.d0) then
         abscissa_normalized = abscissa_in_PML / thickness_PML_x
         d_x(i) = d0_x * abscissa_normalized**NPOWER
         K_x(i) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NPOWER
@@ -400,7 +397,7 @@ do i = 1,NX
 
       ! define damping profile at half the grid points
       abscissa_in_PML = xval + DX/2.d0 - xoriginright
-      if (abscissa_in_PML >= ZERO) then
+      if (abscissa_in_PML >= 0.d0) then
         abscissa_normalized = abscissa_in_PML / thickness_PML_x
         d_x_half(i) = d0_x * abscissa_normalized**NPOWER
         K_x_half(i) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NPOWER
@@ -408,8 +405,8 @@ do i = 1,NX
       endif
 
     ! just in case, for -5 at the end
-    if (alpha_x(i) < ZERO) alpha_x(i) = ZERO
-    if (alpha_x_half(i) < ZERO) alpha_x_half(i) = ZERO
+    if (alpha_x(i) < 0.d0) alpha_x(i) = 0.d0
+    if (alpha_x_half(i) < 0.d0) alpha_x_half(i) = 0.d0
 
     b_x(i) = exp(- (d_x(i) / K_x(i) + alpha_x(i)) * DT)
     b_x_half(i) = exp(- (d_x_half(i) / K_x_half(i) + alpha_x_half(i)) * DT)
@@ -441,7 +438,7 @@ do j = 1,NY
   !---------- bottom edge
     ! define damping profile at the grid points
     abscissa_in_PML = yoriginbottom - yval
-    if (abscissa_in_PML >= ZERO) then
+    if (abscissa_in_PML >= 0.d0) then
       abscissa_normalized = abscissa_in_PML / thickness_PML_y
       d_y(j) = d0_y * abscissa_normalized**NPOWER
       K_y(j) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NPOWER
@@ -450,7 +447,7 @@ do j = 1,NY
 
     ! define damping profile at half the grid points
     abscissa_in_PML = yoriginbottom - (yval + DY/2.d0)
-    if (abscissa_in_PML >= ZERO) then
+    if (abscissa_in_PML >= 0.d0) then
       abscissa_normalized = abscissa_in_PML / thickness_PML_y
       d_y_half(j) = d0_y * abscissa_normalized**NPOWER
       K_y_half(j) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NPOWER
@@ -461,7 +458,7 @@ do j = 1,NY
   !---------- top edge
     ! define damping profile at the grid points
     abscissa_in_PML = yval - yorigintop
-    if (abscissa_in_PML >= ZERO) then
+    if (abscissa_in_PML >= 0.d0) then
       abscissa_normalized = abscissa_in_PML / thickness_PML_y
       d_y(j) = d0_y * abscissa_normalized**NPOWER
       K_y(j) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NPOWER
@@ -470,7 +467,7 @@ do j = 1,NY
 
     ! define damping profile at half the grid points
     abscissa_in_PML = yval + DY/2.d0 - yorigintop
-    if (abscissa_in_PML >= ZERO) then
+    if (abscissa_in_PML >= 0.d0) then
       abscissa_normalized = abscissa_in_PML / thickness_PML_y
       d_y_half(j) = d0_y * abscissa_normalized**NPOWER
       K_y_half(j) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NPOWER
@@ -487,21 +484,21 @@ do j = 1,NY
 enddo
 
 ! initialize arrays
-vx(:,:) = ZERO
-vy(:,:) = ZERO
-sigmaxx(:,:) = ZERO
-sigmayy(:,:) = ZERO
-sigmaxy(:,:) = ZERO
+vx(:,:) = 0.d0
+vy(:,:) = 0.d0
+sigmaxx(:,:) = 0.d0
+sigmayy(:,:) = 0.d0
+sigmaxy(:,:) = 0.d0
 
 ! PML
-memory_dvx_dx(:,:) = ZERO
-memory_dvx_dy(:,:) = ZERO
-memory_dvy_dx(:,:) = ZERO
-memory_dvy_dy(:,:) = ZERO
-memory_dsigmaxx_dx(:,:) = ZERO
-memory_dsigmayy_dy(:,:) = ZERO
-memory_dsigmaxy_dx(:,:) = ZERO
-memory_dsigmaxy_dy(:,:) = ZERO
+memory_dvx_dx(:,:) = 0.d0
+memory_dvx_dy(:,:) = 0.d0
+memory_dvy_dx(:,:) = 0.d0
+memory_dvy_dy(:,:) = 0.d0
+memory_dsigmaxx_dx(:,:) = 0.d0
+memory_dsigmayy_dy(:,:) = 0.d0
+memory_dsigmaxy_dx(:,:) = 0.d0
+memory_dsigmaxy_dy(:,:) = 0.d0
 
 !---
 !---  beginning of time loop
@@ -592,43 +589,30 @@ do it = 1,NSTEP
   ! Gaussian
   source_term = factor * 2.d0*exp(-a*(t-t0)**2)
 
-  ! first derivative of a Gaussian
-  ! source_term = - factor * 2.d0*a*(t-t0)*exp(-a*(t-t0)**2)
-
-  ! Ricker source time function (second derivative of a Gaussian)
-  ! source_term = factor * (1.d0 - 2.d0*a*(t-t0)**2)*exp(-a*(t-t0)**2)
-
   force_x = sin(ANGLE_FORCE * DEGREES_TO_RADIANS) * source_term
   force_y = cos(ANGLE_FORCE * DEGREES_TO_RADIANS) * source_term
-
-  ! define location of the source
-  ! i = ISOURCE
-  ! j = JSOURCE
 
   vx(isource,jsource) = vx(isource,jsource) + force_x * DT / rho(i,j)
   vy(isource,jsource) = vy(isource,jsource) + force_y * DT / rho(i,j)
 
   ! Dirichlet conditions (rigid boundaries) on the edges or at the bottom of the PML layers
-  vx(1,:) = ZERO
-  vx(NX,:) = ZERO
+  vx(1,:) = 0.d0
+  vx(NX,:) = 0.d0
 
-  vx(:,1) = ZERO
-  vx(:,NY) = ZERO
+  vx(:,1) = 0.d0
+  vx(:,NY) = 0.d0
 
-  vy(1,:) = ZERO
-  vy(NX,:) = ZERO
+  vy(1,:) = 0.d0
+  vy(NX,:) = 0.d0
 
-  vy(:,1) = ZERO
-  vy(:,NY) = ZERO
+  vy(:,1) = 0.d0
+  vy(:,NY) = 0.d0
 
   ! output information
   if (mod(it,IT_DISPLAY) == 0 .or. it == 1) then
 
   ! print maximum of norm of velocity
   velocnorm = maxval(sqrt(vx**2 + vy**2))
-  print *,'Time step # ',it,' out of ',NSTEP
-  print *,'Time: ',sngl((it-1)*DT),' seconds'
-
   if (velocnorm > STABILITY_THRESHOLD) stop 'code became unstable and blew up'
 
   call write_image(vx, nx, ny, it, 'Vx')

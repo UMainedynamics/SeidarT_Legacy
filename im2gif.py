@@ -31,12 +31,16 @@ parser.add_argument( '-f', '--frames_per_second', nargs = 1, type = int,
 	required = False, default = 1, help = """The number of frames per second
 	to build the GIF.""")
 
+parser.add_argument( '-t', '--threshold', nargs = 1, type = float,
+	required = False, default=[0.0001], help = """Set values to zero when they 
+	below a specific threshold. Default = 0.0001""")
+
 # Get the arguments
 args = parser.parse_args()
 project_file = ''.join(args.project_file)
 channel = ''.join(args.channel)
 frame_rate = args.frames_per_second[0]
-
+threshold = args.threshold[0]
 
 # ===
 # ----------------------- Definitions ----------------------- 
@@ -151,39 +155,35 @@ if channel:
 	# Check if the .dat files are still around
 	files = glob.glob(channel + '*.dat')
 
-	# if they aren't then get the csv files
-	if not files:
-		pass
-		# files = glob.glob(channel+'*.csv')
-		# files.sort()
-		# ind = 0
-		# for fn in files:
-		# 	dat = np.genfromtxt(fn, delimiter = ',')
-			
-		# 	duration = dt*ind
-		# 	time_label = 'Time (s): ' + str(np.round(duration, 5) )
-		# 	animated_gif.add(dat, time_label, extent)
-			
-		# 	ind = ind + write
+	ind = 0
+	files.sort()
+	for fn in files:
+		f = FortranFile(fn, 'r')
+		dat = f.read_reals(dtype = 'float32')
+		dat = dat.reshape(nz, nx)
 
-		# animated_gif.save(channel + '.gif', fps = frame_rate)
 
-		
-	else:
-		ind = 0
-		files.sort()
-		for fn in files:
-			f = FortranFile(fn, 'r')
-			dat = f.read_reals(dtype = 'float32')
-			dat = dat.reshape(nz, nx)
+		# Normalize the values
+		max_amplitude = np.abs(dat).max()
+		dat_normalize = dat/max_amplitude
+		dat_normalize[ dat_normalize < -1.0 ] = -1.0
+		dat_normalize[ dat_normalize > 1.0 ] = 1.0
 
-			duration = dt*ind
+		# Zero out any values below our given threshold
+		dat_normalize[np.abs(dat_normalize) < (max_amplitude*threshold) ] = 0.0
+
+
+		duration = dt*ind
+
+		if channel == 'Vx' or channel == 'Vz':
 			time_label = 'Time (s): ' + str(np.round(duration, 5) )
-			animated_gif.add(dat, time_label, extent)
+		else:
+			time_label = 'Time (s): ' + str(np.round(duration, 8) )
+		animated_gif.add( dat_normalize, time_label, extent)
 
-			ind = ind + write
+		ind = ind + write
 
-		animated_gif.save(channel + '.gif', frame_rate = frame_rate)
+	animated_gif.save(channel + '.gif', frame_rate = frame_rate)
 
 else:
 

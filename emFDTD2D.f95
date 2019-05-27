@@ -615,20 +615,12 @@ do it = 1,NSTEP
   Hz(:,1) = 0.d0
   Hz(:,ny) = 0.d0
 
-  ! store seismograms
-  ! do irec = 1,NREC
-  !   sisEx(it,irec) = Ex(rcx(irec,1),rcx(irec,2))
-  !   sisEy(it,irec) = Ey(rcx(irec,1),rcx(irec,2))
-  ! enddo
 
   ! output information
   if (mod(it,IT_DISPLAY) == 0 .or. it == 1) then
 
     ! print maximum of norm of velocity
     velocnorm = maxval(sqrt(Ex**2 + Ey**2))
-    print *,'Time step # ',it,' out of ',NSTEP
-    print *,'Time: ',sngl((it-1)*DT),' seconds'
-
     if (velocnorm > STABILITY_THRESHOLD) stop 'code became unstable and blew up'
 
     call write_image(Ex, nx, ny, it, 'Ex')

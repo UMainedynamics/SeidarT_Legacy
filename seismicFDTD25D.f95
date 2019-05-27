@@ -16,159 +16,142 @@ implicit none
 
 contains
 
-subroutine doall(im, mlist, nx, ny, nz, dx, dy, dz, npoints_pml, & 
-                  src, f0, nstep, it_display, angle_force)
-! DOALL This is kind of a wrapper function for the subsequent subroutines 
-! because this will be implemented via Python or some other dynamic front end 
-! language. Of course I would name this in the fashion of the Computer Programs in
-! Seismology naming. 
-!
-! INPUT
-!   im (INTEGER) - m-by-n array of integer values corresponding to different
-!         materials.
-!   mlist (REAL) - the p-by-13 array containing in each column:
-!
-!   MATERIAL_ID,TEMPERATURE,PRESSURE,C11,C12,C13,C22,C23,C33,C44,C55,C66,RHO
-!   
-!   nx,ny (INTEGER) - the shape variables of the input arrays in order to 
-!         allocate space and other static language headaches 
-!   dx,dy (REAL) - the inteval length values in the x and y directions
-!   npoints_pml (INTEGER) - the number of points for the CPML layer. This is 
-!         a constant value for all four sides. 
-!   rcx,src (INTEGER) - the indices of the locations of the receivers 
-!   f0 (REAL) - the center frequency of the source function. The time step is
-!         inversely proportional to the center frequency 
-! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-implicit none
+  !==============================================================================
+  subroutine stiffness_write(im, mlist, c11, c12, c13, c22, c23, c33, c44, &
+                              c55, c66, rho, npoints_pml) 
+    ! STIFFNESS_ARRAYS takes a matrix containing the material integer identifiers 
+    ! and creates the same size array for each independent coefficient of the 
+    ! stiffness matrix along with a density matrix. Since we ae using PML
+    ! boundaries, we will extend the the boundary values through the PML region.
+    ! 
+    ! INPUT 
+    !   im (INTEGER)  
+    !   mlist (REAL)
+    !   c11(i,j), c12(i,j), c22(i,j), c66, rho(i,j) (REAL) -
+    !   npoints_pml (INTEGER) - the 
+    !   
+    ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-integer,parameter :: dp = kind(0.d0)
-integer :: nx, ny, nz, nstep, npoints_pml, it_display
-integer,dimension(:,:) :: im
-! integer,dimension(:,:) :: rcx
-integer,dimension(:) :: src 
-real(kind=dp),dimension(:,:) :: mlist
-real(kind=dp) :: f0
-real(kind=dp),dimension(2) :: angle_force
-real(kind=dp) :: dx, dy, dz
-real(kind=dp),dimension(nx+2*npoints_pml,nz+2*npoints_pml) :: &
-  c11, c12, c13, c22, c23, c33, c44, c55, c66, rho
-! character(len=6) :: src_type
+    implicit none 
 
-!f2py3 intent(in) :: im, mlist, nx, ny, dx, dy, npoints_pml, src
-!f2py3 intent(in) :: f0, nstep, it_display, angle_force
-!f2py3 intent(hide), depend(im) :: nx = shape(im, 0), ny = shape(im,1)
+    integer,parameter :: dp = kind(0.d0)
+    integer,dimension(:,:) :: im
+    integer :: m, n, i, j, k, npoints_pml
+    real(kind=dp), dimension(:,:) :: mlist
+    real(kind=dp), dimension(:,:) :: c11, c12, c13, c22, c23, c33, c44, c55, c66, rho
 
-! Preallocate arrays
-c11(:,:) = 0.d0
-c12(:,:) = 0.d0
-c13(:,:) = 0.d0
-c22(:,:) = 0.d0
-c23(:,:) = 0.d0
-c33(:,:) = 0.d0
-c44(:,:) = 0.d0
-c55(:,:) = 0.d0
-c66(:,:) = 0.d0
-rho(:,:) = 0.d0
+    !f2py3 intent(in):: c11,c12,c13,c22,c23,c33,c44,c55,c66,rho
 
+    m = size(rho, 1)
+    n = size(rho, 2)
 
-! Setup arrays
-call stiffness_arrays(im, mlist, c11, c12, c13, c22, c23, c33, c44, c55, c66, rho, npoints_pml)
+    !Assign between the PML regions
+    do i=npoints_pml+1, m+npoints_pml
+      do j=npoints_pml+1, n+npoints_pml
+        c11(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 2)
+        c12(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 3)
+        c13(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 4) 
+        c22(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 5)
+        c23(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 6)
+        c33(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 7)
+        c44(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 8)
+        c55(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 9)
+        c66(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 10)
+        rho(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 11) 
+      enddo
+    enddo
 
-call seismic_cpml_2d(nx+2*npoints_pml, ny+2*npoints_pml, nz+2*npoints_pml, &
-                      c11, c12, c13, c22, c23, c33, c44, c55, c66, &
-                      rho, dx, dy, dz, npoints_pml, src, f0, nstep, &
-                      it_display, angle_force)
+    ! Extend the boundary values of the stiffnesses into the PML region
+    do i = 1,npoints_pml+1
+      ! top 
+      c11( i, :) = c11(npoints_pml+1,:)
+      c12( i, :) = c12(npoints_pml+1,:)
+      c13( i, :) = c13(npoints_pml+1,:)
+      c22( i, :) = c22(npoints_pml+1,:)
+      c23( i, :) = c23(npoints_pml+1,:)
+      c33( i, :) = c33(npoints_pml+1,:)
+      c44( i, :) = c44(npoints_pml+1,:)
+      c55( i, :) = c55(npoints_pml+1,:)
+      c66( i, :) = c66(npoints_pml+1,:)
+      rho( i, :) = rho(npoints_pml+1,:)
 
+      ! bottom
+      c11( m+npoints_pml-1+i, :) = c11(m+npoints_pml,:)
+      c12( m+npoints_pml-1+i, :) = c12(m+npoints_pml,:)
+      c13( m+npoints_pml-1+i, :) = c13(m+npoints_pml,:)
+      c22( m+npoints_pml-1+i, :) = c22(m+npoints_pml,:)
+      c23( m+npoints_pml-1+i, :) = c23(m+npoints_pml,:)
+      c33( m+npoints_pml-1+i, :) = c33(m+npoints_pml,:)
+      c44( m+npoints_pml-1+i, :) = c44(m+npoints_pml,:)
+      c55( m+npoints_pml-1+i, :) = c55(m+npoints_pml,:)
+      c66( m+npoints_pml-1+i, :) = c66(m+npoints_pml,:)
+      rho( m+npoints_pml-1+i, :) = rho(m+npoints_pml,:)
 
-end subroutine doall
+      ! left 
+      c11( :, i) = c11(:, npoints_pml+1)
+      c12( :, i) = c12(:, npoints_pml+1)
+      c13( :, i) = c13(:, npoints_pml+1)
+      c22( :, i) = c22(:, npoints_pml+1)
+      c23( :, i) = c23(:, npoints_pml+1)
+      c33( :, i) = c33(:, npoints_pml+1)
+      c44( :, i) = c44(:, npoints_pml+1)
+      c55( :, i) = c55(:, npoints_pml+1)
+      c66( :, i) = c66(:, npoints_pml+1)
+      rho( :, i) = rho(:, npoints_pml+1)
 
+      ! right
+      c11( :, n+npoints_pml-1+i) = c11(:,n+npoints_pml)
+      c12( :, n+npoints_pml-1+i) = c12(:,n+npoints_pml)
+      c13( :, n+npoints_pml-1+i) = c12(:,n+npoints_pml)      
+      c22( :, n+npoints_pml-1+i) = c22(:,n+npoints_pml)
+      c23( :, n+npoints_pml-1+i) = c23(:,n+npoints_pml)
+      c33( :, n+npoints_pml-1+i) = c33(:,n+npoints_pml)
+      c44( :, n+npoints_pml-1+i) = c44(:,n+npoints_pml)
+      c55( :, n+npoints_pml-1+i) = c55(:,n+npoints_pml)      
+      c66( :, n+npoints_pml-1+i) = c66(:,n+npoints_pml)
+      rho( :, n+npoints_pml-1+i) = rho(:,n+npoints_pml)
+
+    end do 
+
+    ! Write each of the matrices to file
+    call material_write('c11.dat', c11, )
+    call material_write('c12.dat',)
+    call material_write('c13.dat',)
+    call material_write('c22.dat',)
+    call material_write('c23.dat',)
+    call material_write('c33.dat',)
+    call material_write('c44.dat',)
+    call material_write('c55.dat',)
+    call material_write('c66.dat',)
+    call material_write('rho.dat', )
+
+  end subroutine material_assign
+
+  ! ---------------------------------------------------------------------------
+  subroutine material_rw(filename, image_data, readfile)
+
+  implicit none
+
+  character(len=6) :: filename
+  real(kind=dp) :: image_data
+  logical :: readfile
+
+  open(unit = 10, form = 'unformatted', file = trim(filename) )
+
+  if (readfile) then  
+    read(10) image_data
+  else
+    write(10) image_data
+  endif
+
+  close(unit = 10)
+  
+  end subroutine material_rw
 
 !==============================================================================
-subroutine stiffness_arrays(im, mlist, c11, c12, c13, c22, c23, c33, c44, &
-                            c55, c66, rho, npoints_pml) 
-! STIFFNESS_ARRAYS takes a matrix containing the material integer identifiers 
-! and creates the same size array for each independent coefficient of the 
-! stiffness matrix along with a density matrix. Since we ae using PML
-! boundaries, we will extend the the boundary values through the PML region.
-! 
-! INPUT 
-!   im (INTEGER)  
-!   mlist (REAL)
-!   c11(i,j), c12(i,j), c22(i,j), c66, rho(i,j) (REAL) -
-!   npoints_pml (INTEGER) - the 
-!   
-! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-implicit none 
-
-integer,parameter :: dp = kind(0.d0)
-integer,dimension(:,:) :: im
-integer :: m, n, i, j, k, npoints_pml
-real(kind=dp), dimension(:,:) :: mlist
-real(kind=dp), dimension(:,:) :: c11, c12, c13, c22, c23, c33, c44, c55, c66, rho
-
-m = size(rho, 1)
-n = size(rho, 2)
-
-
-do i=npoints_pml+1, m+npoints_pml
-  do j=npoints_pml+1, n+npoints_pml
-    c11(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 2)
-    c12(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 3) 
-    c22(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 5)
-    c66(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 10)
-    rho(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 11) 
-  enddo
-enddo
-
-
-! Extend the boundary values of the stiffnesses into the PML region
-do i = 1,npoints_pml+1
-  ! top and bottom
-  c11( i, :) = c11(npoints_pml+1,:)
-  c11( m+npoints_pml-1+i, :) = c11(m+npoints_pml,:)
-
-  c12( i, :) = c12(npoints_pml+1,:)
-  c12( m+npoints_pml-1+i, :) = c12(m+npoints_pml,:)
-  
-  c22( i, :) = c22(npoints_pml+1,:)
-  c22( m+npoints_pml-1+i, :) = c22(m+npoints_pml,:)
-  
-  c66( i, :) = c66(npoints_pml+1,:)
-  c66( m+npoints_pml-1+i, :) = c66(m+npoints_pml,:)
-  
-  rho( i, :) = rho(npoints_pml+1,:)
-  rho( m+npoints_pml-1+i, :) = rho(m+npoints_pml,:)
-
-  ! ! left and right
-  c11( :, i) = c11(:, npoints_pml+1)
-  c11( :, n+npoints_pml-1+i) = c11(:,n+npoints_pml)
-  
-  c12( :, i) = c12(:, npoints_pml+1)
-  c12( :, n+npoints_pml-1+i) = c12(:,n+npoints_pml)
-  
-  c22( :, i) = c22(:, npoints_pml+1)
-  c22( :, n+npoints_pml-1+i) = c22(:,n+npoints_pml)
-  
-  c66( :, i) = c66(:, npoints_pml+1)
-  c66( :, n+npoints_pml-1+i) = c66(:,n+npoints_pml)
-
-  rho( :, i) = rho(:, npoints_pml+1)
-  rho( :, n+npoints_pml-1+i) = rho(:,n+npoints_pml)
-
-end do 
-
-
-end subroutine stiffness_arrays
-
-!==============================================================================
-
-
-subroutine seismic_cpml_2d(nx, ny, nz, &
-                      c11, c12, c13, c22, c23, c33, c44, c55, c66,  &
-                      rho, dx, dy, dz, npoints_pml, src, f0, nstep, &
-                      it_display, angle_force)
+subroutine seismic_cpml_2d(nx, ny, nz, dx, dy, dz, 
+                      npoints_pml, src, f0, nstep, it_display, angle_force)
 
 ! 2D elastic finite-difference code in velocity and stress formulation
 ! with Convolutional-PML (C-PML) absorbing conditions for an anisotropic medium

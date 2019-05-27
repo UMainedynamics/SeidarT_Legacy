@@ -19,8 +19,6 @@ INPUT
 
 '
 
-cmpfilex='common_midpoint_x.csv' # The output file
-cmpfilez='common_midpoint_z.csv' # The output file
 wild='.*'
 
 
@@ -67,6 +65,20 @@ elif [ -z $ds ]; then
 	exit 1
 else
 	echo 
+fi
+
+
+# =========================== Create the output File ==========================
+
+# remove the extension of the project file
+base=`echo "$prjfile" | rev | cut -d"." -f2- | rev`
+
+if [ $seismic ]; then
+	cmpfilex=$base.$ds.$offset.Vx.cmp.csv
+	cmpfilez=$base.$ds.$offset.Vz.cmp.csv
+else
+	cmpfilex=$base.$ds.$offset.Ex.cmp.csv
+	cmpfilez=$base.$ds.$offset.Ez.cmp.csv
 fi
 
 # ================================ Get to work ================================

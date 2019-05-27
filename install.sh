@@ -39,4 +39,4 @@ chmod +x bin/wide_angle bin/common_offset bin/common_midpoint
 
 
 # ---------------- Move all other required files to bin folder ----------------
-mv material_functions.py bin/material_functions.py
+cp material_functions.py bin/material_functions.py
