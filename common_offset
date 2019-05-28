@@ -70,13 +70,16 @@ fi
 # remove the extension of the project file
 base=`echo "$prjfile" | rev | cut -d"." -f2- | rev`
 
+time_stamp=`date +"%m%d%y%H%M"`
+
 if [ $seismic ]; then
-	cofilex=$base.$ds.$offset.Vx.co.csv
-	cofilez=$base.$ds.$offset.Vz.co.csv
+	cofilex=$base.$time_stamp.Vx.co.csv
+	cofilez=$base.$time_stamp.Vz.co.csv
 else
-	cofilex=$base.$ds.$offset.Ex.co.csv
-	cofilez=$base.$ds.$offset.Ez.co.csv
+	cofilex=$base.$time_stamp.Ex.co.csv
+	cofilez=$base.$time_stamp.Ez.co.csv
 fi
+
 
 # ================================ Get to work ================================
 
@@ -116,19 +119,40 @@ z=$(echo $z | cut -f3 -d,)
 ry=$y
 rz=$z	
 
+# Create the file that contains metadata of the survey
+metafile=$base.$time_stamp.meta.txt
+touch $metafile
+echo project_file: $prjfile > $metafile
+echo offset: $offset >> $metafile
+echo delta: $ds >> $metafile
+echo initial_source: $x $y $z >> $metafile
+echo final_source: $xf $yf $zf >> $metafile
+
+
 # For the time functions
 elapsed_time=0
 
+counter=1
+
 # The reciever will trail the source relative to the direction the source is 
 # moving. Negative direction is viewers left
-if [[ $(echo "$x<$xf" | bc -l) ]]; then # Moving right
+if (( $(echo "$x<$xf" | bc -l) )); then # Moving right
 	rx=`echo "$x - $offset" | bc` 
 	
-	while [[ $(echo "$x<$xf" | bc -l) ]]; do
+	# Determine the number of model runs to get to the final coordinates 
+	echo
+	num_total=`echo "($xf-$x)/$ds" | bc -l`
+	num_total=`echo "$num_total/1" | bc `
+
+	# Get going on the survey
+	while (( $(echo "$x<$xf" | bc -l) )); do
 		# We will time the blocks so the user knows how long this is taking
 		start=`date +%s`
 		
+		echo ---------------
+		echo Run $counter of $num_total 
 		prjrun $prjfile --model $mod
+		echo
 
 		# Get the reciever timeseries for the x-direction
 		arrayplot $prjfile -c $c1 -I $rx $ry $rz -F $rx $ry $rz -d 1 -g 0 -S 1
@@ -161,20 +185,30 @@ if [[ $(echo "$x<$xf" | bc -l) ]]; then # Moving right
 		runtime=$((end-start))
 		elapsed_time=$((elapsed_time+runtime))
 
-		echo "Elapsed time of last survey point:"
+		echo "Elapsed time of last model run:"
 		echo $runtime
-		echo 
 		echo "Total elapsed time:"
-		echo $elapsed_time "seconds"
+		echo $elapsed_time 
+		echo
 
+
+		counter=`echo "$counter+1" | bc`
 	done
 
 else # Moving left
-	rx=`echo "$x + $offset" | bc` 
-	
-	while [[ $(echo "$x>$xf" | bc -l) ]]; do
+	rx=`echo "$x + $offset" | bc -l` 
+
+	# Determine the number of model runs to get to the final coordinates 
+	num_total=`echo "($x-$xf)/$ds" | bc -l`
+	num_total=`echo "$num_total/1" | bc `
+
+	while (( $(echo "$x>$xf" | bc -l) )); do
 		start=`date +%s`
+
+		echo ---------------
+		echo Run $counter of $num_total 
 		prjrun $prjfile --model $mod
+		echo 
 
 		# Get the reciever timeseries for the x-direction
 		arrayplot $prjfile -c $c1 -I $rx $ry $rz -F $rx $ry $rz -d 1 -g 0 -S 1
@@ -208,9 +242,12 @@ else # Moving left
 
 		echo "Elapsed time of last survey point:"
 		echo $runtime
-		echo 
 		echo "Total elapsed time:"
 		echo $elapsed_time
+		echo 
+
+		counter=`echo "$counter+1" | bc`
+
 	done
 fi
 

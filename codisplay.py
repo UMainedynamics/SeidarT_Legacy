@@ -27,18 +27,6 @@ parser.add_argument('-e', '--exaggeration', nargs=1, type = float, required = Fa
 	plotting. Default is 0.5""", default = [0.5])
 
 # ----------------- Delete after debug -------------------
-# parser.add_argument('-m', '--model_type', nargs=1, type= str, required = False,
-# 	help = "Specify the type of model; s - seismic; e - electromag (default))")
-
-
-# parser.add_argument( '-d', '--delta', nargs=1, type=float, required = False,
-# 	help="""The change in source distance in meters along the profile. The 
-# 	change in reciever distance is the same.""", default=[1])
-
-# parser.add_argument( '-o', '--offset', nargs =1, type = float, required = False,
-# 	help=""" The initial offset of the source and the reciever from the 
-# 	midpoint""", default = [5])
-# --------------------------------------------------------
 
 
 args = parser.parse_args()
@@ -56,12 +44,22 @@ survey_info = cofile.split('.')
 # The file was saved as <basename>.<delta>.<offset>.<channel>.<co/cmp>.csv but 
 # basename could be <yada_yada>.<blah_blah> 
 
-project_file = survey_info[0:-5] + '.prj'
+
+project_file = survey_info[0] + '.prj'
+time_stamp = survey_info[1] #FYI the format is mmddyyHHMM
+metafile= survey_info[0] + '.' + time_stamp + '.meta.txt'
+
+
+
 ds = survey_info[-5]
 offset = survey_info[-4]
 
+print( survey_info[-3] )
+
 if survey_info[-3] == 'Vx' or survey_info[-3] == 'Vz':
 	model = 's'
+else:
+	model = 'e'
 
 survey_type = survey_info[-2]
 

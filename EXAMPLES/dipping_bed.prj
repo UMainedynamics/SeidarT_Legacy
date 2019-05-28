@@ -61,7 +61,7 @@ D,dz,1
 D,cpml,30
 D,nmats,7
 D,tfile,
-D,write,2
+D,write,15
 
 # number, id, R/G/B, Temperature, Attenuation, Density, Porosity, Water_Content, Anisotropic, ANG_File
 M,0,granite,0/0/0,-5,1,2540,1,10,False,

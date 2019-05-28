@@ -86,7 +86,7 @@ C,2,2090593360.49,2090593360.49,2090593360.49,2090593360.49,2090593360.49,209059
 # The source parameters for the elecromagnetic model
 E,dt,8.339102379953801e-10
 E,time_steps,700
-E,x,2
+E,x,2.0
 E,y,0
 E,z,2.5
 E,f0,1e8
