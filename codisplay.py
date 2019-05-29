@@ -12,12 +12,12 @@ import matplotlib.image as mpimg
 parser = argparse.ArgumentParser(description="""CODISPLAY reads the common 
 	survey file created from common_offset.sh. The """ )
 
-# parser.add_argument( 'project_file', nargs=1, type=str,
-# 	help=""" The project file used to model the common offset survey """)
+parser.add_argument( 'meta_file', nargs=1, type=str,
+	help='File path that contains the survey metadata.', )
 
-parser.add_argument( 'survey_file', nargs=1, type=str,
-						help='the survey .csv file', 
-						default=None)
+parser.add_argument( '-c', '--channel', nargs=1, type=str, required=True,
+	help="""The channel that you would like to plot. Valid options 
+	are Ex, Ez, Vx, Vz.""")
 
 parser.add_argument('-g', '--gain', nargs = 1, type = float, required = False,
 	help = "The exponential value for 2^m of the gain function (default=None)", default = None)
@@ -30,45 +30,42 @@ parser.add_argument('-e', '--exaggeration', nargs=1, type = float, required = Fa
 
 
 args = parser.parse_args()
-cofile = ''.join(args.survey_file)
+meta_file = ''.join(args.meta_file)
 gain = args.gain
 exaggeration = args.exaggeration[0]
+channel = ''.join(args.channel)
 
 if gain:
 	gain = gain[0]
 
+# --------------------- Get the values from the meta file ---------------------
 
-# The filename contains information about the survey
-survey_info = cofile.split('.')
+f = open(meta_file)
 
-# The file was saved as <basename>.<delta>.<offset>.<channel>.<co/cmp>.csv but 
-# basename could be <yada_yada>.<blah_blah> 
+# If running the wrapper functions, the meta file will save the same each time,
+# but for whatever reason we'll assume that this isn't the case
+for line in f:
 
+	 temp = line.rstrip().rsplit()
 
-project_file = survey_info[0] + '.prj'
-time_stamp = survey_info[1] #FYI the format is mmddyyHHMM
-metafile= survey_info[0] + '.' + time_stamp + '.meta.txt'
+	 if temp[0] == 'offset:':
+	 	offset = float(temp[1])
+	 if temp[0] == 'delta:':
+	 	ds = float(temp[1])
+	 if temp[0] == 'survey_type:':
+	 	survey_type = temp[1]
+	 	
+f.close()
 
-
-
-ds = survey_info[-5]
-offset = survey_info[-4]
-
-print( survey_info[-3] )
-
-if survey_info[-3] == 'Vx' or survey_info[-3] == 'Vz':
-	model = 's'
-else:
-	model = 'e'
-
-survey_type = survey_info[-2]
+cofile = '.'.join( meta_file.split('.')[:-2] )+ '.' + channel + '.' + survey_type + '.csv'
+project_file = '.'.join( meta_file.split('.')[:-3] )+ '.prj'
 
 # -----------------------------------------------------------------------------
 # Get the values we need
 f = open(project_file)
 
 for line in f:
-	if model== 's':
+	if channel == 'Vx' or channel == 'Vz':
 		# Source
 		if line[0] == 'S':
 			temp = line.split(',')
@@ -86,20 +83,24 @@ f.close()
 dat = np.genfromtxt(cofile, delimiter = ',')
 m,n = dat.shape
 
-time_locations = np.linspace(1, m, 10) 
-time_labels = np.round( time_locations*dt*1e6, 4)
+if channel == 'Vx' or channel == 'Vz':
+	mult = 1e2
+else:
+	mult = 1e6
 
+time_locations = np.linspace(1, m, 10) 
+time_labels = np.round( time_locations*dt*mult, 4)
 
 if survey_type == 'cmp':
 	dist_locations = np.round( np.linspace(1, n, 7) )
 	dist_labels = 2*dist_locations*ds + offset*2
 	dist_labels = dist_labels.astype(int)
 else:
-	dist_location = np.round(0, n-1, 7) * ds 
-	dist_labels = dist_locations.astype(int)
+	dist_locations = np.round(np.linspace(0, n-1, 7) )
+	dist_labels = dist_labels*ds
+	dist_labels = dist_labels.astype(int)
 
-
-
+# Create the figure object using subplots
 fig, ax = plt.subplots()
 
 if gain:
@@ -110,20 +111,24 @@ if gain:
 else:
 	im = ax.imshow(dat, cmap = 'Greys')
 
+# Label the x axis
+plt.xticks(ticks = dist_locations, labels = dist_labels.astype(str) )
 ax.set_xlabel(r"Source-Reciever Distance (m)")
 ax.xaxis.tick_top()
 ax.xaxis.set_label_position('top')
 
+# Label the y axis
 ax.set_ylabel(r"Two way travel time (s)")
+plt.yticks(ticks=time_locations, labels = time_labels.astype(str) )
 
+# Other figure handle operations
 ax.set_aspect(aspect = exaggeration)
 
-# Label the y axis
-plt.yticks(ticks=time_locations, labels = time_labels.astype(str) )
-plt.figtext(0.30, 0.07, 'x $10^{-6}$')
+if channel == 'Vx' or channel == 'Vz':
+	plt.figtext(0.30, 0.07, 'x $10^{-2}$')	
+else:
+	plt.figtext(0.30, 0.07, 'x $10^{-6}$')
 
-# Label the x axis
-plt.xticks(ticks = dist_locations, labels = dist_labels.astype(str) )
 
 plt.show()
 

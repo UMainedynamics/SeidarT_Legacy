@@ -12,11 +12,10 @@ INPUT
 	-o, --offset 	Source and reciever offset distance (meters)
 	-d, --delta		Source and reciever step length (meters)
 	-s, --seismic 	(OPTIONAL) Specifier to run seismic common offset 
-
+	-p, --plot 		(OPTIONAL) Show plot. Default is none
 '
 
 wild='.*'
-
 
 while [[ $# -gt 0 ]]; do
 	key="$1"
@@ -43,6 +42,10 @@ while [[ $# -gt 0 ]]; do
 	    ;;
 	    -s|--seismic)
 		seismic=true
+		shift
+		;;
+		-p|--plot)
+		plot=true
 		shift
 	esac
 done
@@ -121,12 +124,15 @@ rz=$z
 
 # Create the file that contains metadata of the survey
 metafile=$base.$time_stamp.meta.txt
+istr=initial_source: 
+fstr=final_source:
 touch $metafile
 echo project_file: $prjfile > $metafile
+echo survey_type: co >> $metafile
 echo offset: $offset >> $metafile
 echo delta: $ds >> $metafile
-echo initial_source: $x $y $z >> $metafile
-echo final_source: $xf $yf $zf >> $metafile
+echo $istr $rx $ry $rz >> $metafile
+echo $fstr $rx $ry $rz >> $metafile
 
 
 # For the time functions
@@ -142,7 +148,7 @@ if (( $(echo "$x<$xf" | bc -l) )); then # Moving right
 	# Determine the number of model runs to get to the final coordinates 
 	echo
 	num_total=`echo "($xf-$x)/$ds" | bc -l`
-	num_total=`echo "$num_total/1" | bc `
+	num_total=`echo "$num_total/1" | bc`
 
 	# Get going on the survey
 	while (( $(echo "$x<$xf" | bc -l) )); do
@@ -155,7 +161,7 @@ if (( $(echo "$x<$xf" | bc -l) )); then # Moving right
 		echo
 
 		# Get the reciever timeseries for the x-direction
-		arrayplot $prjfile -c $c1 -I $rx $ry $rz -F $rx $ry $rz -d 1 -g 0 -S 1
+		arrayplot $metafile -c $c1 -g 0 -S 1
 
 		# append the timeseries to the others
 		paste -d',' $cofilex reciever_array.csv > temp.csv
@@ -163,7 +169,7 @@ if (( $(echo "$x<$xf" | bc -l) )); then # Moving right
 		rm reciever_array.csv
 
 		# Get the reciever timeseries for the z-direction
-		arrayplot $prjfile -c $c2 -I $rx $ry $rz -F $rx $ry $rz -d 1 -g 0 -S 1
+		arrayplot $metafile -c $c2 -g 0 -S 1
 
 		# append the timeseries to the others
 		paste -d',' $cofilez reciever_array.csv > temp.csv
@@ -171,10 +177,14 @@ if (( $(echo "$x<$xf" | bc -l) )); then # Moving right
 		rm reciever_array.csv
 
 		# Shift the source
-		x=`echo "$x + $ds" | bc`
+		x=`echo "$x + $ds" | bc -l`
 		sed -i "s/$xstring$wild/$xstring$x/" $prjfile
 		# Shift the reciever
-		rx=`echo "$rx + $ds" | bc`
+		rx=`echo "$rx + $ds" | bc -l`
+
+		# Update the metafile
+		sed -i "s/$istr.*/$istr $rx $ry $rz/" $metafile
+		sed -i "s/$fstr.*/$fstr $rx $ry $rz/" $metafile
 
 		# Remove the dat files
 		rm *.dat
@@ -190,8 +200,7 @@ if (( $(echo "$x<$xf" | bc -l) )); then # Moving right
 		echo "Total elapsed time:"
 		echo $elapsed_time 
 		echo
-
-
+		
 		counter=`echo "$counter+1" | bc`
 	done
 
@@ -211,7 +220,7 @@ else # Moving left
 		echo 
 
 		# Get the reciever timeseries for the x-direction
-		arrayplot $prjfile -c $c1 -I $rx $ry $rz -F $rx $ry $rz -d 1 -g 0 -S 1
+		arrayplot $metafile -c $c1 -g 0 -S 1
 
 		# append the timeseries to the others
 		paste -d',' $cofilex reciever_array.csv > temp.csv
@@ -219,7 +228,7 @@ else # Moving left
 		rm reciever_array.csv
 
 		# Get the reciever timeseries for the z-direction
-		arrayplot $prjfile -c $c2 -I $rx $ry $rz -F $rx $ry $rz -d 1 -g 0 -S 1
+		arrayplot $metafile -c $c2 -g 0 -S 1
 
 		# append the timeseries to the others
 		paste -d',' $cofilez reciever_array.csv > temp.csv
@@ -233,9 +242,12 @@ else # Moving left
 		# Shift the reciever
 		rx=`echo "$rx - $ds" | bc`
 
+		# Update the metafile
+		sed -i "s/$istr.*/$istr $rx $ry $rz/" $metafile
+		sed -i "s/$fstr.*/$fstr $rx $ry $rz/" $metafile
+
 		# remove the .dat files
 		rm *.dat
-
 
 		runtime=$((end-start))
 		elapsed_time=$((elapsed_time+runtime))
@@ -255,6 +267,9 @@ fi
 sed -i "s/$xstring.*/$xstring$xorig/" $prjfile
 
 
-# Display the results for the Ex field. We can do the same for Ez if we like
-codisplay $cofilex 
+# Display the results if specified
+if [ $plot ]; then
+	codisplay $metafile -c $c1 -e 0.15 
+	codisplay $metafile -c $c2 -e 0.15 
+fi
 

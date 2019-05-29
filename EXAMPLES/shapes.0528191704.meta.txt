@@ -1,5 +1,0 @@
-project_file: shapes.prj
-offset: 3
-delta: 0.5
-initial_source: 2.0 0 2.5
-final_source: 4.0 0 2.5

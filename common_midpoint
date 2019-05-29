@@ -72,13 +72,14 @@ fi
 
 # remove the extension of the project file
 base=`echo "$prjfile" | rev | cut -d"." -f2- | rev`
+time_stamp=`date +"%m%d%y%H%M"`
 
 if [ $seismic ]; then
-	cmpfilex=$base.$ds.$offset.Vx.cmp.csv
-	cmpfilez=$base.$ds.$offset.Vz.cmp.csv
+	cmpfilex=$base.$time_stamp.Vx.cmp.csv
+	cmpfilez=$base.$time_stamp.Vz.cmp.csv
 else
-	cmpfilex=$base.$ds.$offset.Ex.cmp.csv
-	cmpfilez=$base.$ds.$offset.Ez.cmp.csv
+	cmpfilex=$base.$time_stamp.Ex.cmp.csv
+	cmpfilez=$base.$time_stamp.Ez.cmp.csv
 fi
 
 # ================================ Get to work ================================
@@ -134,21 +135,42 @@ else
 fi
 
 # Initialize the source and reciever locations
-xr=`echo "$xs - $offset" | bc` 
-xs=`echo "$xs + $offset" | bc`
-total_offset=`echo "$sign*($xs - $xr)" | bc`
+xr=`echo "$xs - $offset" | bc -l` 
+xs=`echo "$xs + $offset" | bc -l`
+total_offset=`echo "$sign*($xs - $xr)" | bc -l`
 
-# Rewrite the midpoint with the source location because prjrun requires the 
-# source location
-# sed -i "s/$xstring$wild/$xstring$xs/" $prjfile
+# Create the file that contains metadata of the survey
+metafile=$base.$time_stamp.meta.txt
+istr=initial_source: 
+fstr=final_source:
+touch $metafile
+echo project_file: $prjfile > $metafile
+echo survey_type: cmp >> $metafile
+echo offset: $offset >> $metafile
+echo delta: $ds >> $metafile
+echo $istr $xr $yr $zr >> $metafile
+echo $fstr $xr $yr $zr >> $metafile
 
 
-while [[ total_offset -lt total ]]; do
+# For the time functions
+elapsed_time=0
+num_total=`echo "($total-2*$offset)/$ds" | bc -l`
+num_total=`echo "$num_total/1" | bc`
+
+counter=1
+
+while (( $(echo "$total_offset<$total" | bc -l) )); do
+
+	start=`date +%s`
+	echo ---------------
+	echo Run $counter of $num_total 
+	prjrun $prjfile --model $mod
+	echo
 
 	prjrun $prjfile --model $mod
 
 	# Get the reciever timeseries for the x-direction
-	arrayplot $prjfile -c $c1 -I $xr $yr $zr -F $xr $yr $zr -d 1 -g 0 -S 1 -e 0.1
+	arrayplot $metafile -c $c1 -g 0 -S 1
 
 	# append the timeseries to the others
 	paste -d' ' $cmpfilex reciever_array.csv > temp.csv
@@ -156,7 +178,7 @@ while [[ total_offset -lt total ]]; do
 	rm reciever_array.csv
 
 	# Get the reciever timeseries for the z-direction
-	arrayplot $prjfile -c $c2 -I $xr $yr $zr -F $xr $yr $zr -d 1 -g 0 -S 1 -e 0.1
+	arrayplot $metafile -c $c2 -g 0 -S 1
 
 	# append the timeseries to the others
 	paste -d' ' $cmpfilez reciever_array.csv > temp.csv
@@ -164,18 +186,39 @@ while [[ total_offset -lt total ]]; do
 	rm reciever_array.csv
 
 	# Shift the source
-	xs=`echo "$xs + $ds" | bc`
+	xs=`echo "$xs + $ds" | bc -l`
 	sed -i "s/$xstring$wild/$xstring$xs/" $prjfile
 	# Shift the reciever
-	xr=`echo "$xr - $ds" | bc`
+	xr=`echo "$xr - $ds" | bc -l`
+
+	# Update the metadata file with the new reciever location
+	sed -i "s/$istr.*/$istr $xr $yr $zr/" $metafile
+	sed -i "s/$fstr.*/$fstr $xr $yr $zr/" $metafile
 
 	total_offset=`echo "$sign*($xs - $xr)" | bc`
 	echo $xr $xs $total_offset
+
+	# Remove .dat files
+	rm *.dat
+
+	# Update the times and print out the results
+	end=`date +%s`
+	runtime=$((end-start))
+	elapsed_time=$((elapsed_time+runtime))
+	echo "Elapsed time of last model run:"
+	echo $runtime
+	echo "Total elapsed time:"
+	echo $elapsed_time 
+	echo
+
+	# increase the counter
+	counter=`echo "$counter+1" | bc`
+
 done
 
 sed -i "s/$xstring$wild/$xstring$xorig/" $prjfile
 
 
 # Display the results for the Ex field. We can do the same for Ez if we like
-codisplay $prjfile -s $cmpfilex -d $ds -m e 0.15
+codisplay $metafile -c $c1 -e 0.15 -g 7
 

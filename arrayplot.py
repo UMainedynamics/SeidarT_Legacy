@@ -16,20 +16,9 @@ parser = argparse.ArgumentParser(description="""This program creates an equally
 	spaced array of recievers given the x, y, and z coordinates. If the model 
 	isn't specified as 2.5d in the project file then """ )
 
-parser.add_argument( 'project_file', nargs=1, type=str, 
-						help='the full file path for the project file', 
+parser.add_argument( 'meta_file', nargs=1, type=str, 
+						help='the file path for the survey metadata', 
 						default=None)
-
-parser.add_argument( '-I', '--initial', nargs = 3, type = float, required = True,
-	help = """ Initial x y z coordinates of the reciever given in meters.""")
-
-parser.add_argument( '-F', '--final', nargs = 3, type = float, required = True, 
-	help = """ Final x y z coordinates of the reciever given in meters.""")
-
-parser.add_argument( '-d', '--delta', nargs = 1, type = float, required = True, 
-	help = """ Reciever spacing in meters for each of the coordinates. The 
-	slope between the final and initial points is calculated then used to 
-	find the coordinates for each of the recievers.""")
 
 parser.add_argument( '-c', '--channel', nargs = 1, type = str, required = True,
 	help = """The channel to query. """)
@@ -49,19 +38,6 @@ parser.add_argument('-e', '--exaggeration', nargs=1, type = float, required = Fa
 	help = """Set the aspect ratio between the x and y axes for 
 	plotting. Default is 0.5""", default = [0.5])
 
-
-# Get the arguments
-args = parser.parse_args()
-project_file = ''.join(args.project_file)
-channel = ''.join(args.channel)
-
-initial_coords = np.array(args.initial)
-final_coords = np.array(args.final)
-delta = np.array(args.delta)[0]
-gain = args.gain[0]
-layout = args.layout[0] == 1
-showplots = args.suppress_plotting[0] == 1
-exaggeration = args.exaggeration[0]
 
 # ---
 # ---
@@ -135,11 +111,32 @@ class Array:
 		else:
 			im = ax.imshow(self.timeseries, cmap = 'Greys')
 
+		# Label the x-axis
+		ax.xaxis.tick_top()
+		ax.xaxis.set_label_position('top')
 		ax.set_xlabel(r"Reciever #")
+		
+		# Label the y-axis
+		if self.channel == 'Vx' or self.channel == 'Vz':
+			mult = 1e2
+		else:
+			mult = 1e6
+
+		time_locations = np.linspace(1, m, 10) 
+		time_labels = np.round( time_locations*self.dt*mult, 4)
+		ax.set_ylabel(r"Two way travel time (s)")
+		plt.yticks(ticks=time_locations, labels = time_labels.astype(str) )
+
+		# Other figure operations
+		if self.channel == 'Vx' or self.channel == 'Vz':
+			plt.figtext(0.30, 0.07, 'x $10^{-2}$')	
+		else:
+			plt.figtext(0.30, 0.07, 'x $10^{-6}$')
+
 		ax.set_aspect(aspect = exaggeration	)
 		plt.show()
 
-
+	# -------------------------------------------------------------------------
 	def arraybuild(self):
 		
 		# Calculate the length
@@ -162,7 +159,7 @@ class Array:
 
 		self.reciever_locations = xz.astype(int) + self.cpml
 
-
+	# -------------------------------------------------------------------------
 	def plot_layout(self):
 
 		figmod, axmod = plt.subplots()
@@ -188,7 +185,7 @@ class Array:
 
 		plt.show()
 
-# -------------
+# ------------- One more quick global definition
 
 def read_dat(fn, nx, ny):
 	f = FortranFile(fn, 'r')
@@ -198,12 +195,50 @@ def read_dat(fn, nx, ny):
 
 	return(dat)
 
-# --------------------------- Query the project file --------------------------
+
+# ==================== Create the object and assign inputs ====================
 array = Array()
 
 # Fill in object fields 
-array.channel = channel
 
+# Get the arguments
+args = parser.parse_args()
+meta_file = ''.join(args.meta_file)
+
+array.channel = ''.join(args.channel)
+
+
+# Optional inputs
+gain = args.gain[0]
+layout = args.layout[0] == 1
+showplots = args.suppress_plotting[0] == 1
+exaggeration = args.exaggeration[0]
+
+# --------------------- Get the values from the meta file ---------------------
+
+project_file = meta_file.split('.')
+project_file = ','.join( project_file[:-3] ) + '.prj'
+
+f = open(meta_file)
+
+# If running the wrapper functions, the meta file will save the same each time,
+# but for whatever reason we'll assume that this isn't the case
+for line in f:
+
+	 temp = line.rstrip().rsplit()
+
+	 if temp[0] == 'delta:':
+	 	array.dr = float(temp[1])
+	 
+	 if temp[0] == 'initial_source:':
+	 	array.initial_position = np.asarray(temp[1:]).astype(float)
+
+	 if temp[0] == 'final_source:':
+	 	array.final_position = np.asarray( temp[1:]).astype(float)
+
+f.close()
+
+# --------------------------- Query the project file --------------------------
 #!!!!!! Add the 2.5D components later
 
 # Get the values we need
@@ -274,10 +309,6 @@ else:
 	array.source_location = np.array([(sx + array.cpml)/array.dx,
 		(sz + array.cpml)/array.dz]) 
 	array.dt = sdt
-
-array.initial_position = initial_coords
-array.final_position = final_coords
-array.dr = delta
 
 # Construct the array
 array.arraybuild()

@@ -73,6 +73,22 @@ fi
 
 echo $gif
 
+# =========================== Create the output File ==========================
+# remove the extension of the project file
+base=`echo "$prjfile" | rev | cut -d"." -f2- | rev`
+
+time_stamp=`date +"%m%d%y%H%M"`
+
+# Create the file that contains metadata of the survey
+metafile=$base.$time_stamp.meta.txt
+touch $metafile
+echo project_file: $prjfile > $metafile
+echo survey_type: co >> $metafile
+echo delta: $ds >> $metafile
+echo initial_source: $xi $yi $zi >> $metafile
+echo final_source: $xf $yf $zf >> $metafile
+
+
 # ------------------------------- Run the Model -------------------------------
 if [[ $seismic ]]; then
 	c1=Vx
@@ -92,8 +108,8 @@ fi
 prjrun $prjfile --model $mod
 
 echo Creating reciever array
-arrayplot $prjfile -c $c1 -I $xi $yi $zi -F $xf $yf $zf -d $ds -g $gain
-arrayplot $prjfile -c $c2 -I $xi $yi $zi -F $xf $yf $zf -d $ds -g $gain
+arrayplot $metafile -c $c1 -g $gain
+arrayplot $metafile -c $c2 -g $gain
 
 
 if [[ $gif ]]; then
