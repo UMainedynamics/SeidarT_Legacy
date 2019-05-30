@@ -183,14 +183,13 @@ if (( $(echo "$x<$xf" | bc -l) )); then # Moving right
 
 		# Shift the source
 		x=`echo "$x + $ds" | bc -l`
-		sed -i "s/$xstring$wild/$xstring$x/" $prjfile
+		sed -i 's/$xstring$wild/$xstring$x/' $prjfile
 		# Shift the reciever
 		rx=`echo "$rx + $ds" | bc -l`
 
 		# Update the metafile
-		sed -i "s/$istr.*/$istr $rx $ry $rz/" $metafile
-		sed -i "s/$fstr.*/$fstr $rx $ry $rz/" $metafile
-
+		sed -i 's/$istr.*/$istr $rx $ry $rz/' $metafile
+		sed -i 's/$fstr.*/$fstr $rx $ry $rz/' $metafile
 		# Remove the dat files
 		rm *.dat
 
@@ -241,14 +240,14 @@ else # Moving left
 
 		# Shift the source
 		x=`echo "$x - $ds" | bc`
-		sed -i "s/$xstring.*/$xstring$x/" $prjfile
+		sed -i 's/$xstring.*/$xstring$x/' $prjfile
 		
 		# Shift the reciever
 		rx=`echo "$rx - $ds" | bc`
 
 		# Update the metafile
-		sed -i "s/$istr.*/$istr $rx $ry $rz/" $metafile
-		sed -i "s/$fstr.*/$fstr $rx $ry $rz/" $metafile
+		sed -i 's/$istr.*/$istr $rx $ry $rz/' $metafile
+		sed -i 's/$fstr.*/$fstr $rx $ry $rz/' $metafile
 
 		# remove the .dat files
 		rm *.dat
