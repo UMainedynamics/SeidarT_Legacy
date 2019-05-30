@@ -118,6 +118,12 @@ y=$(echo $y | cut -f3 -d,)
 z=`grep -F $zstring $prjfile`
 z=$(echo $z | cut -f3 -d,)
 
+# Set the initial values for the reciever 
+if (( $(echo "$x<$xf" | bc -l) )); then # Moving right
+	rx=`echo "$x - $offset" | bc` 
+else 
+	rx=`echo "$x + $offset" | bc -l` 
+fi
 
 ry=$y
 rz=$z	
@@ -143,7 +149,6 @@ counter=1
 # The reciever will trail the source relative to the direction the source is 
 # moving. Negative direction is viewers left
 if (( $(echo "$x<$xf" | bc -l) )); then # Moving right
-	rx=`echo "$x - $offset" | bc` 
 	
 	# Determine the number of model runs to get to the final coordinates 
 	echo
@@ -205,7 +210,6 @@ if (( $(echo "$x<$xf" | bc -l) )); then # Moving right
 	done
 
 else # Moving left
-	rx=`echo "$x + $offset" | bc -l` 
 
 	# Determine the number of model runs to get to the final coordinates 
 	num_total=`echo "($x-$xf)/$ds" | bc -l`
