@@ -97,7 +97,7 @@ if survey_type == 'cmp':
 	dist_labels = dist_labels.astype(int)
 else:
 	dist_locations = np.round(np.linspace(0, n-1, 7) )
-	dist_labels = dist_labels*ds
+	dist_labels = dist_locations*ds
 	dist_labels = dist_labels.astype(int)
 
 # Create the figure object using subplots
