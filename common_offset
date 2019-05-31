@@ -267,7 +267,7 @@ else # Moving left
 fi
 
 # Restore the initial source location
-sed -i "s/$xstring.*/$xstring$xorig/" $prjfile
+sed -i -e 's/$xstring.*/$xstring$xorig/' $prjfile
 
 
 # Display the results if specified
