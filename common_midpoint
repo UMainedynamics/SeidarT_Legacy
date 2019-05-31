@@ -157,7 +157,7 @@ echo $fstr $xr $yr $zr >> $metafile
 
 # For the time functions
 elapsed_time=0
-num_total=`echo "($total-2*$offset)/$ds" | bc -l`
+num_total=`echo "($total-2*$offset)/(2*$ds)" | bc -l`
 num_total=`echo "$num_total/1" | bc`
 
 counter=1

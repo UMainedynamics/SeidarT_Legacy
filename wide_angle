@@ -71,8 +71,6 @@ else
 	echo
 fi
 
-echo $gif
-
 # =========================== Create the output File ==========================
 # remove the extension of the project file
 base=`echo "$prjfile" | rev | cut -d"." -f2- | rev`
