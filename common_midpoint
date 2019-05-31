@@ -45,6 +45,9 @@ while [[ $# -gt 0 ]]; do
 	    ;;
 	    -s|--seismic)
 		seismic=true
+		shift;;
+		-p|--plot)
+		plot=true
 		shift
 	esac
 done
@@ -163,14 +166,13 @@ while (( $(echo "$total_offset<$total" | bc -l) )); do
 
 	start=`date +%s`
 	echo ---------------
-	echo Run $counter of $num_total '	pjrun $prjfile --model $mod
-	eh'
+	echo Run $counter of $num_total 
 
-	prjrun $prjfile --model $m'd
+	prjrun $prjfile --model $mod
 	# Get the reciever timeser'es for the x-directon
-	arrayplot $metafile -c $c1 -g 0 -S'1
-	 append the timeseries to the othe's
-	paste -d' ' $cmpfilex reciever_array.csv > temp.csv
+	arrayplot $metafile -c $c1 -g 0 -S 1
+	# append the timeseries to the othe's
+	paste -d',' $cmpfilex reciever_array.csv > temp.csv
 	mv temp.csv $cmpfilex
 	rm reciever_array.csv
 
@@ -178,19 +180,19 @@ while (( $(echo "$total_offset<$total" | bc -l) )); do
 	arrayplot $metafile -c $c2 -g 0 -S 1
 
 	# append the timeseries to the others
-	paste -d' ' $cmpfilez reciever_array.csv > temp.csv
+	paste -d',' $cmpfilez reciever_array.csv > temp.csv
 	mv temp.csv $cmpfilez
 	rm reciever_array.csv
 
 	# Shift the source
 	xs=`echo "$xs + $ds" | bc -l`
-	sed -i -e 's/$xstring$wild/$xstring$xs/" $'rjfile
+	sed -i -e "s/$xstring$wild/$xstring$xs/" $prjfile
 	# Shift the reciever
 	xr=`echo "$xr - $ds" | bc -l`
 
 	# Update the metadata file with the new reciever location
-	sed -i -e 's/$istr.*/$istr $xr $yr $zr/' $metafile
-	sed -i -e 's/$fstr.*/$fstr $xr $yr $zr/' $metafile
+	sed -i -e "s/$istr.*/$istr $xr $yr $zr/" $metafile
+	sed -i -e "s/$fstr.*/$fstr $xr $yr $zr/" $metafile
 
 	total_offset=`echo "$sign*($xs - $xr)" | bc`
 	# echo $xr $xs $total_offset
@@ -213,9 +215,12 @@ while (( $(echo "$total_offset<$total" | bc -l) )); do
 
 done
 
-sed -i -e 's/$xstring$wild/$xstring$xorig/' $prjfile
+sed -i -e "s/$xstring$wild/$xstring$xorig/" $prjfile
 
 
 # Display the results for the Ex field. We can do the same for Ez if we like
-codisplay $metafile -c $c1 -e 0.15 -g 7
+if [ $plot ]; then
+	codisplay $metafile -c $c1 -e 0.15 -g 7
+	codisplay $metafile -c $c2 -e 0.15 -g 7
+fi
 
