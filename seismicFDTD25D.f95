@@ -10,7 +10,7 @@
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-module seismicFDTD2d
+module seismicFDTD25d
 
 implicit none
 
@@ -18,8 +18,7 @@ contains
 
 
   !==============================================================================
-  subroutine stiffness_write(im, mlist, c11, c12, c13, c22, c23, c33, c44, &
-                              c55, c66, rho, npoints_pml) 
+  subroutine stiffness_write(im, mlist, npoints_pml, nx, nz) 
     ! STIFFNESS_ARRAYS takes a matrix containing the material integer identifiers 
     ! and creates the same size array for each independent coefficient of the 
     ! stiffness matrix along with a density matrix. Since we ae using PML
@@ -36,19 +35,19 @@ contains
     implicit none 
 
     integer,parameter :: dp = kind(0.d0)
-    integer,dimension(:,:) :: im
-    integer :: m, n, i, j, k, npoints_pml
+    integer :: nx, nz
+    integer,dimension(nx,nz) :: im
+    integer :: i, j, npoints_pml
     real(kind=dp), dimension(:,:) :: mlist
-    real(kind=dp), dimension(:,:) :: c11, c12, c13, c22, c23, c33, c44, c55, c66, rho
+    real(kind=dp), dimension(2*npoints_pml+nx,2*npoints_pml+nz) :: c11, c12, c13, &
+                                                                c22, c23, c33, &
+                                                                c44, c55, c66, rho
 
-    !f2py3 intent(in):: c11,c12,c13,c22,c23,c33,c44,c55,c66,rho
-
-    m = size(rho, 1)
-    n = size(rho, 2)
+    !f2py3 intent(in):: im, mlist, npoints_pml, nx, nz
 
     !Assign between the PML regions
-    do i=npoints_pml+1, m+npoints_pml
-      do j=npoints_pml+1, n+npoints_pml
+    do i=npoints_pml+1, nx+npoints_pml
+      do j=npoints_pml+1, nz+npoints_pml
         c11(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 2)
         c12(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 3)
         c13(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 4) 
@@ -77,16 +76,16 @@ contains
       rho( i, :) = rho(npoints_pml+1,:)
 
       ! bottom
-      c11( m+npoints_pml-1+i, :) = c11(m+npoints_pml,:)
-      c12( m+npoints_pml-1+i, :) = c12(m+npoints_pml,:)
-      c13( m+npoints_pml-1+i, :) = c13(m+npoints_pml,:)
-      c22( m+npoints_pml-1+i, :) = c22(m+npoints_pml,:)
-      c23( m+npoints_pml-1+i, :) = c23(m+npoints_pml,:)
-      c33( m+npoints_pml-1+i, :) = c33(m+npoints_pml,:)
-      c44( m+npoints_pml-1+i, :) = c44(m+npoints_pml,:)
-      c55( m+npoints_pml-1+i, :) = c55(m+npoints_pml,:)
-      c66( m+npoints_pml-1+i, :) = c66(m+npoints_pml,:)
-      rho( m+npoints_pml-1+i, :) = rho(m+npoints_pml,:)
+      c11( nx+npoints_pml-1+i, :) = c11(nx+npoints_pml,:)
+      c12( nx+npoints_pml-1+i, :) = c12(nx+npoints_pml,:)
+      c13( nx+npoints_pml-1+i, :) = c13(nx+npoints_pml,:)
+      c22( nx+npoints_pml-1+i, :) = c22(nx+npoints_pml,:)
+      c23( nx+npoints_pml-1+i, :) = c23(nx+npoints_pml,:)
+      c33( nx+npoints_pml-1+i, :) = c33(nx+npoints_pml,:)
+      c44( nx+npoints_pml-1+i, :) = c44(nx+npoints_pml,:)
+      c55( nx+npoints_pml-1+i, :) = c55(nx+npoints_pml,:)
+      c66( nx+npoints_pml-1+i, :) = c66(nx+npoints_pml,:)
+      rho( nx+npoints_pml-1+i, :) = rho(nx+npoints_pml,:)
 
       ! left 
       c11( :, i) = c11(:, npoints_pml+1)
@@ -101,56 +100,60 @@ contains
       rho( :, i) = rho(:, npoints_pml+1)
 
       ! right
-      c11( :, n+npoints_pml-1+i) = c11(:,n+npoints_pml)
-      c12( :, n+npoints_pml-1+i) = c12(:,n+npoints_pml)
-      c13( :, n+npoints_pml-1+i) = c12(:,n+npoints_pml)      
-      c22( :, n+npoints_pml-1+i) = c22(:,n+npoints_pml)
-      c23( :, n+npoints_pml-1+i) = c23(:,n+npoints_pml)
-      c33( :, n+npoints_pml-1+i) = c33(:,n+npoints_pml)
-      c44( :, n+npoints_pml-1+i) = c44(:,n+npoints_pml)
-      c55( :, n+npoints_pml-1+i) = c55(:,n+npoints_pml)      
-      c66( :, n+npoints_pml-1+i) = c66(:,n+npoints_pml)
-      rho( :, n+npoints_pml-1+i) = rho(:,n+npoints_pml)
+      c11( :, nz+npoints_pml-1+i) = c11(:,nz+npoints_pml)
+      c12( :, nz+npoints_pml-1+i) = c12(:,nz+npoints_pml)
+      c13( :, nz+npoints_pml-1+i) = c12(:,nz+npoints_pml)      
+      c22( :, nz+npoints_pml-1+i) = c22(:,nz+npoints_pml)
+      c23( :, nz+npoints_pml-1+i) = c23(:,nz+npoints_pml)
+      c33( :, nz+npoints_pml-1+i) = c33(:,nz+npoints_pml)
+      c44( :, nz+npoints_pml-1+i) = c44(:,nz+npoints_pml)
+      c55( :, nz+npoints_pml-1+i) = c55(:,nz+npoints_pml)      
+      c66( :, nz+npoints_pml-1+i) = c66(:,nz+npoints_pml)
+      rho( :, nz+npoints_pml-1+i) = rho(:,nz+npoints_pml)
 
     end do 
 
-    ! Write each of the matrices to file
-    call material_write('c11.dat', c11, )
-    call material_write('c12.dat',)
-    call material_write('c13.dat',)
-    call material_write('c22.dat',)
-    call material_write('c23.dat',)
-    call material_write('c33.dat',)
-    call material_write('c44.dat',)
-    call material_write('c55.dat',)
-    call material_write('c66.dat',)
-    call material_write('rho.dat', )
+    print *, maxval(c11)
 
-  end subroutine material_assign
+    ! Write each of the matrices to file
+    call material_rw('c11.dat', c11, .FALSE.)
+    call material_rw('c12.dat', c12, .FALSE.)
+    call material_rw('c13.dat', c13, .FALSE.)
+    call material_rw('c22.dat', c22, .FALSE.)
+    call material_rw('c23.dat', c23, .FALSE.)
+    call material_rw('c33.dat', c33, .FALSE.)
+    call material_rw('c44.dat', c44, .FALSE.)
+    call material_rw('c55.dat', c55, .FALSE.)
+    call material_rw('c66.dat', c66, .FALSE.)
+    call material_rw('rho.dat', rho, .FALSE. )
+
+  end subroutine stiffness_write
 
   ! ---------------------------------------------------------------------------
   subroutine material_rw(filename, image_data, readfile)
 
   implicit none
 
-  character(len=6) :: filename
-  real(kind=dp) :: image_data
+  integer,parameter :: dp = kind(0.d0)
+  character(len=7) :: filename
+  real(kind=dp),dimension(:,:) :: image_data
   logical :: readfile
 
-  open(unit = 10, form = 'unformatted', file = trim(filename) )
+  
+  open(unit = 13, form="unformatted", file = trim(filename))
 
-  if (readfile) then  
-    read(10) image_data
+  if ( readfile ) then
+    read(13) image_data
   else
-    write(10) image_data
+    write(13) image_data
   endif
 
-  close(unit = 10)
+  close(unit = 13)
   
   end subroutine material_rw
 
 !==============================================================================
-subroutine seismic_cpml_2d(nx, ny, nz, dx, dy, dz, 
+subroutine seismic_cpml_25d(nx, ny, nz, dx, dy, dz, &
                       npoints_pml, src, f0, nstep, it_display, angle_force)
 
 ! 2D elastic finite-difference code in velocity and stress formulation
@@ -290,14 +293,34 @@ real(kind=dp) :: velocnorm
 ! for stability estimate
 real(kind=dp) :: quasi_cp_max
 
+! Name the f2py inputs 
+!f2py3 intent(in) :: nx, ny, nz, dx, dy, dz,
+!f2py3 intent(in) :: noints_pml, src, f0, nstep, it_display, angle_force
+
+! ------------------------ Load Stiffness Coefficients ------------------------
+
+call material_rw('c11.dat', c11, .TRUE.)
+call material_rw('c12.dat', c12, .TRUE.)
+call material_rw('c13.dat', c13, .TRUE.)
+call material_rw('c22.dat', c22, .TRUE.)
+call material_rw('c23.dat', c23, .TRUE.)
+call material_rw('c33.dat', c33, .TRUE.)
+call material_rw('c44.dat', c44, .TRUE.)
+call material_rw('c55.dat', c55, .TRUE.)
+call material_rw('c66.dat', c66, .TRUE.)
+
+
 
 ! ------------------------ Assign some constants -----------------------
 
 isource = src(1)+npoints_pml
 jsource = src(2)+npoints_pml
+ksource = src(3)+npoints_pml
 
 t0 = 1.0d0/f0
-DT = minval( (/dx,dy,dz/) )/ ( 2.0* sqrt( ( maxval( (/ c11/rho, c22/rho, c66/rho /) ) ) ) )
+DT = minval( (/dx,dy,dz/) )/ ( 2.0* sqrt( ( maxval( (/ c11/rho, c22/rho, c33/rho /) ) ) ) )
+
+
 ALPHA_MAX_PML = PI*f0 ! from Festa and Vilotte
 a = pi*pi*f0*f0
 angle_force = angle_force * degrees_to_radians
@@ -503,7 +526,7 @@ do j = 1,nz
     sqrt( c11(npoints_pml,j) / rho(npoints_pml,j) ), &
     sqrt( c33(npoints_pml,j) / rho(npoints_pml,j) ) )
   ! compute d0 from INRIA report section 6.1 http://hal.inria.fr/docs/00/07/32/19/PDF/RR-3471.pdf
-  d0_x = - dble(NPOWER + 1) * quasi_cp_max * log(Rcoef) / (2.d0 * thickness_PML_y)
+  d0_z = - dble(NPOWER + 1) * quasi_cp_max * log(Rcoef) / (2.d0 * thickness_PML_y)
 
   ! abscissa of current grid point along the damping profile
   zval = dz * dble(j-1)
@@ -764,6 +787,7 @@ do it = 1,NSTEP
   ! Gaussian
   source_term = factor * 2.d0*exp(-a*(t-t0)**2)
 
+
   ! Use spherical coordinates for the source rotation
   force_x = sin( angle_force(1) ) * cos( angle_force(2) ) * source_term
   force_z = sin( angle_force(1) ) * sin( angle_force(2) ) * source_term
@@ -799,9 +823,10 @@ do it = 1,NSTEP
   if (mod(it,IT_DISPLAY) == 0 .or. it == 1) then
 
   ! print maximum of norm of velocity
-  velocnorm = maxval( sqrt(vx**2 + vy**2 + vy**2) )
+  velocnorm = maxval( sqrt(vx**2 + vy**2 + vz**2) )
   print *,'Time step # ',it,' out of ',NSTEP
-  print *,'Time: ',sngl((it-1)*DT),' seconds'
+  print *,'Time: ',(it-1)*DT,' seconds'
+  print *,'Max vals for vx, vy, vz: ', maxval(vx), maxval(vy), maxval(vz)
 
   if (velocnorm > STABILITY_THRESHOLD) stop 'code became unstable and blew up'
     call write_image(vx, nx, ny, nz, it, 'Vx')
@@ -811,7 +836,7 @@ do it = 1,NSTEP
 
 enddo   ! end of time loop
 
-end subroutine seismic_cpml_2d
+end subroutine seismic_cpml_25d
 
 
 !==============================================================================
@@ -827,7 +852,7 @@ character(len=100) :: filename
 
 WRITE (filename, "(a2, i6.6, '.dat')" ) channel, it
 
-open(unit = 10, form = 'unformatted', file = trim(filename) )
+open(unit = 10, form = "unformatted", file = trim(filename) )
 write(10) sngl(image_data)
 
 close(unit = 10)
@@ -836,4 +861,4 @@ end subroutine write_image
 
 
 
-end module seismicFDTD2d
+end module seismicFDTD25d

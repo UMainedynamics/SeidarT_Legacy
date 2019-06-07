@@ -1,6 +1,0 @@
-project_file: shapes.prj
-survey_type: co
-offset: 2
-delta: 0.25
-initial_source: 71.00 0 2.5
-final_source: 71.00 0 2.5
