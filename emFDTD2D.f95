@@ -17,7 +17,7 @@ implicit none
 contains
 
 subroutine doall(im, mlist, nx, ny, dx, dy, npoints_pml, & 
-                  src, f0, nstep, it_display, angle)
+                  src, f0, nstep, angle)
 ! DOALL This is kind of a wrapper function for the subsequent subroutines 
 ! because this will be implemented via Python or some other dynamic front end 
 ! language. Of course I would name this in the fashion of the Computer Programs in
@@ -43,7 +43,7 @@ subroutine doall(im, mlist, nx, ny, dx, dy, npoints_pml, &
 implicit none
 
 integer,parameter :: dp = kind(0.d0)
-integer :: nx, ny, nstep, npoints_pml, it_display
+integer :: nx, ny, nstep, npoints_pml
 integer,dimension(nx,ny) :: im
 ! integer,dimension(:,:) :: rcx
 integer,dimension(:) :: src 
@@ -54,7 +54,7 @@ real(kind=dp), dimension(nx+2*npoints_pml,ny+2*npoints_pml) :: epsilonx, epsilon
 ! character(len=6) :: src_type
 
 !f2py3 intent(in) :: im, mlist, nx, ny, dx, dy, npoints_pml, src
-!f2py3 intent(in) :: f0, nstep, it_display, angle
+!f2py3 intent(in) :: f0, nstep, angle
 !f2py3 intent(hide), depend(im) :: nx = shape(im, 0), ny = shape(im,1)
 
 ! Preallocate arrays
@@ -67,7 +67,7 @@ sigmay(:,:) = 0.d0
 call stiffness_arrays(im, mlist, epsilonx, sigmax, epsilony, sigmay, npoints_pml)
 
 call electromag_cpml_2d(nx+2*npoints_pml, ny+2*npoints_pml, epsilonx, sigmax, epsilony, sigmay, dx, dy, &
-                      npoints_pml, src, f0, nstep, it_display, angle)
+                      npoints_pml, src, f0, nstep, angle)
 
 
 end subroutine doall
@@ -145,7 +145,7 @@ end subroutine stiffness_arrays
 
 
 subroutine electromag_cpml_2d(nx, ny, epsilonx, sigmax, epsilony, sigmay, dx, dy, &
-                      npoints_pml, src, f0, nstep, it_display, angle)
+                      npoints_pml, src, f0, nstep, angle)
 
 ! 2D elastic finite-difference code in velocity and stress formulation
 ! with Convolutional-PML (C-PML) absorbing conditions for an anisotropic medium
@@ -219,8 +219,6 @@ integer :: isource, jsource
 ! integer :: nrec, irec
 ! real(kind=dp), allocatable :: sisEx(:,:),sisEy(:,:)
 
-! display information on the screen from time to time
-integer :: IT_DISPLAY
 
 ! value of PI
 real(kind=dp), parameter :: PI = 3.141592653589793238462643d0
@@ -615,18 +613,12 @@ do it = 1,NSTEP
   Hz(:,1) = 0.d0
   Hz(:,ny) = 0.d0
 
+  ! print maximum of norm of velocity
+  velocnorm = maxval(sqrt(Ex**2 + Ey**2))
+  if (velocnorm > STABILITY_THRESHOLD) stop 'code became unstable and blew up'
 
-  ! output information
-  if (mod(it,IT_DISPLAY) == 0 .or. it == 1) then
-
-    ! print maximum of norm of velocity
-    velocnorm = maxval(sqrt(Ex**2 + Ey**2))
-    if (velocnorm > STABILITY_THRESHOLD) stop 'code became unstable and blew up'
-
-    call write_image(Ex, nx, ny, it, 'Ex')
-    call write_image(Ey, nx, ny, it, 'Ez')
-
-  endif
+  call write_image(Ex, nx, ny, it, 'Ex')
+  call write_image(Ey, nx, ny, it, 'Ez')
 
 enddo   ! end of time loop
 

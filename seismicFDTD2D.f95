@@ -17,7 +17,7 @@ implicit none
 contains
 
 subroutine doall(im, mlist, nx, ny, dx, dy, npoints_pml, & 
-                  src, f0, nstep, it_display, angle_force)
+                  src, f0, nstep, angle_force)
 ! DOALL This is kind of a wrapper function for the subsequent subroutines 
 ! because this will be implemented via Python or some other dynamic front end 
 ! language. Of course I would name this in the fashion of the Computer Programs in
@@ -43,7 +43,7 @@ subroutine doall(im, mlist, nx, ny, dx, dy, npoints_pml, &
 implicit none
 
 integer,parameter :: dp = kind(0.d0)
-integer :: nx, ny, nstep, npoints_pml, it_display
+integer :: nx, ny, nstep, npoints_pml
 integer,dimension(nx,ny) :: im
 ! integer,dimension(:,:) :: rcx
 integer,dimension(:) :: src 
@@ -54,7 +54,7 @@ real(kind=dp), dimension(nx+2*npoints_pml,ny+2*npoints_pml) :: c11, c12, c22, c6
 ! character(len=6) :: src_type
 
 !f2py3 intent(in) :: im, mlist, nx, ny, dx, dy, npoints_pml, src
-!f2py3 intent(in) :: f0, nstep, it_display, angle_force
+!f2py3 intent(in) :: f0, nstep, angle_force
 !f2py3 intent(hide), depend(im) :: nx = shape(im, 0), ny = shape(im,1)
 
 ! Preallocate arrays
@@ -68,7 +68,7 @@ rho(:,:) = 0.0
 call stiffness_arrays(im, mlist, c11, c12, c22, c66, rho, npoints_pml)
 
 call seismic_cpml_2d(nx+2*npoints_pml, ny+2*npoints_pml, c11, c12, c22, c66, rho, dx, dy, &
-                      npoints_pml, src, f0, nstep, it_display, angle_force)
+                      npoints_pml, src, f0, nstep, angle_force)
 
 
 end subroutine doall
@@ -154,7 +154,7 @@ end subroutine stiffness_arrays
 
 
 subroutine seismic_cpml_2d(nx, ny, c11, c12, c22, c66, rho, dx, dy, &
-                      npoints_pml, src, f0, nstep, it_display, angle_force)
+                      npoints_pml, src, f0, nstep, angle_force)
 
 ! 2D elastic finite-difference code in velocity and stress formulation
 ! with Convolutional-PML (C-PML) absorbing conditions for an anisotropic medium
@@ -228,10 +228,6 @@ integer,dimension(:) :: src
 integer :: isource, jsource
 ! angle of source force clockwise with respect to vertical (Y) axis
 real(kind=dp) :: ANGLE_FORCE
-
-
-! display information on the screen from time to time
-integer :: IT_DISPLAY
 
 ! value of PI
 real(kind=dp), parameter :: PI = 3.141592653589793238462643d0
@@ -483,6 +479,27 @@ do j = 1,NY
 
 enddo
 
+
+! ! =============================================================================
+! ! Print the PML values to a file to check the values
+!   open(unit = 15, file = "x_values2.txt")
+!   do i=1,nx
+!     write(15,"(E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3)") &
+!           a_x(i), a_x_half(i), b_x(i), b_x_half(i), alpha_x(i), alpha_x_half(i), K_x(i), K_x_half(i)
+!   enddo
+!   close(15)
+
+!   open(unit = 16, file = "y_values2.txt")
+!   do i = 1,ny
+!     write(16,"(E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3)") &
+!           a_y(i), a_y_half(i), b_y(i), b_y_half(i), alpha_y(i), alpha_y_half(i), K_y(i), K_y_half(i)
+!   enddo
+!   close(16)
+
+!   stop
+! ! =============================================================================
+
+
 ! initialize arrays
 vx(:,:) = 0.d0
 vy(:,:) = 0.d0
@@ -608,17 +625,12 @@ do it = 1,NSTEP
   vy(:,1) = 0.d0
   vy(:,NY) = 0.d0
 
-  ! output information
-  if (mod(it,IT_DISPLAY) == 0 .or. it == 1) then
-
   ! print maximum of norm of velocity
   velocnorm = maxval(sqrt(vx**2 + vy**2))
   if (velocnorm > STABILITY_THRESHOLD) stop 'code became unstable and blew up'
 
   call write_image(vx, nx, ny, it, 'Vx')
   call write_image(vy, nx, ny, it, 'Vz')
-  
-  endif
 
 enddo   ! end of time loop
 
