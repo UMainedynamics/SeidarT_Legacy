@@ -1,0 +1,274 @@
+ 
+# This is a project file template for the SEISART software. In order to run the
+# model for seismic, electromagnetic or both, the required inputs must be 
+#
+# Domain Input Values:
+#	dim 		- STR; either '2' or '2.5' but default is '2'
+#	nx,ny,nz 	- INT; the dimensions of the image. If dim = 2.5, and ny is 
+#			  empty then default ny=1
+#	dx,dy,dz	- REAL; the spatial step size for each dimension in meters. If
+#			  dim = 2.5 and dy is empty then default dy=min(dx,dz)
+#
+# Material Input Values:
+#	id 		- INT; the identifier given to each unique rgb value as it
+#			  is read into the computer. It's recommended to use this 
+#			  script to make sure it's sorted correctly.
+#	R/G/B 		- STR; the 0-255 values for each color code. 
+#	Temperature 	- REAL; temperature in Celsius.
+#	Attenuation 	- REAL; (placeholder) will be attenuation length soon.
+#	Density 	- REAL; density in kg/m^3 
+#	Porosity 	- REAL; percent porosity
+#	Water_Content 	- REAL; percent of pores that contain water
+#	Anisotropic 	- BOOL; whether the material is anisotropic (True) or 
+#			  isotropic (False).
+#	ANG_File 	- STR; if Anisotrpic is True then the full path to the 
+#			  .ang file is supplied. The .ang file is a delimited text
+#			  file that contains the 3-by-n array of euler rotation 
+#			  angles in radians.
+#	
+#		or alternatively...
+#	C11-C66 	- REAL; the stiffness coefficients with the appropriate id
+#	E11-E33,S11-S33	- REAL; the permittivity and conductivity coefficients and
+#			  'id' value corresponding to the coefficients along the diagonal 
+#			  of their respective tensors. 
+#	
+#
+# Source Input Values:
+#	dt 		- REAL; dx/(2*maxvelcity)
+#	steps 		- INT; the total number of time steps
+#	x,y,z 		- REAL; locations in meters, +z is down, +y is into the screen
+#	f0 		- REAL; center frequency for the guassian pulse function if 
+#			  'source_file' isn't supplied
+#	theta 		- REAL; source orientation in the x-z plane, 
+#	phi 		- REAL; source orientation in the x-y plane for 2.5/3D only,  
+#	source_file	- STR; the pointer to the text file that contains the source 
+#			  timeseries as a steps-by-1 vector.
+#
+# Written by Steven Bernsen
+# University of Maine
+# -----------------------------------------------------------------------------
+
+
+I,layered_ice.png
+
+D,dim,2
+D,nx,600
+D,ny,n/a
+D,nz,400
+D,dx,1
+D,dy,n/a
+D,dz,1
+D,cpml,20
+D,nmats,11
+D,tfile,
+D,write,20
+
+# number, id, R/G/B, Temperature, Attenuation, Density, Porosity, Water_Content, Anisotropic, ANG_File
+# -------------------------------------------------
+# Dirty layers in order from top to bottom
+# 5th dirty
+M,0,ice1h,0/0/0,-2,2,910,0,0,False,
+
+#1st dirty
+M,1,ice1h,20/0/0,-30,2,910,0,0,False,
+# 2nd dirty
+M,2,ice1h,20/20/0,-30,2,910,0,0,False,
+# 3rd dirty
+M,3,ice1h,40/20/0,-30,2,910,0,0,False,
+# 4th dirty
+M,4,ice1h,40/40/0,-30,2,910,0,0,False,
+
+# ice layers from top to bottom
+
+# 5th ice
+M,5,ice1h,145/160/255,-30,2,910,0,0,False,
+# 4th ice
+M,6,ice1h,165/180/255,-30,2,910,0,0,False,
+
+M,7,air,200/200/200,-30,2,1.2,0,0,False,
+
+# 3rd ice
+M,8,ice1h,205/220/255,-30,2,910,0,0,False,
+# 1st ice
+M,9,ice1h,220/200/240,-30,2,500,30,0,False,
+# 2nd ice
+M,10,ice1h,225/240/255,-30,2,910,0,0,False,
+# -------------------------------------------------
+
+# The source parameters for the seismic model
+S,dt,
+S,time_steps,2000
+S,x,
+S,y,
+S,z,
+S,f0,
+S,theta,0
+S,phi,0
+
+# id, C11, C12, C13, C22, C23, C33, C44, C55, C66, rho
+C,0,,,,,,,,,,
+C,1,,,,,,,,,,
+C,2,,,,,,,,,,
+C,3,,,,,,,,,,
+C,4,,,,,,,,,,
+C,5,,,,,,,,,,
+C,6,,,,,,,,,,
+C,7,,,,,,,,,,
+C,8,,,,,,,,,,
+C,9,,,,,,,,,,
+C,10,,,,,,,,,,
+
+# The source parameters for the elecromagnetic model
+E,dt,1.6678204759907602e-09
+E,time_steps,2000
+E,x,10
+E,y,0
+E,z,50
+E,f0,4e7
+E,theta,90
+E,phi,0
+
+# id, e11, e22, e33, s11, s22, s33
+ 
+# This is a project file template for the SEISART software. In order to run the
+# model for seismic, electromagnetic or both, the required inputs must be 
+#
+# Domain Input Values:
+#	dim 		- STR; either '2' or '2.5' but default is '2'
+#	nx,ny,nz 	- INT; the dimensions of the image. If dim = 2.5, and ny is 
+#			  empty then default ny=1
+#	dx,dy,dz	- REAL; the spatial step size for each dimension in meters. If
+#			  dim = 2.5 and dy is empty then default dy=min(dx,dz)
+#
+# Material Input Values:
+#	id 		- INT; the identifier given to each unique rgb value as it
+#			  is read into the computer. It's recommended to use this 
+#			  script to make sure it's sorted correctly.
+#	R/G/B 		- STR; the 0-255 values for each color code. 
+#	Temperature 	- REAL; temperature in Celsius.
+#	Attenuation 	- REAL; (placeholder) will be attenuation length soon.
+#	Density 	- REAL; density in kg/m^3 
+#	Porosity 	- REAL; percent porosity
+#	Water_Content 	- REAL; percent of pores that contain water
+#	Anisotropic 	- BOOL; whether the material is anisotropic (True) or 
+#			  isotropic (False).
+#	ANG_File 	- STR; if Anisotrpic is True then the full path to the 
+#			  .ang file is supplied. The .ang file is a delimited text
+#			  file that contains the 3-by-n array of euler rotation 
+#			  angles in radians.
+#	
+#		or alternatively...
+#	C11-C66 	- REAL; the stiffness coefficients with the appropriate id
+#	E11-E33,S11-S33	- REAL; the permittivity and conductivity coefficients and
+#			  'id' value corresponding to the coefficients along the diagonal 
+#			  of their respective tensors. 
+#	
+#
+# Source Input Values:
+#	dt 		- REAL; dx/(2*maxvelcity)
+#	steps 		- INT; the total number of time steps
+#	x,y,z 		- REAL; locations in meters, +z is down, +y is into the screen
+#	f0 		- REAL; center frequency for the guassian pulse function if 
+#			  'source_file' isn't supplied
+#	theta 		- REAL; source orientation in the x-z plane, 
+#	phi 		- REAL; source orientation in the x-y plane for 2.5/3D only,  
+#	source_file	- STR; the pointer to the text file that contains the source 
+#			  timeseries as a steps-by-1 vector.
+#
+# Written by Steven Bernsen
+# University of Maine
+# -----------------------------------------------------------------------------
+
+
+I,layered_ice.png
+
+D,dim,2
+D,nx,600
+D,ny,n/a
+D,nz,400
+D,dx,1
+D,dy,n/a
+D,dz,1
+D,cpml,20
+D,nmats,11
+D,tfile,
+D,write,1
+
+# number, id, R/G/B, Temperature, Attenuation, Density, Porosity, Water_Content, Anisotropic, ANG_File
+# -------------------------------------------------
+# Dirty layers in order from top to bottom
+# 5th dirty
+M,0,ice1h,0/0/0,-2,2,910,0,0,False,
+
+#1st dirty
+M,1,ice1h,20/0/0,-30,2,910,0,0,False,
+# 2nd dirty
+M,2,ice1h,20/20/0,-30,2,910,0,0,False,
+# 3rd dirty
+M,3,ice1h,40/20/0,-30,2,910,0,0,False,
+# 4th dirty
+M,4,ice1h,40/40/0,-30,2,910,0,0,False,
+
+# ice layers from top to bottom
+
+# 5th ice
+M,5,ice1h,145/160/255,-30,2,910,0,0,False,
+# 4th ice
+M,6,ice1h,165/180/255,-30,2,910,0,0,False,
+
+M,7,air,200/200/200,-30,2,1.2,0,0,False,
+
+# 3rd ice
+M,8,ice1h,205/220/255,-30,2,910,0,0,False,
+# 1st ice
+M,9,ice1h,220/200/240,-30,2,500,30,0,False,
+# 2nd ice
+M,10,ice1h,225/240/255,-30,2,910,0,0,False,
+# -------------------------------------------------
+
+# The source parameters for the seismic model
+S,dt,
+S,time_steps,2000
+S,x,
+S,y,
+S,z,
+S,f0,
+S,theta,0
+S,phi,0
+
+# id, C11, C12, C13, C22, C23, C33, C44, C55, C66, rho
+C,0,,,,,,,,,,
+C,1,,,,,,,,,,
+C,2,,,,,,,,,,
+C,3,,,,,,,,,,
+C,4,,,,,,,,,,
+C,5,,,,,,,,,,
+C,6,,,,,,,,,,
+C,7,,,,,,,,,,
+C,8,,,,,,,,,,
+C,9,,,,,,,,,,
+C,10,,,,,,,,,,
+
+# The source parameters for the elecromagnetic model
+E,dt,1.6678204759907602e-09
+E,time_steps,5000
+E,x,10
+E,y,0
+E,z,50
+E,f0,4e7
+E,theta,90
+E,phi,0
+
+# id, e11, e22, e33, s11, s22, s33
+P,0.0,3.187,3.187,3.187,1e-05,1e-05,1e-05
+P,1.0,3.161,3.161,3.161,1e-05,1e-05,1e-05
+P,2.0,3.161,3.161,3.161,1e-05,1e-05,1e-05
+P,3.0,3.161,3.161,3.161,1e-05,1e-05,1e-05
+P,4.0,3.161,3.161,3.161,1e-05,1e-05,1e-05
+P,5.0,3.161,3.161,3.161,1e-07,1e-07,1e-07
+P,6.0,3.161,3.161,3.161,1e-07,1e-07,1e-07
+P,7.0,1.0,1.0,1.0,1e-16,1e-16,1e-16
+P,8.0,3.161,3.161,3.161,1e-07,1e-07,1e-07
+P,9.0,3.182,3.182,3.182,4.176470588235294e-07,4.176470588235294e-07,4.176470588235294e-07
+P,10.0,3.161,3.161,3.161,1e-07,1e-07,1e-07
+

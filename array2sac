@@ -1,6 +1,25 @@
 #!/bin/bash
 
-# Write individual reciever timeseries as SAC timeseries 
+: '
+ARRAY2SAC - Write individual reciever timeseries as SAC timeseries. One could
+do such things in obspy but I have chosen the unapparently simpler route. If
+you would like to use SAC (seismic analysis code) 
+
+INPUT
+	-m,--meta_file	The file path which contains the array information
+	-r,--rcx_file	The file path to the desired time series to convert
+
+*Certain header values are assigned to each SAC file. These are:
+	STLO, STLA, STDP  	reciever x,y,z respectively 
+	EVLO, EVLA, EVDP  	source x,y,z respectively
+	DELTA 				the time step 
+	AZ 					the reciever indice is stored here so that the user can 
+						order the array
+
+Created by Steven Bernsen
+University of Maine 
+
+'
 
 while [[ $# -gt 0 ]]; do
 	key="$1"
@@ -62,13 +81,13 @@ for ((col=1;col<=$num_cols;col++)); do
 	
 	# Get the reciever and save it to the temp file
 	cat $rcxfile | cut -d ',' -f$col > $tempfile
-
+	
 	# Define the new file
 	newfile=reciever$col.sac
-
+	
 	# Write to Seismic Analysis Code format
 	sac <<- EOF
-
+	
 	readtable $tempfile
 	write over sac $newfile
 	
@@ -76,20 +95,19 @@ for ((col=1;col<=$num_cols;col++)); do
 	chnhdr delta $dt
 	chnhdr stlo $locx stla 0 stdp $locz
 	chnhdr evlo $srcx evla $srcy evdp $srcz
-	chnhdr nwfid $col
+	chnhdr mag $col
 	wh 
-
+	
 	quit
-
+	
 	EOF
-
-
+	
+	
 	# Update the location for the next reciever
 	locx=`echo "$locx+$dr" | bc -l`
-	echo $locx
-
-
-
+	
+	
+	
 done
 
 

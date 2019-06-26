@@ -1,0 +1,5 @@
+project_file: layered_ice_isothermal_isotropic.prj
+survey_type: co
+delta: 10
+initial_position: 20 0 50
+final_position: 580 0 50
