@@ -34,8 +34,8 @@ rf=`echo ${rf} | cut -d ":" -f2`
 xf=`echo ${rf} | cut -d " " -f1`
 zf=`echo ${rf} | cut -d " " -f3`
 
-df=`grep -F 'delta:' $metafile`
-df=`echo ${df} | cut -d ":" -f2`
+dr=`grep -F 'delta:' $metafile`
+dr=`echo ${dr} | cut -d ":" -f2`
 
 # Get information from the project file 
 dt=`grep -F 'E,dt' $prjfile`
@@ -55,6 +55,8 @@ echo $srcx $srcz
 # Tally up the number of the recievers
 num_cols=`head -1 $rcxfile | sed 's/[^,]//g' | wc -c`
 
+locx=$xi
+locz=$zi
 
 for ((col=1;col<=$num_cols;col++)); do
 	
@@ -62,21 +64,29 @@ for ((col=1;col<=$num_cols;col++)); do
 	cat $rcxfile | cut -d ',' -f$col > $tempfile
 
 	# Define the new file
-
+	newfile=reciever$col.sac
 
 	# Write to Seismic Analysis Code format
 	sac <<- EOF
 
 	readtable $tempfile
-	write over sac
+	write over sac $newfile
+	
+	r $newfile
+	chnhdr delta $dt
+	chnhdr stlo $locx stla 0 stdp $locz
+	chnhdr evlo $srcx evla $srcy evdp $srcz
+	chnhdr nwfid $col
+	wh 
+
 	quit
 
 	EOF
 
 
 	# Update the location for the next reciever
-
-
+	locx=`echo "$locx+$dr" | bc -l`
+	echo $locx
 
 
 
