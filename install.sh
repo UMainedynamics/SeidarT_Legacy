@@ -12,8 +12,9 @@ f2py3 -c --fcompiler=gnu95 -m seismicfdtd2d seismicFDTD2D.f95
 
 # 2.5D
 f2py3 -c --fcompiler=gnu95 -m seismicfdtd25d seismicFDTD25D.f95
+f2py3 -c --fcompiler=gnu95 -m emfdtd25d emFDTD25D.f95
 
-# Synthetic 
+# Synthetic microstructure
 f2py3 -c --fcompiler=gnu95 -m orientsynth orientsynth.f95
 
 mv *.so bin

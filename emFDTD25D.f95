@@ -17,125 +17,199 @@ implicit none
 contains
 
 
-  !==============================================================================
-  subroutine permittivity_write(im, mlist, npoints_pml, nx, nz) 
-  ! STIFFNESS_ARRAYS takes a matrix containing the material integer identifiers 
-  ! and creates the same size array for each independent coefficient of the 
-  ! stiffness matrix along with a density matrix. Since we ae using PML
-  ! boundaries, we will extend the the boundary values through the PML region.
-  ! 
-  ! INPUT 
-  !   im (INTEGER)  
-  !   mlist (REAL)
-  !   epsilonx(i,j), sigmax(i,j), epsilony(i,j), sigmay, (REAL) -
-  !   npoints_pml (INTEGER) - the 
-  !   
-  ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!==============================================================================
+subroutine permittivity_write(im, mlist, npoints_pml, nx, nz) 
+! STIFFNESS_ARRAYS takes a matrix containing the material integer identifiers 
+! and creates the same size array for each independent coefficient of the 
+! stiffness matrix along with a density matrix. Since we ae using PML
+! boundaries, we will extend the the boundary values through the PML region.
+! 
+! INPUT 
+!   im (INTEGER)  
+!   mlist (REAL)
+!   epsilonx(i,j), sigmax(i,j), epsilony(i,j), sigmay, (REAL) -
+!   npoints_pml (INTEGER) - the 
+!   
+! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  implicit none 
+implicit none 
 
-  integer :: nx,nz
-  integer,parameter :: dp = kind(0.d0)
-  integer,dimension(nx,nz) :: im
-  integer :: i, j, npoints_pml
-  real(kind=dp), dimension(:,:) :: mlist
-  real(kind=dp), dimension(2*npoints_pml+nx,2*npoints_pml+nz) :: epsilonx, &
-                                                       sigmaz
+integer :: nx,nz
+integer,parameter :: dp = kind(0.d0)
+integer,dimension(nx,nz) :: im
+integer :: i, j, npoints_pml
+real(kind=dp), dimension(:,:) :: mlist
+real(kind=dp), dimension(2*npoints_pml+nx,2*npoints_pml+nz) :: epsilonx, &
+                                                     sigmaz
 
-  !f2py3 intent(in):: im, mlist, npoints_pml, nx, nz
+!f2py3 intent(in):: im, mlist, npoints_pml, nx, nz
 
-  ! Allocate space for permittivity and conductivity values
-  epsilonx(:,:) = 0.d0
-  epsilony(:,:) = 0.d0
-  epsilonz(:,:) = 0.d0
-  sigmax(:,:) = 0.d0
-  sigmay(:,:) = 0.d0
-  sigmaz(:,:) = 0.d0
-  
-  do i=npoints_pml+1,nx + npoints_pml
-    do j=npoints_pml+1,nz + npoints_pml
-      epsilonx(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 2)
-      epsilony(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 3)
-      epsilonz(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 4)
-      
-      sigmax(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 5) 
-      sigmay(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 6)
-      sigmaz(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 7)
-    end do
-  end do
+! Allocate space for permittivity and conductivity values
+epsilonx(:,:) = 0.d0
+epsilony(:,:) = 0.d0
+epsilonz(:,:) = 0.d0
+sigmax(:,:) = 0.d0
+sigmay(:,:) = 0.d0
+sigmaz(:,:) = 0.d0
 
-  ! Extend the boundary values of the stiffnesses into the PML region
-  do i = 1,npoints_pml+1
-    ! top and bottom
-    epsilonx( i, : ) = epsilonx(npoints_pml+1,:)
-    epsilony( i, : ) = epsilony(npoints_pml+1,:)
-    epsilonz( i, : ) = epsilonz(npoints_pml+1,:) 
-    sigmax( i, : ) = sigmax(npoints_pml+1,:)
-    sigmay( i, : ) = sigmay(npoints_pml+1,:)
-    sigmaz( i, : ) = sigmaz(npoints_pml+1,:)
+do i=npoints_pml+1,nx + npoints_pml
+  do j=npoints_pml+1,nz + npoints_pml
+    epsilonx(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 2)
+    epsilony(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 3)
+    epsilonz(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 4)
     
-    epsilonx( nx+npoints_pml-1+i, : ) = epsilonx(nx+npoints_pml-1,:)
-    epsilony( nx+npoints_pml-1+i, : ) = epsilony(nx+npoints_pml-1,:)
-    epsilonz( nx+npoints_pml-1+i, : ) = epsilonz(nx+npoints_pml-1,:)
-    sigmax( nx+npoints_pml-1+i, : ) = sigmax(nx+npoints_pml-1,:)
-    sigmay( nx+npoints_pml-1+i, : ) = sigmay(nx+npoints_pml-1,:)
-    sigmaz( nx+npoints_pml-1+i, : ) = sigmaz(nx+npoints_pml-1,:)
+    sigmax(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 5) 
+    sigmay(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 6)
+    sigmaz(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 7)
+  end do
+end do
 
-    ! left and right
-    epsilonx( :, i ) = epsilonx(:, npoints_pml+1)
-    epsilony( :, i ) = epsilony(:, npoints_pml+1)
-    epsilonz( :, i ) = epsilonz(:, npoints_pml+1)
-    sigmax( :, i ) = sigmax(:, npoints_pml+1)
-    sigmay( :, i ) = sigmay(:, npoints_pml+1)
-    sigmaz( :, i ) = sigmaz(:, npoints_pml+1)
-
-    epsilonx( :, nz+npoints_pml-1+i ) = epsilonx(:,nz+npoints_pml-1)    
-    epsilony( :, nz+npoints_pml-1+i ) = epsilony(:,nz+npoints_pml-1)
-    epsilonz( :, nz+npoints_pml-1+i ) = epsilonz(:,nz+npoints_pml-1)
-    sigmax( :, nz+npoints_pml-1+i ) = sigmax(:,nz+npoints_pml-1)    
-    sigmay( :, nz+npoints_pml-1+i ) = sigmay(:,nz+npoints_pml-1)
-    sigmaz( :, nz+npoints_pml-1+i ) = sigmaz(:,nz+npoints_pml-1)
-
-  end do 
-
-  ! Write each of the matrices to file
-  call material_rw('epsx.dat', epsilonx, .FALSE.)
-  call material_rw('epsy.dat', epsilony, .FALSE.)
-  call material_rw('epsz.dat', epsilonz, .FALSE.)
-  call material_rw('sigx.dat', sigmax, .FALSE.)
-  call material_rw('sigy.dat', sigmay, .FALSE.)
-  call material_rw('sigz.dat', sigmaz, .FALSE.)
+! Extend the boundary values of the stiffnesses into the PML region
+do i = 1,npoints_pml+1
+  ! top and bottom
+  epsilonx( i, : ) = epsilonx(npoints_pml+1,:)
+  epsilony( i, : ) = epsilony(npoints_pml+1,:)
+  epsilonz( i, : ) = epsilonz(npoints_pml+1,:) 
+  sigmax( i, : ) = sigmax(npoints_pml+1,:)
+  sigmay( i, : ) = sigmay(npoints_pml+1,:)
+  sigmaz( i, : ) = sigmaz(npoints_pml+1,:)
   
-  end subroutine permittivity_write
+  epsilonx( nx+npoints_pml-1+i, : ) = epsilonx(nx+npoints_pml-1,:)
+  epsilony( nx+npoints_pml-1+i, : ) = epsilony(nx+npoints_pml-1,:)
+  epsilonz( nx+npoints_pml-1+i, : ) = epsilonz(nx+npoints_pml-1,:)
+  sigmax( nx+npoints_pml-1+i, : ) = sigmax(nx+npoints_pml-1,:)
+  sigmay( nx+npoints_pml-1+i, : ) = sigmay(nx+npoints_pml-1,:)
+  sigmaz( nx+npoints_pml-1+i, : ) = sigmaz(nx+npoints_pml-1,:)
+
+  ! left and right
+  epsilonx( :, i ) = epsilonx(:, npoints_pml+1)
+  epsilony( :, i ) = epsilony(:, npoints_pml+1)
+  epsilonz( :, i ) = epsilonz(:, npoints_pml+1)
+  sigmax( :, i ) = sigmax(:, npoints_pml+1)
+  sigmay( :, i ) = sigmay(:, npoints_pml+1)
+  sigmaz( :, i ) = sigmaz(:, npoints_pml+1)
+
+  epsilonx( :, nz+npoints_pml-1+i ) = epsilonx(:,nz+npoints_pml-1)    
+  epsilony( :, nz+npoints_pml-1+i ) = epsilony(:,nz+npoints_pml-1)
+  epsilonz( :, nz+npoints_pml-1+i ) = epsilonz(:,nz+npoints_pml-1)
+  sigmax( :, nz+npoints_pml-1+i ) = sigmax(:,nz+npoints_pml-1)    
+  sigmay( :, nz+npoints_pml-1+i ) = sigmay(:,nz+npoints_pml-1)
+  sigmaz( :, nz+npoints_pml-1+i ) = sigmaz(:,nz+npoints_pml-1)
+
+end do 
+
+! Write each of the matrices to file
+call material_rw('epsx.dat', epsilonx, .FALSE.)
+call material_rw('epsy.dat', epsilony, .FALSE.)
+call material_rw('epsz.dat', epsilonz, .FALSE.)
+call material_rw('sigx.dat', sigmax, .FALSE.)
+call material_rw('sigy.dat', sigmay, .FALSE.)
+call material_rw('sigz.dat', sigmaz, .FALSE.)
+
+end subroutine permittivity_write
 
 
-  ! ---------------------------------------------------------------------------
-  subroutine material_rw(filename, image_data, readfile)
+! ---------------------------------------------------------------------------
+subroutine material_rw(filename, image_data, readfile)
 
-  implicit none
+implicit none
 
-  integer,parameter :: dp = kind(0.d0)
-  character(len=7) :: filename
-  real(kind=dp),dimension(:,:) :: image_data
-  logical :: readfile
+integer,parameter :: dp = kind(0.d0)
+character(len=7) :: filename
+real(kind=dp),dimension(:,:) :: image_data
+logical :: readfile
 
-  
-  open(unit = 13, form="unformatted", file = trim(filename))
 
-  if ( readfile ) then
-    read(13) image_data
-  else
-    write(13) image_data
-  endif
+open(unit = 13, form="unformatted", file = trim(filename))
 
-  close(unit = 13)
-  
-  end subroutine material_rw
+if ( readfile ) then
+  read(13) image_data
+else
+  write(13) image_data
+endif
 
+close(unit = 13)
+
+end subroutine material_rw
+
+
+! -----------------------------------------------------------------------------
+
+subroutine cpml_coeffs(nx, dx, dt, npml, sig_max, k_max, alpha_max, &
+            kappa, alpha, acoeff, bcoeff, HALF)
+
+implicit none
+
+integer,parameter :: dp=kind(0.d0)
+integer :: i
+
+! Define real inputs 
+real(kind=dp) :: dx, dt, sig_max, k_max, alpha_max 
+integer :: nx, npml
+logical :: HALF
+
+! define the output arrays
+real(kind=dp),dimension(nx) :: kappa, alpha, acoeff, bcoeff
+
+! Define all other variables needed in the program
+real(kind=dp) :: xoriginleft, xoriginright
+real(kind=dp),dimension(nx) :: xval, sigma
+real(kind=dp),parameter :: eps0 = 8.85418782d-12
+integer,parameter :: NP = 2, NPA = 2
+
+real(kind=dp) :: abscissa_in_pml, abscissa_normalized
+
+! Main program
+sigma(:) = 0.d0
+
+do i=1,nx 
+  xval(i) = dx * dble(i - 1)
+enddo
+
+if (HALF) then 
+    xval = xval + dx/2.0
+endif
+
+xoriginleft = dx * dble( npml )
+xoriginright = dx * dble( (NX-1) - npml )
+
+do i=1,nx
+    !---------- left edge
+    abscissa_in_PML = xoriginleft - xval(i)
+    if (abscissa_in_PML >= 0.d0) then
+        abscissa_normalized = abscissa_in_PML / dble(dx * npml)
+        sigma(i) = sig_max * abscissa_normalized**NP
+        ! from Stephen Gedney's unpublished class notes for class EE699, lecture 8, slide 8-2
+        kappa(i) = 1.d0 + (K_MAX - 1.d0) * abscissa_normalized**NP
+        alpha(i) = ALPHA_MAX * (1.d0 - abscissa_normalized)**NPA
+    endif
+
+    !---------- right edge
+    ! define damping profile at the grid points
+    abscissa_in_PML = xval(i) - xoriginright
+    if (abscissa_in_PML >= 0.d0) then
+      abscissa_normalized = abscissa_in_PML / dble(dx * npml)
+      sigma(i) = sig_max * abscissa_normalized**NP
+      kappa(i) = 1.d0 + (k_max - 1.d0) * abscissa_normalized**NP
+      alpha(i) = alpha_max * (1.d0 - abscissa_normalized)**NPA
+    endif
+
+    ! just in case, for -5 at the end
+    if (alpha(i) < 0.d0) alpha(i) = 0.d0
+    ! Compute the b_i coefficents
+    bcoeff(i) = exp( - (sigma(i) / kappa(i) + alpha(i)) * DT/eps0 )
+    
+    ! Compute the a_i coefficients
+    ! this to avoid division by zero outside the PML
+    if (abs(sigma(i)) > 1.d-6) then 
+      acoeff(i) = sigma(i) * (bcoeff(i) - 1.d0) / ( (sigma(i) + kappa(i) * alpha(i)) ) / kappa(i)
+    endif
+
+enddo 
+
+end subroutine cpml_coeffs
 
 !==============================================================================
-
-
 subroutine electromag_cpml_2d(nx, ny, nz, dx, dy, dz, &
                       npoints_pml, src, f0, nstep, angle)
 
@@ -393,155 +467,45 @@ src(2) = src(2) + thickness_PML_y
 src(3) = src(3) + thickness_PML_z
 
 ! ------------------------- damping in the X direction ------------------------
-! origin of the PML layer (position of right edge minus thickness, in meters)
-  xoriginleft = dx * dble( thickness_PML_x )
-  xoriginright = dx * dble( (NX-1) - thickness_PML_x )
 
-do i=1,nx
-  xval = dx * dble(i-1)
+call cpml_coeffs(nx, dx, dt, thickness_PML_x, sig_x_max, k_max, alpha_max, &
+            K_x, alpha_x, a_x, b_x, .FALSE.)
 
-    !---------- left edge
-    abscissa_in_PML = xoriginleft - xval
-    if (abscissa_in_PML >= 0.d0) then
-        abscissa_normalized = abscissa_in_PML / dble(dx * thickness_PML_x)
-        sigh_x(i) = sig_x_max * abscissa_normalized**NP
-        ! from Stephen Gedney's unpublished class notes for class EE699, lecture 8, slide 8-2
-        K_x(i) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NP
-        alpha_x(i) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)**NPA
-    endif
-
-    ! define damping profile at half the grid points
-    abscissa_in_PML = xoriginleft - (xval + DX/2.d0)
-    if (abscissa_in_PML >= 0.d0) then
-      abscissa_normalized = abscissa_in_PML / dble(dx * thickness_PML_x)
-      sige_x_half(i) = sig_x_max * abscissa_normalized**NP
-      ! from Stephen Gedney's unpublished class notes for class EE699, lecture 8, slide 8-2
-      K_x_half(i) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NP
-      alpha_x_half(i) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)**NPA
-    endif
-
-    !---------- right edge
-    ! define damping profile at the grid points
-    abscissa_in_PML = xval - xoriginright
-    if (abscissa_in_PML >= 0.d0) then
-      abscissa_normalized = abscissa_in_PML / dble(dx * thickness_PML_x)
-      sigh_x(i) = sig_x_max * abscissa_normalized**NP
-      K_x(i) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NP
-      alpha_x(i) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)**NPA
-    endif
-
-    ! define damping profile at half the grid points
-    abscissa_in_PML = xval + DX/2.d0 - xoriginright
-    if (abscissa_in_PML >= 0.d0) then
-      abscissa_normalized = abscissa_in_PML / dble(dx * thickness_PML_x)
-      sige_x_half(i) = sig_x_max * abscissa_normalized**NP
-      K_x_half(i) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NP
-      alpha_x_half(i) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)**NPA
-    endif
-
-    ! just in case, for -5 at the end
-    if (alpha_x(i) < 0.d0) alpha_x(i) = 0.d0
-    if (alpha_x_half(i) < 0.d0) alpha_x_half(i) = 0.d0
-
-    ! Compute the b_i coefficents
-    b_x(i) = exp( - (sigh_x(i) / K_x(i) + alpha_x(i)) * DT/eps0 )
-    b_x_half(i) = exp( - (sige_x_half(i) / K_x_half(i) + alpha_x_half(i)) * DT/eps0)
-  
-    ! Compute the a_i coefficients
-    ! this to avoid division by zero outside the PML
-    if (abs(sigh_x(i)) > 1.d-6) then 
-      a_x(i) = sigh_x(i) * (b_x(i) - 1.d0) / ( (sigh_x(i) + K_x(i) * alpha_x(i)) ) / K_x(i)
-    endif
-
-    if (abs(sige_x_half(i)) > 1.d-6) then 
-      a_x_half(i) = sige_x_half(i) * (b_x_half(i) - 1.d0) / &
-          ( (sige_x_half(i) + K_x_half(i) * alpha_x_half(i))) / K_x_half(i)
-    endif 
-
-enddo
-
+call cpml_coeffs(nx, dx, dt, thickness_PML_x, sig_x_max, k_max, alpha_max, &
+            K_x_half, alpha_x_half, a_x_half, b_x_half, .TRUE.)
 
 ! damping in the Y direction
+call cpml_coeffs(ny, dy, dt, thickness_PML_y, sig_y_max, k_max, alpha_max, &
+            K_y, alpha_y, a_y, b_y, .FALSE.)
 
-! origin of the PML layer (position of right edge minus thickness, in meters)
-yoriginbottom = dy * dble( thickness_PML_y )
-yorigintop = dy * dble( (NY-1) - thickness_PML_y )
+call cpml_coeffs(ny, dy, dt, thickness_PML_y, sig_y_max, k_max, alpha_max, &
+            K_y_half, alpha_y_half, a_y_half, b_y_half, .TRUE.)
 
-do j = 1,NY
+! damping in the Z direction
+call cpml_coeffs(nz, dz, dt, thickness_PML_z, sig_z_max, k_max, alpha_max, &
+            K_z, alpha_z, a_z, b_z, .FALSE.)
 
-  ! abscissa of current grid point along the damping profile
-  yval = dy * dble(j-1)
-
-  !---------- bottom edge
-  ! define damping profile at the grid points
-  abscissa_in_PML = yoriginbottom - yval
-  if (abscissa_in_PML >= 0.d0) then
-    abscissa_normalized = abscissa_in_PML / dble(dy * thickness_PML_y)
-    sigh_y(j) = sig_y_max * abscissa_normalized**NP
-    K_y(j) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NP
-    alpha_y(j) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)**NPA
-  endif
-
-  ! define damping profile at half the grid points
-  abscissa_in_PML = yoriginbottom - (yval + DY/2.d0)
-  if (abscissa_in_PML >= 0.d0) then
-    abscissa_normalized = abscissa_in_PML / dble(dy * thickness_PML_y)
-    sige_y_half(j) = sig_y_max * abscissa_normalized**NP
-    K_y_half(j) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NP
-    alpha_y_half(j) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)**NPA
-  endif
-
-  !---------- top edge
-  ! define damping profile at the grid points
-  abscissa_in_PML = yval - yorigintop
-  if (abscissa_in_PML >= 0.d0) then
-    abscissa_normalized = abscissa_in_PML / dble(dy * thickness_PML_y)
-    sigh_y(j) = sig_y_max * abscissa_normalized**NP
-    K_y(j) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NP
-    alpha_y(j) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)**NPA
-  endif
-
-  ! define damping profile at half the grid points
-  abscissa_in_PML = yval + DY/2.d0 - yorigintop
-  if (abscissa_in_PML >= 0.d0) then
-    abscissa_normalized = abscissa_in_PML / dble(dy * thickness_PML_y)
-    sige_y_half(j) = sig_y_max * abscissa_normalized**NP
-    K_y_half(j) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NP
-    alpha_y_half(j) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)**NPA
-  endif
-
-  ! just in case, for -5 at the end
-  if (alpha_y_half(j) < 0.d0) alpha_y_half(j) = 0.0d0
-  if (alpha_y(j) < 0.d0) alpha_y(j) = 0.d0
-
-  ! Compute the b_i coefficents
-  b_y(j) = exp(- (sigh_y(j) / K_y(j) + alpha_y(j)) * DT/eps0)
-  b_y_half(j) = exp(- (sige_y_half(j) / K_y_half(j) + alpha_y_half(j)) * DT/eps0)
-
-  ! Compute the a_i coefficients
-  ! this to avoid division by 0.d0 outside the PML
-  if (abs(sigh_y(j)) > 1.d-6) then 
-    a_y(j) = sigh_y(j) * (b_y(j) - 1.d0) / &
-        ( (sigh_y(j) + K_y(j) * alpha_y(j) ) ) / K_y(j)
-  endif  
+call cpml_coeffs(nz, dz, dt, thickness_PML_z, sig_z_max, k_max, alpha_max, &
+            K_z_half, alpha_z_half, a_z_half, b_z_half, .TRUE.)
 
 
-  if (abs(sige_y_half(j)) > 1.d-6) then 
-    a_y_half(j) = sige_y_half(j) * (b_y_half(j) - 1.d0) / &
-              ( (sige_y_half(j) + K_y_half(j) * alpha_y_half(j) ) )/ K_y_half(j)
-  endif
-
-enddo
-
+! -----------------------------------------------------------------------------
 
 ! initialize arrays
 Ex(:,:) = 0.0d0
 Ey(:,:) = 0.0d0
+Ez(:,:) = 0.0d0
+
+Hx(:,:) = 0.0d0
+Hy(:,:) = 0.0d0
 Hz(:,:) = 0.0d0
+
 
 ! PML
 memory_dEx_dy(:,:) = 0.0d0
 memory_dEy_dx(:,:) = 0.0d0
+
+memory_dEz_dx
 
 memory_dHz_dx(:,:) = 0.0d0
 memory_dHz_dy(:,:) = 0.0d0
