@@ -296,13 +296,6 @@ real(kind=dp) :: quasi_cp_max
 isource = src(1)+npoints_pml
 jsource = src(2)+npoints_pml
 
-
-! nrec = size(rcx,1) 
-! allocate( sisvx(nstep, nrec ), &
-  ! sisvy(nstep, nrec ) )
-
- ! dx/minval( (/ c11/rho, c22/rho, c12/rho, c66/rho /) )
-
 t0 = 1.0d0/f0
 DT = minval( (/dx,dy/) )/ ( 2.0* sqrt( ( maxval( (/ c11/rho, c22/rho, c12/rho, c66/rho /) ) ) ) )!dx/(256*f0)!dt)
 ALPHA_MAX_PML = PI*f0 ! from Festa and Vilotte
@@ -342,6 +335,15 @@ Rcoef = 0.001d0
   a_y(:) = 0.d0
   a_y_half(:) = 0.d0
 
+
+  quasi_cp_max = ( minval( (/dx,dy/) )/ ( 2.0 * dt) )
+
+  ! compute d0 from INRIA report section 6.1 http://hal.inria.fr/docs/00/07/32/19/PDF/RR-3471.pdf
+  d0_x = - dble(NPOWER + 1) * quasi_cp_max * log(Rcoef) / (2.d0 * thickness_PML_x)
+  d0_y = - dble(NPOWER + 1) * quasi_cp_max * log(Rcoef) / (2.d0 * thickness_PML_y)
+  ! d0_z = - dble(NPOWER + 1) * quasi_cp_max * log(Rcoef) / (2.d0 * thickness_PML_z)
+
+
 ! damping in the X direction
 
 ! origin of the PML layer (position of right edge minus thickness, in meters)
@@ -350,11 +352,11 @@ Rcoef = 0.001d0
 
 do i = 1,NX
   ! to compute d0 below, and for stability estimate
-  quasi_cp_max = max(sqrt(c22(i,npoints_pml)/rho(i,npoints_pml)),&
-    sqrt(c11(i,npoints_pml)/rho(i,npoints_pml)))
+  ! quasi_cp_max = max(sqrt(c22(i,npoints_pml)/rho(i,npoints_pml)),&
+  !   sqrt(c11(i,npoints_pml)/rho(i,npoints_pml)))
   ! compute d0 from INRIA report section 6.1 http://hal.inria.fr/docs/00/07/32/19/PDF/RR-3471.pdf
-  d0_x = - dble(NPOWER + 1) * quasi_cp_max * log(Rcoef) / (2.d0 * thickness_PML_x)
-  d0_y = - dble(NPOWER + 1) * quasi_cp_max * log(Rcoef) / (2.d0 * thickness_PML_y)
+  ! d0_x = - dble(NPOWER + 1) * quasi_cp_max * log(Rcoef) / (2.d0 * thickness_PML_x)
+  ! d0_y = - dble(NPOWER + 1) * quasi_cp_max * log(Rcoef) / (2.d0 * thickness_PML_y)
 
 
     ! abscissa of current grid point along the damping profile
@@ -422,11 +424,11 @@ yorigintop = dy * dble(NY-1) - thickness_PML_y
 
 do j = 1,NY
   ! to compute d0 below, and for stability estimate
-  quasi_cp_max = max(sqrt(c22(npoints_pml,j)/rho(npoints_pml,j)),&
-    sqrt(c11(npoints_pml,j)/rho(npoints_pml,j)))
-  ! compute d0 from INRIA report section 6.1 http://hal.inria.fr/docs/00/07/32/19/PDF/RR-3471.pdf
-  d0_x = - dble(NPOWER + 1) * quasi_cp_max * log(Rcoef) / (2.d0 * thickness_PML_x)
-  d0_y = - dble(NPOWER + 1) * quasi_cp_max * log(Rcoef) / (2.d0 * thickness_PML_y)
+  ! quasi_cp_max = max(sqrt(c22(npoints_pml,j)/rho(npoints_pml,j)),&
+  !   sqrt(c11(npoints_pml,j)/rho(npoints_pml,j)))
+  ! ! compute d0 from INRIA report section 6.1 http://hal.inria.fr/docs/00/07/32/19/PDF/RR-3471.pdf
+  ! d0_x = - dble(NPOWER + 1) * quasi_cp_max * log(Rcoef) / (2.d0 * thickness_PML_x)
+  ! d0_y = - dble(NPOWER + 1) * quasi_cp_max * log(Rcoef) / (2.d0 * thickness_PML_y)
 
   ! abscissa of current grid point along the damping profile
   yval = DY * dble(j-1)
@@ -480,24 +482,24 @@ do j = 1,NY
 enddo
 
 
-! ! =============================================================================
-! ! Print the PML values to a file to check the values
-!   open(unit = 15, file = "x_values2.txt")
-!   do i=1,nx
-!     write(15,"(E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3)") &
-!           a_x(i), a_x_half(i), b_x(i), b_x_half(i), alpha_x(i), alpha_x_half(i), K_x(i), K_x_half(i)
-!   enddo
-!   close(15)
+! =============================================================================
+! Print the PML values to a file to check the values
+  open(unit = 15, file = "x_values2.txt")
+  do i=1,nx
+    write(15,"(E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3)") &
+          a_x(i), a_x_half(i), b_x(i), b_x_half(i), alpha_x(i), alpha_x_half(i), K_x(i), K_x_half(i)
+  enddo
+  close(15)
 
-!   open(unit = 16, file = "y_values2.txt")
-!   do i = 1,ny
-!     write(16,"(E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3)") &
-!           a_y(i), a_y_half(i), b_y(i), b_y_half(i), alpha_y(i), alpha_y_half(i), K_y(i), K_y_half(i)
-!   enddo
-!   close(16)
+  open(unit = 16, file = "z_values2.txt")
+  do i = 1,ny
+    write(16,"(E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3)") &
+          a_y(i), a_y_half(i), b_y(i), b_y_half(i), alpha_y(i), alpha_y_half(i), K_y(i), K_y_half(i)
+  enddo
+  close(16)
 
-!   stop
-! ! =============================================================================
+  ! stop
+! =============================================================================
 
 
 ! initialize arrays

@@ -1,5 +1,5 @@
 # Compute regression of time picks
-library(sm)
+# library(sm)
 
 # Define the files 
 ifn <- 'pick_iso_iso.txt'
@@ -77,31 +77,34 @@ adat_picks <- vals_assign(adat)
 
 # Plot pick comparisons
 
-dev.new(width=5, height = 9, units = "in")
+# dev.new(width=5, height = 9, units = "in")
+png("TimePickComparison_layered.png", width = 5, height = 9, units = "in", res = 100)
+  par(mai = c(1, 1, 0.1, 0.1), bg = NA)
+  plot( idat_picks$t0[,1], idat_picks$t0[,3], type = "l", ylim = c(6e-6, 0), cex.lab = 1.5,
+        xlab = "Distance (m)", ylab = "TWTT (s)", col = "black", lty = 2, lwd = 2)
 
-plot( idat_picks$t0[,1], idat_picks$t0[,3], type = "l", ylim = c(6e-6, 0), 
-      xlab = "Distance (m)", ylab = "TWTT (s)", col = "black", lty = 2, lwd = 2)
-
-lines( adat_picks$t1[,1], adat_picks$t1[,3], col = "red", lty = 1, lwd = 3)
-lines( adat_picks$t2[,1], adat_picks$t2[,3], col = "red", lty = 1, lwd = 3)
-lines( adat_picks$t3[,1], adat_picks$t3[,3], col = "red", lty = 1, lwd = 3)
-lines( adat_picks$t4[,1], adat_picks$t4[,3], col = "red", lty = 1, lwd = 3)
-lines( adat_picks$t5[,1], adat_picks$t5[,3], col = "red", lty = 1, lwd = 3)
-lines( adat_picks$t6[,1], adat_picks$t6[,3], col = "red", lty = 1, lwd = 3)
-
-lines( tdat_picks$t1[,1], tdat_picks$t1[,3], col = "blue", lty = 1, lwd = 2)
-lines( tdat_picks$t2[,1], tdat_picks$t2[,3], col = "blue", lty = 1, lwd = 2)
-lines( tdat_picks$t3[,1], tdat_picks$t3[,3], col = "blue", lty = 1, lwd = 2)
-lines( tdat_picks$t4[,1], tdat_picks$t4[,3], col = "blue", lty = 1, lwd = 2)
-lines( tdat_picks$t5[,1], tdat_picks$t5[,3], col = "blue", lty = 1, lwd = 2)
-lines( tdat_picks$t6[,1], tdat_picks$t6[,3], col = "blue", lty = 1, lwd = 2)
-
-lines( idat_picks$t1[,1], idat_picks$t1[,3], col = "black", lty = 2, lwd = 1)
-lines( idat_picks$t2[,1], idat_picks$t2[,3], col = "black", lty = 2, lwd = 1)
-lines( idat_picks$t3[,1], idat_picks$t3[,3], col = "black", lty = 2, lwd = 1)
-lines( idat_picks$t4[,1], idat_picks$t4[,3], col = "black", lty = 2, lwd = 1)
-lines( idat_picks$t5[,1], idat_picks$t5[,3], col = "black", lty = 2, lwd = 1)
-lines( idat_picks$t6[,1], idat_picks$t6[,3], col = "black", lty = 2, lwd = 1)
+    
+  lines( adat_picks$t1[,1], adat_picks$t1[,3], col = "red", lty = 1, lwd = 3)
+  lines( adat_picks$t2[,1], adat_picks$t2[,3], col = "red", lty = 1, lwd = 3)
+  lines( adat_picks$t3[,1], adat_picks$t3[,3], col = "red", lty = 1, lwd = 3)
+  lines( adat_picks$t4[,1], adat_picks$t4[,3], col = "red", lty = 1, lwd = 3)
+  lines( adat_picks$t5[,1], adat_picks$t5[,3], col = "red", lty = 1, lwd = 3)
+  lines( adat_picks$t6[,1], adat_picks$t6[,3], col = "red", lty = 1, lwd = 3)
+  
+  lines( tdat_picks$t1[,1], tdat_picks$t1[,3], col = "blue", lty = 1, lwd = 2)
+  lines( tdat_picks$t2[,1], tdat_picks$t2[,3], col = "blue", lty = 1, lwd = 2)
+  lines( tdat_picks$t3[,1], tdat_picks$t3[,3], col = "blue", lty = 1, lwd = 2)
+  lines( tdat_picks$t4[,1], tdat_picks$t4[,3], col = "blue", lty = 1, lwd = 2)
+  lines( tdat_picks$t5[,1], tdat_picks$t5[,3], col = "blue", lty = 1, lwd = 2)
+  lines( tdat_picks$t6[,1], tdat_picks$t6[,3], col = "blue", lty = 1, lwd = 2)
+  
+  lines( idat_picks$t1[,1], idat_picks$t1[,3], col = "black", lty = 2, lwd = 1)
+  lines( idat_picks$t2[,1], idat_picks$t2[,3], col = "black", lty = 2, lwd = 1)
+  lines( idat_picks$t3[,1], idat_picks$t3[,3], col = "black", lty = 2, lwd = 1)
+  lines( idat_picks$t4[,1], idat_picks$t4[,3], col = "black", lty = 2, lwd = 1)
+  lines( idat_picks$t5[,1], idat_picks$t5[,3], col = "black", lty = 2, lwd = 1)
+  lines( idat_picks$t6[,1], idat_picks$t6[,3], col = "black", lty = 2, lwd = 1)
+dev.off()
 
 # Compute the regression
 newx <- seq(20, 560, 10)

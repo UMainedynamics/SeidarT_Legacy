@@ -367,8 +367,6 @@ thickness_PML_y = NPOINTS_PML
 
 ! The source and reciever values are given relative to the image so we
 ! need to add the PML thickness to the coordinates
-! rcx(:,1) = rcx(:,1) + NPOINTS_PML
-! rcx(:,2) = rcx(:,2) + thickness_PML_y 
 src(1) = src(1) + thickness_PML_x 
 src(2) = src(2) + thickness_PML_y
 

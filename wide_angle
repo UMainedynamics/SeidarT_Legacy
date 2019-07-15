@@ -112,6 +112,6 @@ arrayplot $metafile -c $c2 -g $gain
 
 
 if [[ $gif ]]; then
-	im2gif $prjfile -c $c1 -f 30
-	im2gif $prjfile -c $c2 -f 30
+	im2anim $prjfile -c $c1 -f 30
+	im2anim $prjfile -c $c2 -f 30
 fi

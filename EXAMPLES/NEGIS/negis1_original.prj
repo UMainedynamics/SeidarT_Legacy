@@ -1,0 +1,106 @@
+# This is a project file template for the SEISART software. In order to run the
+# model for seismic, electromagnetic or both, the required inputs must be 
+#
+# Domain Input Values:
+#	dim 		- STR; either '2' or '2.5' but default is '2'
+#	nx,ny,nz 	- INT; the dimensions of the image. If dim = 2.5, and ny is 
+#			  empty then default ny=1
+#	dx,dy,dz	- REAL; the spatial step size for each dimension in meters. If
+#			  dim = 2.5 and dy is empty then default dy=min(dx,dz)
+#
+# Material Input Values:
+#	id 		- INT; the identifier given to each unique rgb value as it
+#			  is read into the computer. It's recommended to use this 
+#			  script to make sure it's sorted correctly.
+#	R/G/B 		- STR; the 0-255 values for each color code. 
+#	Temperature 	- REAL; temperature in Celsius.
+#	Attenuation 	- REAL; (placeholder) will be attenuation length soon.
+#	Density 	- REAL; density in kg/m^3 
+#	Porosity 	- REAL; percent porosity
+#	Water_Content 	- REAL; percent of pores that contain water
+#	Anisotropic 	- BOOL; whether the material is anisotropic (True) or 
+#			  isotropic (False).
+#	ANG_File 	- STR; if Anisotrpic is True then the full path to the 
+#			  .ang file is supplied. The .ang file is a delimited text
+#			  file that contains the 3-by-n array of euler rotation 
+#			  angles in radians.
+#	
+#		or alternatively...
+#	C11-C66 	- REAL; the stiffness coefficients with the appropriate id
+#	E11-E33,S11-S33	- REAL; the permittivity and conductivity coefficients and
+#			  'id' value corresponding to the coefficients along the diagonal 
+#			  of their respective tensors. 
+#	
+#
+# Source Input Values:
+#	dt 		- REAL; dx/(2*maxvelcity)
+#	steps 		- INT; the total number of time steps
+#	x,y,z 		- REAL; locations in meters, +z is down, +y is into the screen
+#	f0 		- REAL; center frequency for the guassian pulse function if 
+#			  'source_file' isn't supplied
+#	theta 		- REAL; source orientation in the x-z plane, 
+#	phi 		- REAL; source orientation in the x-y plane for 2.5/3D only,  
+#	source_file	- STR; the pointer to the text file that contains the source 
+#			  timeseries as a steps-by-1 vector.
+#
+# Written by Steven Bernsen
+# University of Maine
+# -----------------------------------------------------------------------------
+
+
+I,negis1_crop2m.png
+
+D,dim,2
+D,nx,375
+D,ny,n/a
+D,nz,1258
+D,dx,2
+D,dy,n/a
+D,dz,2
+D,cpml,25
+D,nmats,4
+D,write,7
+
+# number, id, R/G/B, Temperature, Attenuation, Density, Porosity, Water_Content, Anisotropic, ANG_File
+M,0,granite,137/198/75,-15.0,2.0,2500,0.0,0.0,False,
+M,1,ice1h,149/151/203,-10.0,2.0,910,0.0,0.0,True,/home/bernsen/NEGIS/20transv100.ang
+M,2,ice1h,167/222/248,-30.0,2.0,910,0.0,0.0,False,
+M,3,ice1h,237/31/62,-10.0,2.0,910,0.0,0.0,False,
+
+# The source parameters for the seismic model
+S,dt,0.00021761949483774853
+S,time_steps,8000
+S,x,60
+S,y,0
+S,z,60
+S,f0,80
+S,theta,0
+S,phi,0
+
+# id, C11, C12, C13, C22, C23, C33, C44, C55, C66, rho
+C,0.0,52789118866.83,20257214861.37,20257214861.37,52789118866.83,20257214861.37,52789118866.83,16265952002.73,16265952002.73,16265952002.73,2500.0
+C,1.0,12395561569.51,7251481160.63,7243410681.9,12822985190.08,6716829081.87,12955210379.22,3369211171.98,3480547641.17,4221464710.06,910.0
+C,2.0,10677240192.01,5338620096.01,5338620096.01,10677240192.01,5338620096.01,10677240192.01,2669310048.0,2669310048.0,2669310048.0,910.0
+C,3.0,10677240192.01,5338620096.01,5338620096.01,10677240192.01,5338620096.01,10677240192.01,2669310048.0,2669310048.0,2669310048.0,910.0
+
+# The source parameters for the elecromagnetic model
+E,dt,3.3356409519815204e-09
+E,time_steps,9000
+E,x,40
+E,y,
+E,z,40
+E,f0,3e6
+E,theta,90
+E,phi,0
+
+# id, e11, e22, e33, s11, s22, s33
+P,0.0,4.8,4.8,4.8,4e-05,4e-05,4e-05
+P,1.0,3.1859414708075473,3.197446776504509,3.1800579859079443,1e-07,1e-07,1e-07
+P,2.0,3.161,3.161,3.161,1e-07,1e-07,1e-07
+P,3.0,3.179,3.179,3.179,1e-07,1e-07,1e-07
+
+
+
+
+
+

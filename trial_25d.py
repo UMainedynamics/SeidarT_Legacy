@@ -35,7 +35,8 @@ import seismicfdtd2d as seis2d
 
 
 # Get the arguments
-project_file = 'fear_anger_hate_suffering.prj'
+# project_file = 'fear_anger_hate_suffering.prj'
+project_file = 'dipping_bed.prj'
 model_type = 's'
 
 
@@ -101,7 +102,6 @@ class Domain:
     		self.dx = float(domain.dx[0])
     		self.dz = float(domain.dz[0])
     		self.cpml = int(domain.cpml[0])
-    		self.write = int(domain.write[0])
     	else:
     		print('\n Domain inputs are not satisfied. I can"t go on anymore. \n')
     		# quit()
@@ -475,14 +475,14 @@ if seismic.exit_status == 0 and not seismic.compute_coefficients:
 				domain.cpml, domain.nx, domain.nz)
 			seis25d.seismicfdtd25d.seismic_cpml_25d(nx, ny, nz,
 				domain.dx, domain.dy, domain.dz, domain.cpml, 
-				src, seismic.f0, seismic.time_steps, domain.write, force)
+				src, seismic.f0, seismic.time_steps, force)
 
 		else:
 			src = np.array([seismic.x/domain.dx, seismic.z/domain.dz]).astype(int)
 			print('Running 2 D model')
 			seis2d.seismicfdtd2d.doall(domain.geometry+1, seismic.tensor_coefficients, 
 				domain.dx, domain.dz, domain.cpml, src, seismic.f0, 
-				seismic.time_steps, domain.write, seismic.theta)
+				seismic.time_steps, seismic.theta)
 
 
 elif seismic.exit_status == 0 and seismic.compute_coefficients and material.material_flag:
@@ -537,14 +537,14 @@ elif seismic.exit_status == 0 and seismic.compute_coefficients and material.mate
 				domain.cpml, domain.nx, domain.nz)
 			seis25d.seismicfdtd25d.seismic_cpml_25d(nx, ny, nz,
 				domain.dx, domain.dy, domain.dz, domain.cpml, 
-				src, seismic.f0, seismic.time_steps, domain.write, force)
+				src, seismic.f0, seismic.time_steps, force)
 
 		else:
 			src = np.array([seismic.x/domain.dx, seismic.z/domain.dz]).astype(int)
 			print('Running 2 D model')
 			seis2d.seismicfdtd2d.doall(domain.geometry+1, seismic.tensor_coefficients, 
 				domain.dx, domain.dz, domain.cpml, src, seismic.f0, 
-				seismic.time_steps, domain.write, seismic.theta)
+				seismic.time_steps, seismic.theta)
 
 else:
 	# We don't have the materials or the coefficients

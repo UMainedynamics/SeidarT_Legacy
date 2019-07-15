@@ -24,7 +24,7 @@ cp prjbuild.py bin/prjbuild
 cp prjrun.py bin/prjrun
 cp arrayplot.py bin/arrayplot
 cp codisplay.py bin/codisplay
-cp im2gif.py bin/im2gif
+cp im2anim.py bin/im2anim
 cp orientation_tensor.py bin/orientation_tensor
 
 # Change them to executables
@@ -32,7 +32,7 @@ chmod +x bin/prjbuild \
         bin/prjrun \
         bin/arrayplot \
         bin/codisplay \
-        bin/im2gif \
+        bin/im2anim \
         bin/orientation_tensor
 
 

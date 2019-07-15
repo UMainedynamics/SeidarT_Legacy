@@ -72,25 +72,25 @@ M,1,ice1h,20/0/0,-30,2,910,0,0,False,
 # 2nd dirty
 M,2,ice1h,20/20/0,-25,2,910,0,0,False,
 # 3rd dirty
-M,3,ice1h,40/20/0,-15,2,910,0,0,False,
+M,3,ice1h,40/20/0,-30,2,910,0,0,False,
 # 4th dirty
-M,4,ice1h,40/40/0,-5,2,910,0,0,False,
+M,4,ice1h,40/40/0,-30,2,910,0,0,False,
 
 # ice layers from top to bottom
 
 # 5th ice
-M,5,ice1h,145/160/255,-2,2,910,0,0,False,
+M,5,ice1h,145/160/255,-30,2,910,0,0,False,
 # 4th ice
-M,6,ice1h,165/180/255,-5,2,910,0,0,False,
+M,6,ice1h,165/180/255,-30,2,910,0,0,False,
 
 M,7,air,200/200/200,-30,2,1.2,0,0,False,
 
 # 3rd ice
-M,8,ice1h,205/220/255,-15,2,910,0,0,False,
+M,8,ice1h,205/220/255,-30,2,910,0,0,False,
 # 1st ice
 M,9,ice1h,220/200/240,-30,2,500,30,0,False,
 # 2nd ice
-M,10,ice1h,225/240/255,-25,2,910,0,0,False,
+M,10,ice1h,225/240/255,-30,2,910,0,0,False,
 
 
 # The source parameters for the seismic model
