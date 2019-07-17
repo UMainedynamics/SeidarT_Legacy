@@ -10,7 +10,7 @@
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-module electromagFDTD2d
+module electromagFDTD25d
 
 implicit none
 
@@ -39,8 +39,8 @@ integer,parameter :: dp = kind(0.d0)
 integer,dimension(nx,nz) :: im
 integer :: i, j, npoints_pml
 real(kind=dp), dimension(:,:) :: mlist
-real(kind=dp), dimension(2*npoints_pml+nx,2*npoints_pml+nz) :: epsilonx, &
-                                                     sigmaz
+real(kind=dp), dimension(2*npoints_pml+nx,2*npoints_pml+nz) :: &
+          epsilonx, epsilony, epsilonz, sigmax, sigmay, sigmaz
 
 !f2py3 intent(in):: im, mlist, npoints_pml, nx, nz
 
@@ -135,7 +135,7 @@ end subroutine material_rw
 
 ! -----------------------------------------------------------------------------
 
-subroutine cpml_coeffs(nx, dx, dt, npml, sig_max, k_max, alpha_max, &
+subroutine cpml_coeffs(nx, dx, dt, npml, k_max, alpha_max, &
             kappa, alpha, acoeff, bcoeff, HALF)
 
 implicit none
@@ -154,12 +154,15 @@ real(kind=dp),dimension(nx) :: kappa, alpha, acoeff, bcoeff
 ! Define all other variables needed in the program
 real(kind=dp) :: xoriginleft, xoriginright
 real(kind=dp),dimension(nx) :: xval, sigma
-real(kind=dp),parameter :: eps0 = 8.85418782d-12
+real(kind=dp), parameter :: PI = 3.141592653589793238462643d0
+real(kind=dp),parameter :: eps0 = 8.85418782d-12, mu0 = 4.0d0*pi*1.0d-7
 integer,parameter :: NP = 2, NPA = 2
 
 real(kind=dp) :: abscissa_in_pml, abscissa_normalized
 
 ! Main program
+sig_max = ( 0.8d0 * ( dble(NP+1) ) / ( dx * ( mu0 / eps0 )**0.5d0 ) )
+
 sigma(:) = 0.d0
 
 do i=1,nx 
@@ -210,10 +213,10 @@ enddo
 end subroutine cpml_coeffs
 
 !==============================================================================
-subroutine electromag_cpml_2d(nx, ny, nz, dx, dy, dz, &
+subroutine electromag_cpml_25d(nx, ny, nz, dx, dy, dz, &
                       npoints_pml, src, f0, nstep, angle)
 
-! 2D elastic finite-difference code in velocity and stress formulation
+! 2.5D elastic finite-difference code in velocity and stress formulation
 ! with Convolutional-PML (C-PML) absorbing conditions for an anisotropic medium
 
 ! Dimitri Komatitsch, University of Pau, France, April 2007.
@@ -265,9 +268,10 @@ integer :: nx, ny, nz
 ! but it should be inversely proportional to the center frequency of the 
 ! source frequency 
 integer :: npoints_pml, nstep
+
 ! source
 integer,dimension(:) :: src
-integer :: isource, jsource,zsource
+integer :: isource,jsource,ksource
 
 
 real(kind=dp), dimension(nx,nz) :: epsilonx, epsilony, epsilonz, &
@@ -296,16 +300,16 @@ real(kind=dp), parameter :: DEGREES_TO_RADIANS = PI / 180.d0
 real(kind=dp), parameter :: STABILITY_THRESHOLD = 1.d+25
 
 ! main arrays
-real(kind=dp), dimension(nx,ny+1,nz+1) :: Ex
-real(kind=dp), dimension(nx+1,ny,nz+1) :: Ey
-real(kind=dp), dimension(nx+1,ny+1,nz) :: Ez
-real(kind=dp), dimension(nx+1,ny,nz) :: Hx
-real(kind=dp), dimension(nx,ny+1,nz) :: Hy
-real(kind=dp), dimension(nx,ny,nz+1) :: Hz
+real(kind=dp), dimension(nx-1,ny,nz) :: Ex
+real(kind=dp), dimension(nx,ny-1,nz) :: Ey
+real(kind=dp), dimension(nx,ny,nz-1) :: Ez
+real(kind=dp), dimension(nx,ny-1,nz-1) :: Hx
+real(kind=dp), dimension(nx-1,ny,nz-1) :: Hy
+real(kind=dp), dimension(nx-1,ny-1,nz) :: Hz
 
 
 ! we will compute the coefficients for the finite difference scheme 
-real(kind=dp), dimension(nx+1, ny+1, nz+1) :: caEx, cbEx, &
+real(kind=dp), dimension(nx, nz) :: caEx, cbEx, &
                                               caEy, cbEy, &
                                               caEz, cbEz
 
@@ -321,52 +325,58 @@ real(kind=dp) ::  value_dEx_dy, value_dEy_dx, &
 
 ! arrays for the memory variables
 ! could declare these arrays in PML only to save a lot of memory, but proof of concept only here
-real(kind=dp), dimension(nx,ny,nz) :: memory_dEy_dx, memory_dEx_dy, &
+real(kind=dp),dimension(nx,ny,nz) :: memory_dEy_dx, memory_dEx_dy, &
                                       memory_dEz_dx, memory_dEx_dz, &
                                       memory_dEy_dz, memory_dEz_dy
 
-real(kind=dp), dimension(nx,ny,nz) :: memory_dHz_dx, memory_dHx_dz, &
+real(kind=dp),dimension(nx,ny,nz) :: memory_dHz_dx, memory_dHx_dz, &
                                       memory_dHy_dx, memory_dHx_dy, &
                                       memory_dHy_dz, memory_dHz_dy
 
 ! parameters for the source
 ! angle of source force clockwise with respect to vertical (Y) axis
 ! this will later be treated as an input
-real(kind=dp) :: f0, angle
-real(kind=dp) :: t0, tw
-real(kind=dp), parameter :: factor = 1.d0
+real(kind=dp) :: f0, t0, tw
+real(kind=dp),dimension(2) :: angle
+real(kind=dp),parameter :: factor = 1.d0
 ! character(len=6) :: src_type
 real(kind=dp) :: t,force_x,force_y,force_z,source_term
-integer :: i,j,it
+integer :: i,j,k,it
 
 real(kind=dp) :: velocnorm
 
 ! -------------------------------- PML parameters 
 ! power to compute d0 profile. Increasing this value allows for a larger dampening gradient in the PML
-real(kind=dp), parameter :: NP = 2.d0, NPA = 1.d0
+! real(kind=dp), parameter :: NP = 2.d0, NPA = 1.d0
 
 ! from Stephen Gedney's unpublished class notes for class EE699, lecture 8, slide 8-11
-real(kind=dp) :: k_max_pml!, parameter :: K_MAX_PML = 1.2d5
-real(kind=dp) :: alpha_max_pml !, parameter :: ALPHA_MAX_PML = pi*f0 !7.0d-1 ! From Taflove ! PI*f0 ! from Festa and Vilotte 
-real(kind=dp) :: sig_x_max, sig_y_max, sig_z_max
-real(kind=dp) :: abscissa_in_PML,abscissa_normalized, xval, yval, zval
-real(kind=dp) ::  xoriginleft, xoriginright, &
-                  yoriginleft, yoriginright, &
-                  zorigintop, zoriginbottom 
+real(kind=dp) :: k_max!, parameter :: K_MAX_PML = 1.2d5
+real(kind=dp) :: alpha_max !, parameter :: ALPHA_MAX_PML = pi*f0 !7.0d-1 ! From Taflove ! PI*f0 ! from Festa and Vilotte 
+! real(kind=dp) :: sig_x_max, sig_y_max, sig_z_max
+! real(kind=dp) :: abscissa_in_PML,abscissa_normalized, xval, yval, zval
+! real(kind=dp) ::  xoriginleft, xoriginright, &
+!                   yoriginleft, yoriginright, &
+!                   zorigintop, zoriginbottom 
 
 
 ! 1D arrays for the damping profiles
-real(kind=dp), dimension(nx) :: sigh_x,K_x,alpha_x,a_x,b_x, & 
-                                sige_x_half,K_x_half, alpha_x_half,&
-                                a_x_half,b_x_half
-real(kind=dp), dimension(ny) :: sigh_y,K_y,alpha_y,a_y,b_y &
-                                sige_y_half,K_y_half, alpha_y_half,&
-                                a_y_half,b_y_half
-real(kind=dp), dimension(nz) :: sigh_z,K_z,alpha_z,a_z,b_z &
-                                sige_z_half,K_z_half, alpha_z_half,&
-                                a_z_half,b_z_half
+real(kind=dp),dimension(nx) :: K_x,alpha_x,a_x,b_x, & 
+                                K_x_half, alpha_x_half,a_x_half,b_x_half
+real(kind=dp),dimension(ny) :: K_y,alpha_y,a_y,b_y, &
+                                K_y_half, alpha_y_half,a_y_half,b_y_half
+real(kind=dp),dimension(nz) :: K_z,alpha_z,a_z,b_z, &
+                                K_z_half, alpha_z_half,a_z_half,b_z_half
 
 integer :: thickness_PML_x,thickness_PML_y, thickness_PML_z
+
+! ------------------------ Load Stiffness Coefficients ------------------------
+
+call material_rw('epsx.dat', epsilonx, .TRUE.)
+call material_rw('epsy.dat', epsilony, .TRUE.)
+call material_rw('epsz.dat', epsilonz, .TRUE.)
+call material_rw('sigx.dat', sigmax, .TRUE.)
+call material_rw('sigy.dat', sigmay, .TRUE.)
+call material_rw('sigz.dat', sigmaz, .TRUE.)
 
 
 ! ------------------------ Assign some constants -----------------------
@@ -381,13 +391,13 @@ DT = minval( (/dx, dy, dz/) )/ ( 2.d0 * Clight)
 t0 = 1.0d0/f0
 tw = 4.0d0*t0
 
-ALPHA_MAX_PML = 2*pi*eps0*f0/10
-k_max_pml = 1.0d1
+alpha_max = 2*pi*eps0*f0/10
+k_max = 1.0d1
 
 ! Kappa and alpha max were assigned in the definitions
-sig_x_max = ( 0.8d0 * ( dble(NP+1) ) / ( dx * ( mu0 / eps0 )**0.5d0 ) )
-sig_y_max = ( 0.8d0 * ( dble(NP+1) ) / ( dy * ( mu0 / eps0 )**0.5d0 ) )
-sig_z_max = ( 0.8d0 * ( dble(NP+1) ) / ( dz * ( mu0 / eps0 )**0.5d0 ) )
+! sig_x_max = ( 0.8d0 * ( dble(NP+1) ) / ( dx * ( mu0 / eps0 )**0.5d0 ) )
+! sig_y_max = ( 0.8d0 * ( dble(NP+1) ) / ( dy * ( mu0 / eps0 )**0.5d0 ) )
+! sig_z_max = ( 0.8d0 * ( dble(NP+1) ) / ( dz * ( mu0 / eps0 )**0.5d0 ) )
 
 ! Compute the coefficients of the FD scheme. First scale the relative 
 ! permittivity and permeabilities to get the absolute values 
@@ -395,7 +405,6 @@ epsilonx(:,:) = epsilonx*eps0
 epsilony(:,:) = epsilony*eps0
 epsilonz(:,:) = epsilonz*eps0
 
-!!!!!! REDERIVE THESE EXPRESSIONS FOR 3D !!!!!!!!!!!!!1
 caEx(:,:) = ( 1.0d0 - sigmax * dt / ( 2.0d0 * epsilonx ) ) / &
             ( 1.0d0 + sigmax * dt / (2.0d0 * epsilonx ) )
 cbEx(:,:) = (dt / epsilonx ) / ( 1.0d0 + sigmax * dt / ( 2.0d0 * epsilonx ) )
@@ -404,15 +413,22 @@ caEy(:,:) = ( 1.0d0 - sigmay * dt / ( 2.0d0 * epsilony ) ) / &
             ( 1.0d0 + sigmay * dt / (2.0d0 * epsilonx ) )
 cbEy(:,:) = (dt / epsilony ) / ( 1.0d0 + sigmay * dt / ( 2.0d0 * epsilony ) )
 
-caEz(:,:) = ( 1.0d0 - sigmay * dt / ( 2.0d0 * epsilony ) ) / &
-            ( 1.0d0 + sigmay * dt / (2.0d0 * epsilonx ) )
-cbEz(:,:) = (dt / epsilony ) / ( 1.0d0 + sigmay * dt / ( 2.0d0 * epsilony ) )
+caEz(:,:) = ( 1.0d0 - sigmaz * dt / ( 2.0d0 * epsilonz ) ) / &
+            ( 1.0d0 + sigmaz * dt / (2.0d0 * epsilonz ) )
+cbEz(:,:) = (dt / epsilonz ) / ( 1.0d0 + sigmaz * dt / ( 2.0d0 * epsilonz ) )
+
+daHx = dt/(4.0d0*mu0*mu)
+dbHx = dt/mu0 !dt/(mu*mu*dx*(1+daHz) ) 
+daHx = 1.0d0 ! (1-daHz)/(1+daHz) ! 
+
+daHy = dt/(4.0d0*mu0*mu)
+dbHy = dt/mu0 !dt/(mu*mu*dx*(1+daHz) ) 
+daHy = 1.0d0 ! (1-daHz)/(1+daHz) ! 
 
 daHz = dt/(4.0d0*mu0*mu)
 dbHz = dt/mu0 !dt/(mu*mu*dx*(1+daHz) ) 
 daHz = 1.0d0 ! (1-daHz)/(1+daHz) ! 
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 
 ! ----------------------------------------------------------------------
 !---
@@ -421,13 +437,7 @@ daHz = 1.0d0 ! (1-daHz)/(1+daHz) !
 
 !--- define profile of absorption in PML region
 
-! check that NP is okays
-if (NP < 1) stop 'NP must be greater than 1'
-
-
 ! Initialize CPML damping variables
-  sigh_x(:) = 0.d0
-  sige_x_half(:) = 0.d0
   K_x(:) = 1.d0
   K_x_half(:) = 1.d0
   alpha_x(:) = 0.d0
@@ -435,8 +445,6 @@ if (NP < 1) stop 'NP must be greater than 1'
   a_x(:) = 0.d0
   a_x_half(:) = 0.d0
 
-  sigh_y(:) = 0.d0
-  sige_y_half(:) = 0.d0
   K_y(:) = 1.d0
   K_y_half(:) = 1.d0
   alpha_y(:) = 0.d0
@@ -444,8 +452,6 @@ if (NP < 1) stop 'NP must be greater than 1'
   a_y(:) = 0.d0
   a_y_half(:) = 0.d0
 
-  sigh_z(:) = 0.d0
-  sige_z_half(:) = 0.d0
   K_z(:) = 1.d0
   K_z_half(:) = 1.d0
   alpha_z(:) = 0.d0
@@ -468,47 +474,53 @@ src(3) = src(3) + thickness_PML_z
 
 ! ------------------------- damping in the X direction ------------------------
 
-call cpml_coeffs(nx, dx, dt, thickness_PML_x, sig_x_max, k_max, alpha_max, &
+call cpml_coeffs(nx, dx, dt, thickness_PML_x, k_max, alpha_max, &
             K_x, alpha_x, a_x, b_x, .FALSE.)
 
-call cpml_coeffs(nx, dx, dt, thickness_PML_x, sig_x_max, k_max, alpha_max, &
+call cpml_coeffs(nx, dx, dt, thickness_PML_x, k_max, alpha_max, &
             K_x_half, alpha_x_half, a_x_half, b_x_half, .TRUE.)
 
 ! damping in the Y direction
-call cpml_coeffs(ny, dy, dt, thickness_PML_y, sig_y_max, k_max, alpha_max, &
+call cpml_coeffs(ny, dy, dt, thickness_PML_y, k_max, alpha_max, &
             K_y, alpha_y, a_y, b_y, .FALSE.)
 
-call cpml_coeffs(ny, dy, dt, thickness_PML_y, sig_y_max, k_max, alpha_max, &
+call cpml_coeffs(ny, dy, dt, thickness_PML_y, k_max, alpha_max, &
             K_y_half, alpha_y_half, a_y_half, b_y_half, .TRUE.)
 
 ! damping in the Z direction
-call cpml_coeffs(nz, dz, dt, thickness_PML_z, sig_z_max, k_max, alpha_max, &
+call cpml_coeffs(nz, dz, dt, thickness_PML_z, k_max, alpha_max, &
             K_z, alpha_z, a_z, b_z, .FALSE.)
 
-call cpml_coeffs(nz, dz, dt, thickness_PML_z, sig_z_max, k_max, alpha_max, &
+call cpml_coeffs(nz, dz, dt, thickness_PML_z, k_max, alpha_max, &
             K_z_half, alpha_z_half, a_z_half, b_z_half, .TRUE.)
 
 
 ! -----------------------------------------------------------------------------
 
 ! initialize arrays
-Ex(:,:) = 0.0d0
-Ey(:,:) = 0.0d0
-Ez(:,:) = 0.0d0
+Ex(:,:,:) = 0.0d0
+Ey(:,:,:) = 0.0d0
+Ez(:,:,:) = 0.0d0
 
-Hx(:,:) = 0.0d0
-Hy(:,:) = 0.0d0
-Hz(:,:) = 0.0d0
+Hx(:,:,:) = 0.0d0
+Hy(:,:,:) = 0.0d0
+Hz(:,:,:) = 0.0d0
 
 
 ! PML
-memory_dEx_dy(:,:) = 0.0d0
-memory_dEy_dx(:,:) = 0.0d0
+memory_dEx_dy(:,:,:) = 0.0d0
+memory_dEy_dx(:,:,:) = 0.0d0
+memory_dEx_dz(:,:,:) = 0.d0
+memory_dEz_dx(:,:,:) = 0.d0
+memory_dEz_dy(:,:,:) = 0.d0
+memory_dEy_dz(:,:,:) = 0.d0
 
-memory_dEz_dx
-
-memory_dHz_dx(:,:) = 0.0d0
-memory_dHz_dy(:,:) = 0.0d0
+memory_dHz_dx(:,:,:) = 0.0d0
+memory_dHx_dz(:,:,:) = 0.d0
+memory_dHz_dy(:,:,:) = 0.0d0
+memory_dHy_dz(:,:,:) = 0.d0
+memory_dHx_dy(:,:,:) = 0.d0
+memory_dHy_dx(:,:,:) = 0.d0
 
 !---
 !---  beginning of time loop
@@ -519,50 +531,127 @@ do it = 1,NSTEP
   !--------------------------------------------------------
   ! compute magnetic field and update memory variables for C-PML
   !--------------------------------------------------------
-  do i = 1,nx      
-    do j = 1,ny
+  
+  ! Update Hx
+  do k = 1,nz-1
+    do i = 1,nx-1  
+      do j = 1,ny-1
       
-      ! Values needed for the magnetic field updates
-      value_dEx_dy = ( Ex(i,j+1) - Ex(i,j) )/dy
-      memory_dEx_dy(i,j) = b_y(j) * memory_dEx_dy(i,j) + a_y(j) * value_dEx_dy
-      value_dEx_dy = value_dEx_dy/ K_y(j) + memory_dEx_dy(i,j)
+        ! Values needed for the magnetic field updates
+        value_dEz_dy = ( Ez(i,j+1,k) - Ez(i,j,k) )/dy
+        memory_dEz_dy(i,j,k) = b_y_half(j) * memory_dEz_dy(i,j,k) + a_y_half(j) * value_dEz_dy
+        value_dEz_dy = value_dEz_dy/ K_y_half(j) + memory_dEz_dy(i,j,k)
 
-      ! The rest of the equation needed for agnetic field updates
-      value_dEy_dx = ( Ey(i+1,j) - Ey(i,j) )/dx
-      memory_dEy_dx(i,j) = b_x(i) * memory_dEy_dx(i,j) + a_x(i) * value_dEy_dx
-      value_dEy_dx = value_dEy_dx/ K_x(i) + memory_dEy_dx(i,j)
+        ! The rest of the equation needed for agnetic field updates
+        value_dEy_dz = ( Ey(i,j,k+1) - Ey(i,j,k) )/dz
+        memory_dEy_dz(i,j,k) = b_z(k) * memory_dEy_dz(i,j,k) + a_z(k) * value_dEy_dz
+        value_dEy_dz = value_dEy_dz/ K_z(k) + memory_dEy_dz(i,j,k)
 
-      ! Now update the Magnetic field
-      Hz(i,j) = daHz*Hz(i,j) + dbHz*( value_dEy_dx + value_dEx_dy )
+        ! Now update the Magnetic field
+        Hx(i,j,k) = daHx*Hx(i,j,k) + dbHx*( value_dEy_dz + value_dEz_dy )
 
+      enddo
+    enddo  
+  enddo
+
+    ! Update Hy
+  do k = 1,nz-1
+    do i = 1,nx-1      
+      do j = 1,ny-1
+      
+        ! Values needed for the magnetic field updates
+        value_dEx_dz = ( Ex(i,j,k) - Ex(i,j,k+1) )/dz
+        memory_dEx_dz(i,j,k) = b_z(k) * memory_dEx_dz(i,j,k) + a_z(k) * value_dEx_dz
+        value_dEx_dz = value_dEx_dz/ K_z(k) + memory_dEx_dz(i,j,k)
+
+        ! The rest of the equation needed for agnetic field updates
+        value_dEz_dx = ( Ez(i+1,j,k) - Ez(i,j,k) )/dx
+        memory_dEz_dx(i,j,k) = b_x_half(i) * memory_dEz_dx(i,j,k) + a_x_half(i) * value_dEz_dx
+        value_dEz_dx = value_dEz_dx/ K_x_half(i) + memory_dEz_dx(i,j,k)
+
+        ! Now update the Magnetic field
+        Hy(i,j,k) = daHy*Hy(i,j,k) + dbHy*( value_dEz_dx + value_dEz_dy )
+
+      enddo
+    enddo  
+  enddo
+
+    ! Update Hz
+  do k = 2,nz-1
+    do i = 1,nx-1      
+      do j = 1,ny-1
+      
+        ! Values needed for the magnetic field updates
+        value_dEx_dy = ( Ex(i,j+1,k) - Ex(i,j,k) )/dy
+        memory_dEx_dy(i,j,k) = b_y(j) * memory_dEx_dy(i,j,k) + a_y(j) * value_dEx_dy
+        value_dEx_dy = value_dEx_dy/ K_y(j) + memory_dEx_dy(i,j,k)
+
+        ! The rest of the equation needed for agnetic field updates
+        value_dEy_dx = ( Ey(i,j,k) - Ey(i+1,j,k) )/dx
+        memory_dEy_dx(i,j,k) = b_x(i) * memory_dEy_dx(i,j,k) + a_x(i) * value_dEy_dx
+        value_dEy_dx = value_dEy_dx/ K_x(i) + memory_dEy_dx(i,j,k)
+
+        ! Now update the Magnetic field
+        Hz(i,j,k) = daHz*Hz(i,j,k) + dbHz*( value_dEy_dx + value_dEx_dy )
+
+      enddo
     enddo  
   enddo
 
   !--------------------------------------------------------
   ! compute electric field and update memory variables for C-PML
   !--------------------------------------------------------
-  
-  ! Compute the differences in the y-direction
-  do i = 1,nx 
-    do j = 2,ny 
-      ! Update the Ex field
-      value_dHz_dy = ( Hz(i,j) - Hz(i,j-1) )/dy ! this is ny-1 length vector
-      memory_dHz_dy(i,j) = b_y_half(j) * memory_dHz_dy(i,j) + a_y_half(j) * value_dHz_dy
-      value_dHz_dy = value_dHz_dy/K_y_half(j) + memory_dHz_dy(i,j)
+    ! Compute the differences in the x-direction
+  do k = 2,nz-1
+    do i = 1,nx-1
+      do j = 2,ny-1  
+        ! Update the Ey field
+        value_dHz_dy = ( Hz(i,j,k) - Hz(i,j-1,k) )/dy
+        memory_dHz_dy(i,j,k) = b_y_half(j) * memory_dHz_dy(i,j,k) + a_y_half(j) * value_dHz_dy
+        value_dHz_dy = value_dHz_dy/K_y_half(j) + memory_dHz_dy(i,j,k)
 
-      Ex(i,j) = caEx(i,j)*Ex(i,j) + cbEx(i,j)*value_dHz_dy
+        value_dHy_dz = ( Hy(i,j,k-1) - Hy(i,j,k) )/dz
+        memory_dHy_dz(i,j,k) = b_z_half(k) * memory_dHy_dz(i,j,k) + a_z_half(k) * value_dHy_dz
+        value_dHy_dz = value_dHy_dz/K_z_half(k) + memory_dHy_dz(i,j,k)
+        
+        Ex(i,j,k) = caEx(i,k)*Ex(i,j,k) + cbEx(i,k)*(value_dHz_dy + value_dHy_dz) 
+      enddo
+    enddo
+  enddo
+
+  ! Compute the differences in the y-direction
+  do k = 2,nz-1
+    do i = 2,nx-1 
+      do j = 1,ny-1 
+        ! Update the Ey field
+        value_dHz_dx = ( Hz(i,j,k) - Hz(i,j-1,k) )/dx ! this is ny-1 length vector
+        memory_dHz_dx(i,j,k) = b_x_half(i) * memory_dHz_dx(i,j,k) + a_x_half(i) * value_dHz_dx
+        value_dHz_dx = value_dHz_dx/K_x_half(i) + memory_dHz_dx(i,j,k)
+
+        value_dHx_dz = ( Hx(i,j,k) - Hx(i,j-1,k) )/dz ! this is ny-1 length vector
+        memory_dHx_dz(i,j,k) = b_z_half(k) * memory_dHx_dz(i,j,k) + a_z_half(k) * value_dHx_dz
+        value_dHx_dz = value_dHx_dz/K_z_half(k) + memory_dHx_dz(i,j,k)
+
+        Ey(i,j,k) = caEy(i,k)*Ey(i,j,k) + cbEy(i,k)*(value_dHz_dx + value_dHx_dz)
+      enddo
     enddo
   enddo 
 
-  ! Compute the differences in the x-direction
-  do j = 1,ny
-    do i = 2,nx  
-      ! Update the Ey field
-      value_dHz_dx = ( Hz(i,j) - Hz(i-1,j) )/dx
-      memory_dHz_dx(i,j) = b_x_half(i) * memory_dHz_dx(i,j) + a_x_half(i) * value_dHz_dx
-      value_dHz_dx = value_dHz_dx/K_x_half(i) + memory_dHz_dx(i,j)
-      
-      Ey(i,j) = caEy(i,j)*Ey(i,j) + cbEy(i,j)*value_dHz_dx 
+    ! Compute the differences in the z-direction
+  do k = 1,nz-1
+    do i = 2,nx-1  
+      do j = 2,ny-1
+        ! Update the Ez field
+        value_dHx_dy = ( Hx(i,j-1,k) - Hx(i,j,k) )/dy
+        memory_dHx_dy(i,j,k) = b_y_half(j) * memory_dHx_dy(i,j,k) + a_y_half(j) * value_dHx_dy
+        value_dHx_dy = value_dHx_dy/K_y_half(j) + memory_dHx_dy(i,j,k)
+
+        value_dHy_dx = ( Hy(i,j,k) - Hy(i-1,j,k) )/dx
+        memory_dHy_dx(i,j,k) = b_x(i) * memory_dHy_dx(i,j,k) + a_x(i) * value_dHy_dx
+        value_dHy_dx = value_dHy_dx/K_x(i) + memory_dHy_dx(i,j,k)
+        
+        Ez(i,j,k) = caEz(i,k)*Ez(i,j,k) + cbEz(i,k)*(value_dHx_dy + value_dHy_dx)
+      enddo
     enddo
   enddo
 
@@ -573,29 +662,55 @@ do it = 1,NSTEP
 
   source_term = factor*exp(-(1.0d0*pi*f0*(t-t0) )**2.0d0 )*sin(2.0d0*pi*f0*(t-t0) )
 
+  force_x = sin( ANGLE(1)* DEGREES_TO_RADIANS ) * cos( ANGLE(2)* DEGREES_TO_RADIANS ) * source_term
+  force_y = sin( ANGLE(1)* DEGREES_TO_RADIANS ) * sin( ANGLE(2)* DEGREES_TO_RADIANS ) * source_term
+  force_z = cos( ANGLE(1)* DEGREES_TO_RADIANS ) * source_term
 
-  force_x = sin(ANGLE * DEGREES_TO_RADIANS) * source_term
-  force_y = cos(ANGLE * DEGREES_TO_RADIANS) * source_term
-
-  Ex(isource,jsource) = Ex(isource,jsource) + force_x !* DT / epsilonx(i,j)
-  Ey(isource,jsource) = Ey(isource,jsource) + force_y !* DT / epsilony(i,j) !* cbEy(ISOURCE,JSOURCE) !* DT / (epsilony(i,j) )
+  Ex(isource,jsource,ksource) = Ex(isource,jsource,ksource) + force_x !* DT / epsilonx(i,j)
+  Ey(isource,jsource,ksource) = Ey(isource,jsource,ksource) + force_y !* DT / epsilony(i,j) !* cbEy(ISOURCE,JSOURCE) !* DT / (epsilony(i,j) )
 
   ! Dirichlet conditions (rigid boundaries) on the edges or at the bottom of the PML layers
-  Ex(1,:) = 0.d0
-  Ex(nx,:) = 0.d0
-  Ex(:,1) = 0.d0
-  Ex(:,ny+1) = 0.d0
+  Ex(1,:,:) = 0.d0
+  Ex(:,1,:) = 0.d0
+  Ex(:,:,1) = 0.d0
+  Ex(nx-1,:,:) = 0.d0
+  Ex(:,ny,:) = 0.d0
+  Ex(:,:,nz) = 0.d0 
 
-  Ey(1,:) = 0.d0
-  Ey(nx+1,:) = 0.d0
-  Ey(:,1) = 0.d0
-  Ey(:,ny) = 0.d0
+  Ey(1,:,:) = 0.d0
+  Ey(:,1,:) = 0.d0
+  Ey(:,:,1) = 0.d0
+  Ey(nx,:,:) = 0.d0
+  Ey(:,ny-1,:) = 0.d0
+  Ey(:,:,nz) = 0.d0
+  
+  Ez(1,:,:) = 0.d0
+  Ez(:,1,:) = 0.d0
+  Ez(:,:,1) = 0.d0
+  Ez(nx,:,:) = 0.d0
+  Ez(:,ny,:) = 0.d0
+  Ez(:,:,nz-1) = 0.d0
+  
+  Hx(1,:,:) = 0.d0
+  Hx(:,1,:) = 0.d0
+  Hx(:,:,1) = 0.d0
+  Hx(nx,:,:) = 0.d0
+  Hx(:,ny-1,:) = 0.d0
+  Hx(:,:,nz-1) = 0.d0
 
-  Hz(1,:) = 0.d0
-  Hz(nx,:) = 0.d0
-  Hz(:,1) = 0.d0
-  Hz(:,ny) = 0.d0
-
+  Hy(1,:,:) = 0.d0
+  Hy(:,1,:) = 0.d0
+  Hy(:,:,1) = 0.d0
+  Hy(nx-1,:,:) = 0.d0
+  Hy(:,ny,:) = 0.d0
+  Hy(:,:,nz-1) = 0.d0
+  
+  Hz(1,:,:) = 0.d0
+  Hz(:,1,:) = 0.d0
+  Hz(:,:,1) = 0.d0
+  Hz(nx-1,:,:) = 0.d0
+  Hz(:,ny-1,:) = 0.d0
+  Hz(:,:,nz) = 0.d0
   ! print maximum of norm of velocity
   velocnorm = maxval(sqrt(Ex**2 + Ey**2))
   if (velocnorm > STABILITY_THRESHOLD) stop 'code became unstable and blew up'
@@ -606,7 +721,7 @@ do it = 1,NSTEP
 enddo   ! end of time loop
 
 
-end subroutine electromag_cpml_2d
+end subroutine electromag_cpml_25d
 
 
 !==============================================================================
@@ -632,4 +747,4 @@ close(unit = 10)
 end subroutine write_image
 
 
-end module electromagFDTD2d
+end module electromagFDTD25d

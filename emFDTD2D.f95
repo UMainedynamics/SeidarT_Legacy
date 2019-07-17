@@ -396,8 +396,9 @@ epsilony(:,:) = epsilony*eps0
 caEx(:,:) = ( 1.0d0 - sigmax * dt / ( 2.0d0 * epsilonx ) ) / &
             ( 1.0d0 + sigmax * dt / (2.0d0 * epsilonx ) )
 cbEx(:,:) = (dt / epsilonx ) / ( 1.0d0 + sigmax * dt / ( 2.0d0 * epsilonx ) )
+
 caEy(:,:) = ( 1.0d0 - sigmay * dt / ( 2.0d0 * epsilony ) ) / &
-            ( 1.0d0 + sigmay * dt / (2.0d0 * epsilonx ) )
+            ( 1.0d0 + sigmay * dt / (2.0d0 * epsilony ) )
 cbEy(:,:) = (dt / epsilony ) / ( 1.0d0 + sigmay * dt / ( 2.0d0 * epsilony ) )
 
 daHz = dt/(4.0d0*mu0*mu)

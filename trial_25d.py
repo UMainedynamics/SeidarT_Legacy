@@ -16,7 +16,8 @@ import material_functions as mf
 import seismicfdtd25d as seis25d
 import seismicfdtd2d as seis2d
 
-# import emfdtd2d as em2d
+import emfdtd2d as em2d
+import emfdtd25d as em25d 
 
 # -------------------------- Command Line Arguments ---------------------------
 # parser = argparse.ArgumentParser(description="""The seisarT software requires a 
@@ -37,7 +38,7 @@ import seismicfdtd2d as seis2d
 # Get the arguments
 # project_file = 'fear_anger_hate_suffering.prj'
 project_file = 'dipping_bed.prj'
-model_type = 's'
+model_type = 'e'
 
 
 # =============================================================================
@@ -571,7 +572,30 @@ if electromag.exit_status == 0 and not electromag.compute_coefficients:
 		src = np.array([electromag.x/domain.dx, electromag.z/domain.dz]).astype(int)
 		print('Modeling the electromagnetic wavefield.\n')
 
-		em2d.electromagfdtd2d.doall(domain.geometry+1, electromag.tensor_coefficients, 
+		if domain.dim == 2.5:
+			# There are additional values we need to assign
+			domain.ny = int(domain.ny[0])
+			domain.dy = float(domain.dy[0])
+			electromag.y = float(electromag.y[0])
+			electromag.phi = float(electromag.phi[0])
+
+			src = np.array([electromag.x/domain.dx, electromag.y/domain.dy, electromag.z/domain.dz]).astype(int)
+			force=np.array([electromag.theta, electromag.phi])
+
+			nx = domain.nx + 2*domain.cpml
+			ny = domain.ny + 2*domain.cpml
+			nz = domain.nz + 2*domain.cpml 
+
+			print('Running 2.5D model')
+
+
+			em25d.electromagfdtd25d.permittivity_write(domain.geometry+1, seismic.tensor_coefficients,
+				domain.cpml, domain.nx, domain.nz)
+			em25d.electromagfdtd25d.electromag_cpml_25d(nx, ny, nz,
+				domain.dx, domain.dy, domain.dz, domain.cpml, 
+				src, seismic.f0, seismic.time_steps, force)
+		else:
+			em2d.electromagfdtd2d.doall(domain.geometry+1, electromag.tensor_coefficients, 
 			domain.dx, domain.dz, domain.cpml, src, electromag.f0, 
 			electromag.time_steps, domain.write, electromag.theta)
 
@@ -600,10 +624,34 @@ elif electromag.exit_status == 0 and electromag.compute_coefficients and materia
 		src = np.array([electromag.x/domain.dx, electromag.z/domain.dz]).astype(int)
 		print('Modeling the electromagnetic wavefield.\n')
 		
-		em2d.electromagfdtd2d.doall(domain.geometry+1, electromag.tensor_coefficients, 
+
+		if domain.dim == 2.5:
+			# There are additional values we need to assign
+			domain.ny = int(domain.ny[0])
+			domain.dy = float(domain.dy[0])
+			electromag.y = float(electromag.y[0])
+			electromag.phi = float(electromag.phi[0])
+
+			src = np.array([electromag.x/domain.dx, electromag.y/domain.dy, electromag.z/domain.dz]).astype(int)
+			force=np.array([electromag.theta, electromag.phi])
+
+			nx = domain.nx + 2*domain.cpml
+			ny = domain.ny + 2*domain.cpml
+			nz = domain.nz + 2*domain.cpml 
+
+			print('Running 2.5D model')
+
+
+			em25d.electromagfdtd25d.permittivity_write(domain.geometry+1, seismic.tensor_coefficients,
+				domain.cpml, domain.nx, domain.nz)
+			em25d.electromagfdtd25d.electromag_cpml_25d(nx, ny, nz,
+				domain.dx, domain.dy, domain.dz, domain.cpml, 
+				src, seismic.f0, seismic.time_steps, force)
+		else:
+			em2d.electromagfdtd2d.doall(domain.geometry+1, electromag.tensor_coefficients, 
 			domain.dx, domain.dz, domain.cpml, src, electromag.f0, 
 			electromag.time_steps, domain.write, electromag.theta)
-
+		
 else:
 	# We don't have the materials neither the coefficients
 	print('Unable to model electromagnetics. Check your project file for errors.')

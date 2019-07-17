@@ -161,6 +161,84 @@ contains
   
   end subroutine material_rw
 
+! -----------------------------------------------------------------------------
+
+subroutine cpml_coeffs(nx, dx, dt, npml, sig_max, k_max, alpha_max, &
+            kappa, alpha, acoeff, bcoeff, HALF)
+
+implicit none
+
+integer,parameter :: dp=kind(0.d0)
+integer :: i
+
+! Define real inputs 
+real(kind=dp) :: dx, dt, sig_max, k_max, alpha_max 
+integer :: nx, npml
+logical :: HALF
+
+! define the output arrays
+real(kind=dp),dimension(nx) :: kappa, alpha, acoeff, bcoeff
+
+! Define all other variables needed in the program
+real(kind=dp) :: xoriginleft, xoriginright
+real(kind=dp),dimension(nx) :: xval, sigma
+integer,parameter :: NP = 2, NPA = 2
+
+real(kind=dp) :: abscissa_in_pml, abscissa_normalized
+
+! -----------------------------------------------------------------------------
+sigma(:) = 0.d0
+
+do i=1,nx 
+  xval(i) = dx * dble(i - 1)
+enddo
+
+if (HALF) then 
+    xval = xval + dx/2.0
+endif
+
+xoriginleft = dx * dble( npml )
+xoriginright = dx * dble( (NX-1) - npml )
+
+do i=1,nx
+    !---------- left edge
+    abscissa_in_PML = xoriginleft - xval(i)
+    if (abscissa_in_PML >= 0.d0) then
+        abscissa_normalized = abscissa_in_PML / dble(dx * npml)
+        sigma(i) = sig_max * abscissa_normalized**NP
+        ! from Stephen Gedney's unpublished class notes for class EE699, lecture 8, slide 8-2
+        kappa(i) = 1.d0 + (K_MAX - 1.d0) * abscissa_normalized**NP
+        alpha(i) = ALPHA_MAX * (1.d0 - abscissa_normalized)**NPA
+    endif
+
+    !---------- right edge
+    ! define damping profile at the grid points
+    abscissa_in_PML = xval(i) - xoriginright
+    if (abscissa_in_PML >= 0.d0) then
+      abscissa_normalized = abscissa_in_PML / dble(dx * npml)
+      sigma(i) = sig_max * abscissa_normalized**NP
+      kappa(i) = 1.d0 + (k_max - 1.d0) * abscissa_normalized**NP
+      alpha(i) = alpha_max * (1.d0 - abscissa_normalized)**NPA
+    endif
+
+    ! just in case, for -5 at the end
+    if (alpha(i) < 0.d0) alpha(i) = 0.d0
+    ! Compute the b_i coefficents
+    bcoeff(i) = exp( - (sigma(i) / kappa(i) + alpha(i)) * DT )
+    
+    ! Compute the a_i coefficients
+    ! this to avoid division by zero outside the PML
+    if (abs(sigma(i)) > 1.d-6) then 
+      acoeff(i) = sigma(i) * (bcoeff(i) - 1.d0) / ( (sigma(i) + kappa(i) * alpha(i)) ) / kappa(i)
+    endif
+
+enddo 
+
+end subroutine cpml_coeffs
+
+!==============================================================================
+
+
 !==============================================================================
 subroutine seismic_cpml_25d(nx, ny, nz, dx, dy, dz, &
                       npoints_pml, src, f0, nstep, angle_force)
@@ -256,8 +334,8 @@ real(kind=dp), dimension(nx,ny,nz) :: vx,vy,vz,sigmaxx,sigmayy,sigmazz,sigmaxy,s
 real(kind=dp), parameter :: NPOWER = 2.d0
 
 ! from Stephen Gedney's unpublished class notes for class EE699, lecture 8, slide 8-11
-real(kind=dp), parameter :: K_MAX_PML = 1.d1
-real(kind=dp) :: ALPHA_MAX_PML
+real(kind=dp), parameter :: K_MAX = 1.d1
+real(kind=dp) :: ALPHA_MAX
 
 ! arrays for the memory variables
 ! could declare these arrays in PML only to save a lot of memory, but proof of concept only here
@@ -327,7 +405,7 @@ t0 = 1.0d0/f0
 DT = minval( (/dx,dy,dz/) )/ ( 2.0* sqrt( ( maxval( (/ c11/rho, c22/rho, c33/rho /) ) ) ) )
 
 
-ALPHA_MAX_PML = PI*f0 ! from Festa and Vilotte
+ALPHA_MAX = PI*f0 ! from Festa and Vilotte
 a = pi*pi*f0*f0
 angle_force = angle_force * degrees_to_radians
 ! ----------------------------------------------------------------------
@@ -345,8 +423,8 @@ Rcoef = 0.001d0
 ! ---------------- define profile of absorption in PML region -----------------
 
 ! thickness of the PML layer in meters
-thickness_PML_x = NPOINTS_PML * dx
-thickness_PML_y = NPOINTS_PML * dy
+thickness_PML_x = npoints_pml * dx
+thickness_PML_y = npoints_pml * dy
 thickness_PML_z = npoints_pml * dz
 
 
@@ -379,12 +457,6 @@ thickness_PML_z = npoints_pml * dz
   a_z_half(:) = 0.d0
 
 
-! ------------------------- damping in the X direction-------------------------
-
-  ! origin of the PML layer (position of right edge minus thickness, in meters)
-  xoriginleft = dble(thickness_PML_x)
-  xoriginright = dx * dble(NX-1) - thickness_PML_x
-  
   ! to compute d0 below, and for stability estimate
   ! quasi_cp_max = sqrt( maxval( (/ c11/rho, c22/rho, c33/rho /) ) )
   quasi_cp_max = ( minval( (/dx,dy,dz/) )/ ( 2.0 * dt) )
@@ -394,236 +466,56 @@ thickness_PML_z = npoints_pml * dz
   d0_y = - dble(NPOWER + 1) * quasi_cp_max * log(Rcoef) / (2.d0 * thickness_PML_y)
   d0_z = - dble(NPOWER + 1) * quasi_cp_max * log(Rcoef) / (2.d0 * thickness_PML_z)
 
-  do i = 1,NX
 
-    ! abscissa of current grid point along the damping profile
-    xval = DX * dble(i-1)
+! ------------------------- damping in the X direction-------------------------
 
-    !---------- left edge
-    ! define damping profile at the grid points
-    abscissa_in_PML = xoriginleft - xval
-    if (abscissa_in_PML >= 0.d0) then
-      abscissa_normalized = abscissa_in_PML / thickness_PML_x
+call cpml_coeffs(nx, dx, dt, npoints_pml, d0_x, k_max, alpha_max, &
+            K_x, alpha_x, a_x, b_x, .FALSE.)
 
-      d_x(i) = d0_x * abscissa_normalized**NPOWER
-      ! from Stephen Gedney's unpublished class notes for class EE699, lecture 8, slide 8-2
-      K_x(i) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NPOWER
-      alpha_x(i) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)
-    endif
+call cpml_coeffs(nx, dx, dt, npoints_pml, d0_x, k_max, alpha_max, &
+            K_x_half, alpha_x_half, a_x_half, b_x_half, .TRUE.)
 
-    ! define damping profile at half the grid points
-    abscissa_in_PML = xoriginleft - (xval + DX/2.d0)
-    if (abscissa_in_PML >= 0.d0) then
-      abscissa_normalized = abscissa_in_PML / thickness_PML_x
-      d_x_half(i) = d0_x * abscissa_normalized**NPOWER
-      ! from Stephen Gedney's unpublished class notes for class EE699, lecture 8, slide 8-2
-      K_x_half(i) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NPOWER
-      alpha_x_half(i) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)
-    endif
+! ------------------------ damping in the Y direction -------------------------
+call cpml_coeffs(ny, dy, dt, npoints_pml, d0_y, k_max, alpha_max, &
+            K_y, alpha_y, a_y, b_y, .FALSE.)
 
-    !---------- right edge
-      ! define damping profile at the grid points
-      abscissa_in_PML = xval - xoriginright ! Fixed being exactly on the edge
+call cpml_coeffs(ny, dy, dt, npoints_pml, d0_y, k_max, alpha_max, &
+            K_y_half, alpha_y_half, a_y_half, b_y_half, .TRUE.)
 
-      if (abscissa_in_PML >= 0.d0) then
-        abscissa_normalized = abscissa_in_PML / thickness_PML_x
-        d_x(i) = d0_x * abscissa_normalized**NPOWER
-        K_x(i) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NPOWER
-        alpha_x(i) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)
-      endif
+! ------------------------- damping in the Z direction-------------------------
 
-      ! define damping profile at half the grid points
-      abscissa_in_PML = xval + DX/2.d0 - xoriginright
-      if (abscissa_in_PML >= 0.d0) then
-        abscissa_normalized = abscissa_in_PML / thickness_PML_x
-        d_x_half(i) = d0_x * abscissa_normalized**NPOWER
-        K_x_half(i) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NPOWER
-        alpha_x_half(i) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)
-      endif
+call cpml_coeffs(nz, dz, dt, npoints_pml, d0_z, k_max, alpha_max, &
+            K_z, alpha_z, a_z, b_z, .FALSE.)
 
-    ! just in case, for -5 at the end
-    if (alpha_x(i) < 0.d0) alpha_x(i) = 0.d0
-    if (alpha_x_half(i) < 0.d0) alpha_x_half(i) = 0.d0
+call cpml_coeffs(nz, dz, dt, npoints_pml, d0_z, k_max, alpha_max, &
+            K_z_half, alpha_z_half, a_z_half, b_z_half, .TRUE.)
 
-    b_x(i) = exp(- (d_x(i) / K_x(i) + alpha_x(i)) * DT)
-    b_x_half(i) = exp(- (d_x_half(i) / K_x_half(i) + alpha_x_half(i)) * DT)
-
-    ! this to avoid division by z'ero outside the PML
-    if (abs(d_x(i)) > 1.d-6) then 
-      a_x(i) = d_x(i) * ( b_x(i) - 1.d0) / &
-        (K_x(i) * (d_x(i) + K_x(i) * alpha_x(i)))
-    endif
-
-    if (abs(d_x_half(i)) > 1.d-6) then 
-      a_x_half(i) = d_x_half(i) * (b_x_half(i) - 1.d0) / &
-        (K_x_half(i) * (d_x_half(i) + K_x_half(i) * alpha_x_half(i)))
-    endif
-
-  enddo
-
-
-
-  ! ------------------------ damping in the Y direction -------------------------
-
-  ! origin of the PML layer (position of right edge minus thickness, in meters)
-  yoriginout = dble(thickness_PML_y)
-  yoriginin = dy * dble(ny-1) - thickness_PML_y
-
-  do k = 1,NY
-    
-    ! abscissa of current grid point along the damping profile
-    yval = DY * dble(k-1)
-
-    !---------- bottom edge
-      ! define damping profile at the grid points
-      abscissa_in_PML = yoriginout - yval
-      if (abscissa_in_PML >= 0.d0) then
-        abscissa_normalized = abscissa_in_PML / thickness_PML_y
-        d_y(k) = d0_y * abscissa_normalized**NPOWER
-        K_y(k) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NPOWER
-        alpha_y(k) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)
-      endif
-
-      ! define damping profile at half the grid points
-      abscissa_in_PML = yoriginout - (yval + DY/2.d0)
-      if (abscissa_in_PML >= 0.d0) then
-        abscissa_normalized = abscissa_in_PML / thickness_PML_y
-        d_y_half(k) = d0_y * abscissa_normalized**NPOWER
-        K_y_half(k) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NPOWER
-        alpha_y_half(k) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)
-      endif
-
-
-    !---------- top edge
-      ! define damping profile at the grid points
-      abscissa_in_PML = yval - yoriginin 
-      if (abscissa_in_PML >= 0.d0) then
-        abscissa_normalized = abscissa_in_PML / thickness_PML_y
-        d_y(k) = d0_y * abscissa_normalized**NPOWER
-        K_y(k) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NPOWER
-        alpha_y(k) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)
-      endif
-
-      ! define damping profile at half the grid points
-      abscissa_in_PML = yval + DY/2.d0 - yoriginin
-      if (abscissa_in_PML >= 0.d0) then
-        abscissa_normalized = abscissa_in_PML / thickness_PML_y
-        d_y_half(k) = d0_y * abscissa_normalized**NPOWER
-        K_y_half(k) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NPOWER
-        alpha_y_half(k) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)
-      endif
-
-      ! just in case, for -5 at the end
-      if (alpha_y(k) < 0.d0) alpha_y(k) = 0.d0
-      if (alpha_y_half(k) < 0.d0) alpha_y_half(k) = 0.d0
-
-    b_y(k) = exp(- (d_y(k) / K_y(k) + alpha_y(k)) * DT)
-    b_y_half(k) = exp(- (d_y_half(k) / K_y_half(k) + alpha_y_half(k)) * DT)
-
-    if (abs(d_y(k)) > 1.d-6) then 
-      a_y(k) = d_y(k) * (b_y(k) - 1.d0) / &
-        (K_y(k) * (d_y(k) + K_y(k) * alpha_y(k) ) )
-    endif
-
-    if (abs(d_y_half(k)) > 1.d-6) then 
-      a_y_half(k) = d_y_half(k) * (b_y_half(k) - 1.d0) / &
-        (K_y_half(k) * (d_y_half(k) + K_y_half(k) * alpha_y_half(k) ) )
-    endif
-
-  enddo
-
-! ------------------------- damping in the z direction ------------------------
-
-! origin of the PML layer (position of right edge minus thickness, in meters)
-zoriginbottom = dble(thickness_PML_z)
-zorigintop = dz * dble(nz-1) - thickness_PML_z
-
-
-do j = 1,nz
-  ! abscissa of current grid point along the damping profile
-  zval = dz * dble(j-1)
-
-  !---------- bottom edge
-    ! define damping profile at the grid points
-    abscissa_in_PML = zoriginbottom - zval
-    if (abscissa_in_PML >= 0.d0) then
-      abscissa_normalized = abscissa_in_PML / thickness_PML_z
-      d_z(j) = d0_z * abscissa_normalized**NPOWER
-      K_z(j) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NPOWER
-      alpha_z(j) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)
-    endif
-
-    ! define damping profile at half the grid points
-    abscissa_in_PML = zoriginbottom - (zval + dz/2.d0)
-    if (abscissa_in_PML >= 0.d0) then
-      abscissa_normalized = abscissa_in_PML / thickness_PML_z
-      d_z_half(j) = d0_z * abscissa_normalized**NPOWER
-      K_z_half(j) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NPOWER
-      alpha_z_half(j) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)
-    endif
-
-
-  !---------- top edge
-    ! define damping profile at the grid points
-    abscissa_in_PML = zval - zorigintop
-    if (abscissa_in_PML >= 0.d0) then
-      abscissa_normalized = abscissa_in_PML / thickness_PML_z
-      d_z(j) = d0_z * abscissa_normalized**NPOWER
-      K_z(j) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NPOWER
-      alpha_z(j) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)
-    endif
-
-    ! define damping profile at half the grid points
-    abscissa_in_PML = zval + dz/2.d0 - zorigintop
-    if (abscissa_in_PML >= 0.d0) then
-      abscissa_normalized = abscissa_in_PML / thickness_PML_z
-      d_z_half(j) = d0_z * abscissa_normalized**NPOWER
-      K_z_half(j) = 1.d0 + (K_MAX_PML - 1.d0) * abscissa_normalized**NPOWER
-      alpha_z_half(j) = ALPHA_MAX_PML * (1.d0 - abscissa_normalized)
-    endif
-
-    ! just in case, for -5 at the end
-    if (alpha_z(j) < 0.d0) alpha_z(j) = 0.d0
-    if (alpha_z_half(j) < 0.d0) alpha_z_half(j) = 0.d0
-
-    b_z(j) = exp(- (d_z(j) / K_z(j) + alpha_z(j)) * DT)
-    b_z_half(j) = exp(- (d_z_half(j) / K_z_half(j) + alpha_z_half(j)) * DT)
-
-    if (abs(d_z(j)) > 1.d-6) then 
-      a_z(j) = d_z(j) * (b_z(j) - 1.d0) / &
-        (K_z(j) * (d_z(j) + K_z(j) * alpha_z(j)))
-    endif
-    if (abs(d_z_half(j)) > 1.d-6) then 
-      a_z_half(j) = d_z_half(j) * (b_z_half(j) - 1.d0) / &
-        (K_z_half(j) * (d_z_half(j) + K_z_half(j) * alpha_z_half(j)))
-    endif
-enddo
 
 
 
 ! Print the PML values to a file to check the values
-  open(unit = 15, file = "x_values25.txt")
+  open(unit = 15, file = "x_values_sub.txt")
   do i=1,nx
     write(15,"(E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3)") &
           a_x(i), a_x_half(i), b_x(i), b_x_half(i), alpha_x(i), alpha_x_half(i), K_x(i), K_x_half(i)
   enddo
   close(15)
 
-  open(unit = 16, file = "y_values25.txt")
+  open(unit = 16, file = "y_values_sub.txt")
   do i = 1,ny
     write(16,"(E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3)") &
           a_y(i), a_y_half(i), b_y(i), b_y_half(i), alpha_y(i), alpha_y_half(i), K_y(i), K_y_half(i)
   enddo
   close(16)
 
-  open(unit = 17, file = "z_values25.txt")
+  open(unit = 17, file = "z_values_sub.txt")
   do i = 1,nz
     write(17, "(E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3)")  &
           a_z(i), a_z_half(i), b_z(i), b_z_half(i), alpha_z(i), alpha_z_half(i), K_z(i), K_z_half(i)
   enddo
   close(17)
 
-! stop
+stop
 
 ! =============================== Forward Model ===============================
 ! initialize arrays
@@ -734,10 +626,10 @@ do it = 1,NSTEP
 
       enddo
     enddo
-  enddo
+  ! enddo
 
-    ! update sigmayz, y-direction is full nodes
-  do k = 1,nz-1
+  !   ! update sigmayz, y-direction is full nodes
+  ! do k = 1,nz-1
     do j = 1,ny-1
       do i = 1,nx
 
@@ -780,9 +672,9 @@ do it = 1,NSTEP
 
       enddo
     enddo
-  enddo
+  ! enddo
 
-  do k = 2,nz
+  ! do k = 2,nz
     do j = 1,ny-1
       do i = 1,nx-1
         ! ds6/dx, ds2/dy, ds4/dz
