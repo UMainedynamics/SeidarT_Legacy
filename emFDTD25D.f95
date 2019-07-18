@@ -115,7 +115,7 @@ subroutine material_rw(filename, image_data, readfile)
 implicit none
 
 integer,parameter :: dp = kind(0.d0)
-character(len=7) :: filename
+character(len=8) :: filename
 real(kind=dp),dimension(:,:) :: image_data
 logical :: readfile
 
@@ -180,7 +180,7 @@ do i=1,nx
     !---------- left edge
     abscissa_in_PML = xoriginleft - xval(i)
     if (abscissa_in_PML >= 0.d0) then
-        abscissa_normalized = abscissa_in_PML / dble(dx * npml)
+        abscissa_normalized = abscissa_in_PML / dble(dx * (npml-1.0) )
         sigma(i) = sig_max * abscissa_normalized**NP
         ! from Stephen Gedney's unpublished class notes for class EE699, lecture 8, slide 8-2
         kappa(i) = 1.d0 + (K_MAX - 1.d0) * abscissa_normalized**NP
@@ -191,7 +191,7 @@ do i=1,nx
     ! define damping profile at the grid points
     abscissa_in_PML = xval(i) - xoriginright
     if (abscissa_in_PML >= 0.d0) then
-      abscissa_normalized = abscissa_in_PML / dble(dx * npml)
+      abscissa_normalized = abscissa_in_PML / dble(dx * (npml - 1.0) )
       sigma(i) = sig_max * abscissa_normalized**NP
       kappa(i) = 1.d0 + (k_max - 1.d0) * abscissa_normalized**NP
       alpha(i) = alpha_max * (1.d0 - abscissa_normalized)**NPA
@@ -379,6 +379,7 @@ call material_rw('sigy.dat', sigmay, .TRUE.)
 call material_rw('sigz.dat', sigmaz, .TRUE.)
 
 
+
 ! ------------------------ Assign some constants -----------------------
 
 ! Assign the source location indices
@@ -538,24 +539,24 @@ do it = 1,NSTEP
       do j = 1,ny-1
       
         ! Values needed for the magnetic field updates
-        value_dEz_dy = ( Ez(i,j+1,k) - Ez(i,j,k) )/dy
+        value_dEz_dy = ( Ez(i,j,k) - Ez(i,j+1,k) )/dy
         memory_dEz_dy(i,j,k) = b_y_half(j) * memory_dEz_dy(i,j,k) + a_y_half(j) * value_dEz_dy
         value_dEz_dy = value_dEz_dy/ K_y_half(j) + memory_dEz_dy(i,j,k)
 
         ! The rest of the equation needed for agnetic field updates
         value_dEy_dz = ( Ey(i,j,k+1) - Ey(i,j,k) )/dz
-        memory_dEy_dz(i,j,k) = b_z(k) * memory_dEy_dz(i,j,k) + a_z(k) * value_dEy_dz
-        value_dEy_dz = value_dEy_dz/ K_z(k) + memory_dEy_dz(i,j,k)
+        memory_dEy_dz(i,j,k) = b_z_half(k) * memory_dEy_dz(i,j,k) + a_z_half(k) * value_dEy_dz
+        value_dEy_dz = value_dEy_dz/ K_z_half(k) + memory_dEy_dz(i,j,k)
 
         ! Now update the Magnetic field
         Hx(i,j,k) = daHx*Hx(i,j,k) + dbHx*( value_dEy_dz + value_dEz_dy )
 
       enddo
     enddo  
-  enddo
+  ! enddo
 
-    ! Update Hy
-  do k = 1,nz-1
+  !   ! Update Hy
+  ! do k = 1,nz-1
     do i = 1,nx-1      
       do j = 1,ny-1
       
@@ -566,8 +567,8 @@ do it = 1,NSTEP
 
         ! The rest of the equation needed for agnetic field updates
         value_dEz_dx = ( Ez(i+1,j,k) - Ez(i,j,k) )/dx
-        memory_dEz_dx(i,j,k) = b_x_half(i) * memory_dEz_dx(i,j,k) + a_x_half(i) * value_dEz_dx
-        value_dEz_dx = value_dEz_dx/ K_x_half(i) + memory_dEz_dx(i,j,k)
+        memory_dEz_dx(i,j,k) = b_x(i) * memory_dEz_dx(i,j,k) + a_x(i) * value_dEz_dx
+        value_dEz_dx = value_dEz_dx/ K_x(i) + memory_dEz_dx(i,j,k)
 
         ! Now update the Magnetic field
         Hy(i,j,k) = daHy*Hy(i,j,k) + dbHy*( value_dEz_dx + value_dEz_dy )
@@ -617,18 +618,18 @@ do it = 1,NSTEP
         Ex(i,j,k) = caEx(i,k)*Ex(i,j,k) + cbEx(i,k)*(value_dHz_dy + value_dHy_dz) 
       enddo
     enddo
-  enddo
+  ! enddo
 
-  ! Compute the differences in the y-direction
-  do k = 2,nz-1
+  ! ! Compute the differences in the y-direction
+  ! do k = 2,nz-1
     do i = 2,nx-1 
       do j = 1,ny-1 
         ! Update the Ey field
-        value_dHz_dx = ( Hz(i,j,k) - Hz(i,j-1,k) )/dx ! this is ny-1 length vector
+        value_dHz_dx = ( Hz(i-1,j,k) - Hz(i,j,k) )/dx ! this is ny-1 length vector
         memory_dHz_dx(i,j,k) = b_x_half(i) * memory_dHz_dx(i,j,k) + a_x_half(i) * value_dHz_dx
         value_dHz_dx = value_dHz_dx/K_x_half(i) + memory_dHz_dx(i,j,k)
 
-        value_dHx_dz = ( Hx(i,j,k) - Hx(i,j-1,k) )/dz ! this is ny-1 length vector
+        value_dHx_dz = ( Hx(i,j,k) - Hx(i,j,k-1) )/dz ! this is ny-1 length vector
         memory_dHx_dz(i,j,k) = b_z_half(k) * memory_dHx_dz(i,j,k) + a_z_half(k) * value_dHx_dz
         value_dHx_dz = value_dHx_dz/K_z_half(k) + memory_dHx_dz(i,j,k)
 
@@ -647,8 +648,8 @@ do it = 1,NSTEP
         value_dHx_dy = value_dHx_dy/K_y_half(j) + memory_dHx_dy(i,j,k)
 
         value_dHy_dx = ( Hy(i,j,k) - Hy(i-1,j,k) )/dx
-        memory_dHy_dx(i,j,k) = b_x(i) * memory_dHy_dx(i,j,k) + a_x(i) * value_dHy_dx
-        value_dHy_dx = value_dHy_dx/K_x(i) + memory_dHy_dx(i,j,k)
+        memory_dHy_dx(i,j,k) = b_x_half(i) * memory_dHy_dx(i,j,k) + a_x_half(i) * value_dHy_dx
+        value_dHy_dx = value_dHy_dx/K_x_half(i) + memory_dHy_dx(i,j,k)
         
         Ez(i,j,k) = caEz(i,k)*Ez(i,j,k) + cbEz(i,k)*(value_dHx_dy + value_dHy_dx)
       enddo
@@ -662,9 +663,11 @@ do it = 1,NSTEP
 
   source_term = factor*exp(-(1.0d0*pi*f0*(t-t0) )**2.0d0 )*sin(2.0d0*pi*f0*(t-t0) )
 
-  force_x = sin( ANGLE(1)* DEGREES_TO_RADIANS ) * cos( ANGLE(2)* DEGREES_TO_RADIANS ) * source_term
-  force_y = sin( ANGLE(1)* DEGREES_TO_RADIANS ) * sin( ANGLE(2)* DEGREES_TO_RADIANS ) * source_term
-  force_z = cos( ANGLE(1)* DEGREES_TO_RADIANS ) * source_term
+  force_x = sin(ANGLE(1) * DEGREES_TO_RADIANS) * source_term
+  force_y = cos(ANGLE(1) * DEGREES_TO_RADIANS) * source_term
+  ! force_x = sin( ANGLE(1)* DEGREES_TO_RADIANS ) * cos( ANGLE(2)* DEGREES_TO_RADIANS ) * source_term
+  ! force_y = sin( ANGLE(1)* DEGREES_TO_RADIANS ) * sin( ANGLE(2)* DEGREES_TO_RADIANS ) * source_term
+  ! force_z = cos( ANGLE(1)* DEGREES_TO_RADIANS ) * source_term
 
   Ex(isource,jsource,ksource) = Ex(isource,jsource,ksource) + force_x !* DT / epsilonx(i,j)
   Ey(isource,jsource,ksource) = Ey(isource,jsource,ksource) + force_y !* DT / epsilony(i,j) !* cbEy(ISOURCE,JSOURCE) !* DT / (epsilony(i,j) )

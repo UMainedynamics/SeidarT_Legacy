@@ -568,7 +568,7 @@ do it = 1,NSTEP
     do j = 2,NY
       do i = 1,NX-1
 
-        value_dvx_dx = (vx(i+1,j,k) - vx(i,j,k) ) / DX
+        value_dvx_dx = (vx(i+1,j,k) - vx(i,j,k) ) / dx
         value_dvy_dy = (vy(i,j,k) - vy(i,j-1,k) ) / dy
         value_dvz_dz = (vz(i,j,k) - vz(i,j,k-1) ) / dz
 

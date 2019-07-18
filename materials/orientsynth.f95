@@ -81,47 +81,45 @@ euler_axis_rot = transpose( rotator(euler_avg(1), euler_avg(2), euler_avg(3) ) )
 ! start the counter
 rownum=1
 do while( rownum .LE. npts)
-	! Get a random number 
-	call random_number(RND) 
+    ! Get a random number 
+    call random_number(RND) 
 
-	! Just for asthetics lets do this calculation
-	angle = acos(2.0*RND-1.0)
+    ! Just for asthetics lets do this calculation
+    angle = acos(2.0*RND-1.0)
 
 	if  ( (angle(1)<=anglemax(1) ) .AND. (abs( angle(1) )>=anglemin(1) ) ) then
+        call random_number(RND1)
+        call random_number(RND2)
 
-		call random_number(RND1)
-		call random_number(RND2)
+        ! Assign the angles then create the rotation matrix 
+        euler_dev(:) = (/ RND1*2.0*pi, angle, RND2*2.0*pi /)
+        euler_dev_rot = transpose( rotator( euler_dev(1), euler_dev(2), euler_dev(3) ) )
 
-		! Assign the angles then create the rotation matrix 
-		euler_dev(:) = (/ RND1*2.0*pi, angle, RND2*2.0*pi /)
-		euler_dev_rot = transpose( rotator( euler_dev(1), euler_dev(2), euler_dev(3) ) )
-
-		! Matrix multiplication of the two rotation matrices
-		composite_rot = matmul(euler_axis_rot, euler_dev_rot)
+        ! Matrix multiplication of the two rotation matrices
+        composite_rot = matmul(euler_axis_rot, euler_dev_rot)
 
 		if ( composite_rot(3,3) .GT. 0.0) then 
-			end_orientation(rownum,:) = -composite_rot(:,3)
+            end_orientation(rownum,:) = -composite_rot(:,3)
 		else
-			end_orientation(rownum,:) = composite_rot(:,3)
+            end_orientation(rownum,:) = composite_rot(:,3)
 		end if
 
-
-		! Assign the euler_list values
-		euler_list(rownum,2) = acos( composite_rot(3,3) )
+        ! Assign the euler_list values
+        euler_list(rownum,2) = acos( composite_rot(3,3) )
 
 		if( composite_rot(3,3) .LT. 0.0 ) then 
-			euler_list(rownum,1) = pi + atan2(-composite_rot(1,3),&
-				-composite_rot(2,3) )
-			euler_list(rownum,3) = atan2(-composite_rot(3,1), &
-				composite_rot(3,2) )
+            euler_list(rownum,1) = pi + atan2(-composite_rot(1,3),&
+                -composite_rot(2,3) )
+            euler_list(rownum,3) = atan2(-composite_rot(3,1), &
+                composite_rot(3,2) )
 		else 
-			euler_list(rownum,1) = atan2(composite_rot(1,3), &
-				composite_rot(2,3) )
-			euler_list(rownum,3) = atan2(composite_rot(3,1), &
-				-composite_rot(3,2) )
+            euler_list(rownum,1) = atan2(composite_rot(1,3), &
+                composite_rot(2,3) )
+            euler_list(rownum,3) = atan2(composite_rot(3,1), &
+                -composite_rot(3,2) )
 		end if 
 
-		rownum = rownum + 1
+        rownum = rownum + 1
 	end if
 end do 
 
@@ -192,10 +190,6 @@ orten(2,:) = (/ sum(ortho_comp(:,5) ), sum(ortho_comp(:,7) ), sum(ortho_comp(:,8
 orten(3,:) = (/ sum(ortho_comp(:,6) ), sum(ortho_comp(:,8) ), sum(ortho_comp(:,9) ) /)
 
 orten = orten/npts 
-
-! print*,orten(1,1),orten(1,2),orten(1,3)
-! print*,orten(2,1),orten(2,2),orten(2,3)
-! print*,orten(3,1),orten(3,2),orten(3,3)
 
 end function orten
 

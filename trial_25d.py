@@ -589,11 +589,11 @@ if electromag.exit_status == 0 and not electromag.compute_coefficients:
 			print('Running 2.5D model')
 
 
-			em25d.electromagfdtd25d.permittivity_write(domain.geometry+1, seismic.tensor_coefficients,
+			em25d.electromagfdtd25d.permittivity_write(domain.geometry+1, electromag.tensor_coefficients,
 				domain.cpml, domain.nx, domain.nz)
 			em25d.electromagfdtd25d.electromag_cpml_25d(nx, ny, nz,
 				domain.dx, domain.dy, domain.dz, domain.cpml, 
-				src, seismic.f0, seismic.time_steps, force)
+				src, electromag.f0, electromag.time_steps, force)
 		else:
 			em2d.electromagfdtd2d.doall(domain.geometry+1, electromag.tensor_coefficients, 
 			domain.dx, domain.dz, domain.cpml, src, electromag.f0, 
@@ -642,11 +642,11 @@ elif electromag.exit_status == 0 and electromag.compute_coefficients and materia
 			print('Running 2.5D model')
 
 
-			em25d.electromagfdtd25d.permittivity_write(domain.geometry+1, seismic.tensor_coefficients,
+			em25d.electromagfdtd25d.permittivity_write(domain.geometry+1, electromag.tensor_coefficients,
 				domain.cpml, domain.nx, domain.nz)
 			em25d.electromagfdtd25d.electromag_cpml_25d(nx, ny, nz,
 				domain.dx, domain.dy, domain.dz, domain.cpml, 
-				src, seismic.f0, seismic.time_steps, force)
+				src, electromag.f0, electromag.time_steps, force)
 		else:
 			em2d.electromagfdtd2d.doall(domain.geometry+1, electromag.tensor_coefficients, 
 			domain.dx, domain.dz, domain.cpml, src, electromag.f0, 
