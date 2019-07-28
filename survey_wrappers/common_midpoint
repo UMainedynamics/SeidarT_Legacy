@@ -16,7 +16,7 @@ INPUT
 	-d, --delta		Source and reciever step length (meters); total distance
 					between the source and reciever is 2*delta*i + 2*offset.
 	-s, --seismic 	(OPTIONAL) Specifier to run seismic common offset 
-
+	-p, --plot		(OPTIONAL) 
 '
 
 wild='.*'
@@ -49,8 +49,38 @@ while [[ $# -gt 0 ]]; do
 		-p|--plot)
 		plot=true
 		shift
+		;;
+		-h|--help)
+		help=true
+		shift
 	esac
 done
+
+# ============================== Print Help Menu ============================== 
+if [ $help ]; then
+
+	echo
+	echo ' COMMON_MIDPOINT is a wrapper script to create a common midpoint survey using'
+	echo ' the SeidarT programs. The survey is along the x-direction, but can be extended'
+	echo ' to other directions. The midpoint is initialized from the x, y, and z locations'
+	echo ' provided from the source location in the project file.'
+	echo 
+	echo ' INPUT'
+	echo '	-f, --project 	Project file path'
+	echo '	-t, --total	The terminal distance between the source and reciever. '
+	echo '	-o, --offset    The initial source and reciever offset from the midpoint'
+	echo '			given in (+/- meters). A negative value means that the'
+	echo '			source is on the lookers left of the midpoint. The total'
+	echo '			source and reciever distance is 2*offset.'
+	echo '	-d, --delta	Source and reciever step length (meters); total distance'
+	echo '			between the source and reciever is 2*delta*i + 2*offset.'
+	echo ' 	-s, --seismic 	(OPTIONAL) Specifier to run seismic common offset' 
+	echo '	-p, --plot	(OPTIONAL) Show plot. Default is none'
+	echo 
+
+	exit 1
+fi
+
 
 # ================================ Error Checks ===============================
 # A quick check to make sure required arguments are given

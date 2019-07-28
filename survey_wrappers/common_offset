@@ -62,13 +62,13 @@ if [ $help ]; then
 	echo ' other directions.'
 	echo 
 	echo ' INPUT'
-	echo '  -f, --project 	Project file path'
-	echo '	-F, --final	    The final coordinates of the source. Requires 3'
-	echo ' 				    arguments  x y z'
+	echo '	-f, --project 	Project file path'
+	echo '	-F, --final	The final coordinates of the source. Requires 3'
+	echo ' 			arguments  x y z'
 	echo '	-o, --offset    Source and reciever offset distance (meters)'
-	echo '	-d, --delta		Source and reciever step length (meters)'
+	echo '	-d, --delta	Source and reciever step length (meters)'
 	echo ' 	-s, --seismic 	(OPTIONAL) Specifier to run seismic common offset' 
-	echo '	-p, --plot 		(OPTIONAL) Show plot. Default is none'
+	echo '	-p, --plot	(OPTIONAL) Show plot. Default is none'
 	echo 
 
 	exit 1
