@@ -1,21 +1,22 @@
 #!/bin/bash
 
 : '
-WIDE_ANGLE is a wrapper script to create a common offset survey using the
-SeidarT programs. The survey is along the x-direction, but can be extended to 
-other directions.
+WIDE_ANGLE is a wrapper script to create a wide angle survey using the
+SeidarT programs. For 2D, only the x and z coordinates are used and y is 
+ignored. 2.5D and 3D surveys will incorporate all three coordinates
 
 INPUT
 	-f, --project 	Project file path
-	-I, --initial 	The inital coordinates of the recievers. Requires 3 
+	-I, --initial 	The inital coordinates of the recievers in meters. Requires 3 
 					arguments x y z
-	-F, --final		The final coordinates of the source. Requires 3
-					arguments  x y z
+	-F, --final		The final coordinates of the recievers in meters. Requires 3
+					arguments  x y z 
 	-d, --delta		Reciever spacing (meters)
 	-g, --gif		Whether to create the gif
 	-s, --seismic 	(OPTIONAL) Specifier to run model; s-seismic, e-electromag,
 					b-both seismic and electromag, n-none (default) 
 
+	-m, --metafile	the metafile path
 '
 
 # ------------------------------ Input Arguments ------------------------------

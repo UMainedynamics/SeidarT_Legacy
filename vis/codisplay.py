@@ -10,7 +10,7 @@ import matplotlib.image as mpimg
 
 # -------------------------- Command Line Arguments ---------------------------
 parser = argparse.ArgumentParser(description="""CODISPLAY reads the common 
-	survey file created from common_offset.sh. The """ )
+	offset or midpoint survey file created from common_offset.sh. The """ )
 
 parser.add_argument( 'meta_file', nargs=1, type=str,
 	help='File path that contains the survey metadata.', )
@@ -112,14 +112,14 @@ else:
 	im = ax.imshow(dat, cmap = 'Greys')
 
 # Label the x axis
-plt.xticks(ticks = dist_locations, labels = dist_labels.astype(str) )
+plt.xticks(dist_locations, dist_labels.astype(str) )
 ax.set_xlabel(r"Source-Reciever Distance (m)")
 ax.xaxis.tick_top()
 ax.xaxis.set_label_position('top')
 
 # Label the y axis
 ax.set_ylabel(r"Two way travel time (s)")
-plt.yticks(ticks=time_locations, labels = time_labels.astype(str) )
+plt.yticks(time_locations, time_labels.astype(str) )
 
 # Other figure handle operations
 ax.set_aspect(aspect = exaggeration)

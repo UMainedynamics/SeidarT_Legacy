@@ -47,8 +47,34 @@ while [[ $# -gt 0 ]]; do
 		-p|--plot)
 		plot=true
 		shift
+		;;
+		-h|--help)
+		help=true
+		shift
 	esac
 done
+
+# ============================== Print Help Menu ============================== 
+if [ $help ]; then
+	echo
+	echo ' COMMON_OFFSET.SH is a wrapper script to create a common offset survey using the'
+	echo ' SeidarT programs. The survey is along the x-direction, but can be extended to '
+	echo ' other directions.'
+	echo 
+	echo ' INPUT'
+	echo '  -f, --project 	Project file path'
+	echo '	-F, --final	    The final coordinates of the source. Requires 3'
+	echo ' 				    arguments  x y z'
+	echo '	-o, --offset    Source and reciever offset distance (meters)'
+	echo '	-d, --delta		Source and reciever step length (meters)'
+	echo ' 	-s, --seismic 	(OPTIONAL) Specifier to run seismic common offset' 
+	echo '	-p, --plot 		(OPTIONAL) Show plot. Default is none'
+	echo 
+
+	exit 1
+fi
+
+
 
 # ================================ Error Checks ===============================
 # A quick check to make sure required arguments are given
@@ -130,8 +156,8 @@ rz=$z
 
 # Create the file that contains metadata of the survey
 metafile=$base.$time_stamp.meta.txt
-istr=initial_source: 
-fstr=final_source:
+istr=initial_position: 
+fstr=final_position:
 touch $metafile
 echo project_file: $prjfile > $metafile
 echo survey_type: co >> $metafile

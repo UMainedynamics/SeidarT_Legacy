@@ -18,7 +18,7 @@ contains
 
 !------------------------------------------------------------------------------
 subroutine fabric_ortosynth(trend, plunge, anglemin, anglemax, npts, &
-	euler_list, orientation_tensor)
+    euler_list, orientation_tensor)
 ! FABRIC_ORTOSYNTH computes the euler angles of a fabric from its statistical
 ! description trend, plunge, anglemin and anglemax. Angles are input as 
 ! degrees. The number of points (npts) corresponds to the number of equal sized 
@@ -87,7 +87,7 @@ do while( rownum .LE. npts)
     ! Just for asthetics lets do this calculation
     angle = acos(2.0*RND-1.0)
 
-	if  ( (angle(1)<=anglemax(1) ) .AND. (abs( angle(1) )>=anglemin(1) ) ) then
+    if  ( (angle(1)<=anglemax(1) ) .AND. (abs( angle(1) )>=anglemin(1) ) ) then
         call random_number(RND1)
         call random_number(RND2)
 
@@ -98,29 +98,29 @@ do while( rownum .LE. npts)
         ! Matrix multiplication of the two rotation matrices
         composite_rot = matmul(euler_axis_rot, euler_dev_rot)
 
-		if ( composite_rot(3,3) .GT. 0.0) then 
+        if ( composite_rot(3,3) .GT. 0.0) then 
             end_orientation(rownum,:) = -composite_rot(:,3)
-		else
+        else
             end_orientation(rownum,:) = composite_rot(:,3)
-		end if
+        end if
 
         ! Assign the euler_list values
         euler_list(rownum,2) = acos( composite_rot(3,3) )
 
-		if( composite_rot(3,3) .LT. 0.0 ) then 
+        if( composite_rot(3,3) .LT. 0.0 ) then 
             euler_list(rownum,1) = pi + atan2(-composite_rot(1,3),&
                 -composite_rot(2,3) )
             euler_list(rownum,3) = atan2(-composite_rot(3,1), &
                 composite_rot(3,2) )
-		else 
+        else 
             euler_list(rownum,1) = atan2(composite_rot(1,3), &
                 composite_rot(2,3) )
             euler_list(rownum,3) = atan2(composite_rot(3,1), &
                 -composite_rot(3,2) )
-		end if 
+        end if 
 
         rownum = rownum + 1
-	end if
+    end if
 end do 
 
 

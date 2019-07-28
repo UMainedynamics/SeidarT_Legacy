@@ -144,8 +144,8 @@ total_offset=`echo "$sign*($xs - $xr)" | bc -l`
 
 # Create the file that contains metadata of the survey
 metafile=$base.$time_stamp.meta.txt
-istr=initial_source: 
-fstr=final_source:
+istr=initial_position: 
+fstr=final_position:
 touch $metafile
 echo project_file: $prjfile > $metafile
 echo survey_type: cmp >> $metafile

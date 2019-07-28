@@ -24,11 +24,15 @@ parser.add_argument( '-o', '--project_file', nargs=1, type=str, required = False
 	help = """name of output file path with extension .prj and excluding 
 				the full path directory""")
 
+parser.add_argument( 'm', '--metafile', nargs=1, type = str, required = False,
+	help = """name of the metafile template that will be produced corresponding to the
+	project. Default is NoneType which will not return a file. """, default = None)
 
 # Get the arguments
 args = parser.parse_args()
 image_file = ''.join(args.image_file)
 project_file = ''.join(args.project_file)
+meta_file = ''.join(args.metafile)
 
 new_line = '\n'
 # ------------------------ Some Necessary Definitions -------------------------
@@ -68,7 +72,7 @@ def image2int(imfilename):
 
 # -------------------------------- Add a header -------------------------------
 header_comment = """ 
-# This is a project file template for the SEISART software. In order to run the
+# This is a project file template for the SEIDART software. In order to run the
 # model for seismic, electromagnetic or both, the required inputs must be 
 #
 # Domain Input Values:
@@ -245,5 +249,50 @@ with open(project_file, 'a') as prj:
 
 
 
-# -------------------------- Optional Arguments ---------------------------
-# comm = '# The optional arguments'
+# ------------------- Write Additional Survey File Tempates -------------------
+meta_header = """
+# Options for the following fields
+# project_file - (STRING) the file path to the project file
+# survey_type - (STRING) the type of survey you would like to model. Available 
+#				options are 'co' = common offset, 'cmp' = common midpoint, 
+#				'wa' = wide angle. 	
+#
+# The following inputs change given the survey type. There are additional 
+# values that need to be passed in the wrapper
+#
+# delta (FLOAT) 	
+#					'wa' the spacing between each reciever
+#					'cmp' the change in the source and the reciever distance from
+#						the common midpoint (given below)
+#					'co' the shift in the same direction of the source and
+#						reciever. The spacing between the source and reciever 
+#						remains constant so they are moved in the same direction
+#
+# initial_position (FLOAT)
+#					'wa' the initial reciever location along the array in meters
+#					'cmp' the reciever location
+#					'co'  the reciever location 
+#
+# final_position (FLOAT) 
+#					'wa' the final reciever location along the array in meters
+#					'cmp' this is the same value as initial position; moot
+#					'co' 			'' ''			''	''
+#
+"""
+
+if metafile:
+	with open(metafile, 'w') as meta:
+		meta.write(meta_header + new_line)
+		meta.write('project_file: ' + project_file + new_line)
+		meta.write('survey_type: wa' + new_line)
+		meta.write('delta: 1' + new_line)
+		meta.write('initial_position: 0  0  0' + new_line)
+		meta.write('final_position: ' + str(np.shape(im)[0]) + '0 ' + str(np.shape(im)[0]) + new_line )
+		meta.write('reciever_file: None' + new_line)
+		meta.write('source_file: None' )
+
+
+
+
+
+

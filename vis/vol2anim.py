@@ -91,6 +91,22 @@ class Frame:
 		self.background = []
 		self.source_location = []
 
+	def MakeBackground25(self, imfile):
+
+		# If this is a 2.5D image we must extrude the 2D model into the third dimension
+		if dim == '2.5':
+			# Read the image
+			im = mpimg.imread(imfile)
+			self.background = np.zeros( (nz, nx, ny ) )
+			
+			for i in range(0, ny):
+				self.background[:,:,i] = im 
+
+		if dim == '3': # We'll construct 3D backgrounds later
+			pass
+
+
+
 	def plot(self, image, label='', extent=None ):
 
 		plt_im = plt.imshow(image,cmap='seismic', animated=True, extent=(0, (nx), (nz), 0))
@@ -171,14 +187,11 @@ for line in f:
 f.close()
 
 # --------------------------------- Read model --------------------------------
-# If this is a 2.5D image we must extrude the 2D model into the third dimension
-if dim == '2.5':
-	# Read the image
-	im = mpimg.imread(imfile)
-	Frame.background = np.zeros( (nz, nx, ny ) )
-	for i in range(0, ny):
-		Frame.background[:,:,i] = im 
 
+Frame.MakeBackground25(imfile)
+
+
+# Plot the background
 
 
 # ------------------------------ Plotting Inputs ------------------------------
@@ -203,3 +216,5 @@ else:
 	sz = (sz/dz + cpml+1)
 	Frame.source_location = np.array([sx, sy, sz])
 	dt = sdt
+
+

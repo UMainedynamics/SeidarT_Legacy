@@ -204,7 +204,6 @@ array = Array()
 # Get the arguments
 args = parser.parse_args()
 meta_file = ''.join(args.meta_file)
-
 array.channel = ''.join(args.channel)
 
 
@@ -237,6 +236,7 @@ for line in f:
 	 	array.final_position = np.asarray( temp[1:]).astype(float)
 
 f.close()
+
 
 # --------------------------- Query the project file --------------------------
 #!!!!!! Add the 2.5D components later
