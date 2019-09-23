@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# From the set of image outputs, we can build a gif. The images will be in csv 
+# From the set of image outputs, we can build a gif. The images will be in csv
 # or fortran unformatted binary
 
 
@@ -13,33 +13,33 @@ import matplotlib.animation as anim
 from scipy.io import FortranFile
 
 # -------------------------- Command Line Arguments ---------------------------
-parser = argparse.ArgumentParser(description="""This program builds a gif from 
-	the set of image output of the FDTD modeling. The images can be in csv or 
-	unformatted Fortran binary, however, the program runs faster to use the 
+parser = argparse.ArgumentParser(description="""This program builds a gif from
+	the set of image output of the FDTD modeling. The images can be in csv or
+	unformatted Fortran binary, however, the program runs faster to use the
 	latter. """ )
 
 parser.add_argument( 'project_file', nargs=1, type=str,
 						help='the full file path for the project file')
 
 parser.add_argument( '-c', '--channel', nargs = 1, type = str, required = True,
-	help = """Specify whether a particular channel is going to be used. The 
-	available channels are Ex, Ez, Vx, and Vz for the electric field and 
+	help = """Specify whether a particular channel is going to be used. The
+	available channels are Ex, Ez, Vx, and Vz for the electric field and
 	seismic velocities, respectively.""")
 
-parser.add_argument( '-f', '--frames_per_second', nargs = 1, type = int, 
+parser.add_argument( '-f', '--frames_per_second', nargs = 1, type = int,
 	required = False, default = 1, help = """The number of frames per second
 	to build the GIF.""")
 
-parser.add_argument( '-n', '--num_steps', nargs = 1, type = int, 
+parser.add_argument( '-n', '--num_steps', nargs = 1, type = int,
 	required = True, help = """The time step interval between the images that
 	are going to be used. Every time step is written to file which means that
-	we can take any equally spaced images to create the gif with an 
-	appropriate resolution, time to compute, and file size. For example, 
-	n=20 means that every 20 images will be used thus significantly reducing 
+	we can take any equally spaced images to create the gif with an
+	appropriate resolution, time to compute, and file size. For example,
+	n=20 means that every 20 images will be used thus significantly reducing
 	how long it takes to compile the gif.""")
 
 parser.add_argument( '-t', '--threshold', nargs = 1, type = float,
-	required = False, default=[0.0001], help = """Set values to zero when they 
+	required = False, default=[0.0001], help = """Set values to zero when they
 	below a specific threshold. Default = 0.0001""")
 
 parser.add_argument( '-o', '--output', nargs = 1, type = int, required = False,
@@ -54,7 +54,7 @@ num_steps = args.num_steps[0]
 threshold = args.threshold[0]
 output_format = args.output[0]
 # ===
-# ----------------------- Definitions ----------------------- 
+# ----------------------- Definitions -----------------------
 
 class AnimatedGif:
 	def __init__(self, size=(640,480) ):
@@ -68,21 +68,21 @@ class AnimatedGif:
 		self.source_location = []
 
 	def add(self, image, label='', extent=None ):
-
-		plt_im = plt.imshow(image,cmap='seismic', animated=True, extent=(0, (nx), (nz), 0))
-		plt_bg = plt.imshow(self.background,alpha = 0.3, extent=extent, animated = True)
-		plt.scatter(self.source_location[0], self.source_location[1], 
-			marker = '*', s = 30, linewidths = 1, 
+                bound = np.max([abs(np.min(image)),abs(np.max(image))])
+                plt_im = plt.imshow(image,cmap='seismic', animated=True, extent=(0, (nx), (nz), 0),vmin=-bound,vmax=bound)
+                plt_bg = plt.imshow(self.background,alpha = 0.3, extent=extent, animated = True)
+                plt.scatter(self.source_location[0], self.source_location[1],
+			marker = '*', s = 30, linewidths = 1,
 			edgecolor = (0.2, 0.2, 0.2, 1 ) )
-		
-		plt_txt = plt.text(extent[0] + 20, extent[2] + 20, label, color='red') # Lower left corner
-		self.images.append([plt_im, plt_bg, plt_txt])
+
+                plt_txt = plt.text(extent[0] + 20, extent[2] + 20, label, color='red') # Lower left corner
+                self.images.append([plt_im, plt_bg, plt_txt])
 
 	def save(self, filename, frame_rate = 50):
 		animation = anim.ArtistAnimation(self.fig, self.images, interval = frame_rate, blit = True)
-		
+
 		if output_format == 1:
-			animation.save(filename, dpi = 200) 
+			animation.save(filename, dpi = 200)
 		else:
 			animation.save(filename, dpi = 200, writer = 'imagemagick')
 
@@ -148,7 +148,7 @@ extent = (cpml, (nx-cpml), (nz-cpml), cpml)
 
 
 # Create the gif object
-animated_gif = AnimatedGif( size=(nx, nz) ) 
+animated_gif = AnimatedGif( size=(nx, nz) )
 
 # Load the model image
 # animated_gif.background = np.zeros( [nz, nx, 3] )
@@ -159,7 +159,7 @@ animated_gif.background = mpimg.imread(imfile)
 if channel == 'Ex' or channel == 'Ez':
 	ex = (ex/dx + cpml+1)
 	ez = (ez/dz + cpml+1)
-	animated_gif.source_location = np.array([ex, ez]) 
+	animated_gif.source_location = np.array([ex, ez])
 	dt = edt
 else:
 	sx = (sx/dx + cpml+1)
@@ -170,14 +170,14 @@ else:
 print('Creating GIF.')
 
 # Proceed accordingly to the channel flag
-	
+
 # Check if the .dat files are still around
 files = glob.glob(channel + '*.dat')
 
 ind = 0
 files.sort()
 
-# We'll start counting with the first frame 
+# We'll start counting with the first frame
 n=num_steps
 
 for fn in files:
