@@ -10,29 +10,30 @@ import numpy as np
 import matplotlib.image as mpimg
 
 # -------------------------- Command Line Arguments ---------------------------
-parser = argparse.ArgumentParser(description="""The seisarT software requires a 
-	.PNG image that is used to construct the model domain for seismic and 
-	electromagnetic wave propagation. Given the image file, a project file 
-	will be constructed which contains all the necessary parameters to be 
+parser = argparse.ArgumentParser(description="""The seisarT software requires a
+	.PNG image that is used to construct the model domain for seismic and
+	electromagnetic wave propagation. Given the image file, a project file
+	will be constructed which contains all the necessary parameters to be
 	read in to the finite differences time domain modeling schemes.""" )
 
-parser.add_argument( '-i', '--image_file', nargs=1, type=str, required = True, 
+parser.add_argument( '-i', '--image_file', nargs=1, type=str, required = True,
 						help='the full file path for the image', default=None)
 
 parser.add_argument( '-o', '--project_file', nargs=1, type=str, required = False,
 	default = 'jordan_downs.prj',
-	help = """name of output file path with extension .prj and excluding 
+	help = """name of output file path with extension .prj and excluding
 				the full path directory""")
 
-parser.add_argument( 'm', '--metafile', nargs=1, type = str, required = False,
-	help = """name of the metafile template that will be produced corresponding to the
+parser.add_argument( '-m', '--meta_file', nargs=1, type = str, required = False,
+	help = """name of the metadata file template that will be produced corresponding to the
 	project. Default is NoneType which will not return a file. """, default = None)
 
 # Get the arguments
 args = parser.parse_args()
 image_file = ''.join(args.image_file)
 project_file = ''.join(args.project_file)
-meta_file = ''.join(args.metafile)
+if args.meta_file is not None:
+    meta_file = ''.join(args.meta_file)
 
 new_line = '\n'
 # ------------------------ Some Necessary Definitions -------------------------
@@ -43,10 +44,10 @@ def image2int(imfilename):
 
     # Convert RGB to a single value
     rgb_int = np.array(65536*img[:,:,0] +  255*img[:,:,1] + img[:,:,2])
-    
+
     # Get the unique values of the image
     rgb_uni = np.unique(rgb_int)
-    
+
     # We want the unique rgb values too
     rgb = np.zeros( [len(rgb_uni), 3] )
 
@@ -60,7 +61,7 @@ def image2int(imfilename):
     for ind in range(0, len(rgb_uni) ):
     	rgb_ind = np.reshape(rgb_int == rgb_uni[ind], [np.prod(rgb_int.shape)])
     	rgb[ind,:] = (img_vect[rgb_ind,:])[0,:]
-    	rgb_int[ rgb_int == rgb_uni[ind] ] = ind	
+    	rgb_int[ rgb_int == rgb_uni[ind] ] = ind
 
 
     if np.max(rgb) <= 1.0:
@@ -71,50 +72,50 @@ def image2int(imfilename):
 
 
 # -------------------------------- Add a header -------------------------------
-header_comment = """ 
+header_comment = """
 # This is a project file template for the SEIDART software. In order to run the
-# model for seismic, electromagnetic or both, the required inputs must be 
+# model for seismic, electromagnetic or both, the required inputs must be
 #
 # Domain Input Values:
 #	dim 		- STR; either '2' or '2.5' but default is '2'
-#	nx,ny,nz 	- INT; the dimensions of the image. If dim = 2.5, and ny is 
+#	nx,ny,nz 	- INT; the dimensions of the image. If dim = 2.5, and ny is
 #			  empty then default ny=1
 #	dx,dy,dz	- REAL; the spatial step size for each dimension in meters. If
 #			  dim = 2.5 and dy is empty then default dy=min(dx,dz)
 #
 # Material Input Values:
 #	id 		- INT; the identifier given to each unique rgb value as it
-#			  is read into the computer. It's recommended to use this 
+#			  is read into the computer. It's recommended to use this
 #			  script to make sure it's sorted correctly.
-#	R/G/B 		- STR; the 0-255 values for each color code. 
+#	R/G/B 		- STR; the 0-255 values for each color code.
 #	Temperature 	- REAL; temperature in Celsius.
 #	Attenuation 	- REAL; (placeholder) will be attenuation length soon.
-#	Density 	- REAL; density in kg/m^3 
+#	Density 	- REAL; density in kg/m^3
 #	Porosity 	- REAL; percent porosity
 #	Water_Content 	- REAL; percent of pores that contain water
-#	Anisotropic 	- BOOL; whether the material is anisotropic (True) or 
+#	Anisotropic 	- BOOL; whether the material is anisotropic (True) or
 #			  isotropic (False).
-#	ANG_File 	- STR; if Anisotrpic is True then the full path to the 
+#	ANG_File 	- STR; if Anisotrpic is True then the full path to the
 #			  .ang file is supplied. The .ang file is a delimited text
-#			  file that contains the 3-by-n array of euler rotation 
+#			  file that contains the 3-by-n array of euler rotation
 #			  angles in radians.
-#	
+#
 #		or alternatively...
 #	C11-C66 	- REAL; the stiffness coefficients with the appropriate id
 #	E11-E33,S11-S33	- REAL; the permittivity and conductivity coefficients and
-#			  'id' value corresponding to the coefficients along the diagonal 
-#			  of their respective tensors. 
-#	
+#			  'id' value corresponding to the coefficients along the diagonal
+#			  of their respective tensors.
+#
 #
 # Source Input Values:
 #	dt 		- REAL; dx/(2*maxvelcity)
 #	steps 		- INT; the total number of time steps
 #	x,y,z 		- REAL; locations in meters, +z is down, +y is into the screen
-#	f0 		- REAL; center frequency for the guassian pulse function if 
+#	f0 		- REAL; center frequency for the guassian pulse function if
 #			  'source_file' isn't supplied
-#	theta 		- REAL; source orientation in the x-z plane, 
-#	phi 		- REAL; source orientation in the x-y plane for 2.5/3D only,  
-#	source_file	- STR; the pointer to the text file that contains the source 
+#	theta 		- REAL; source orientation in the x-z plane,
+#	phi 		- REAL; source orientation in the x-y plane for 2.5/3D only,
+#	source_file	- STR; the pointer to the text file that contains the source
 #			  timeseries as a steps-by-1 vector.
 #
 # Written by Steven Bernsen
@@ -127,8 +128,8 @@ header_comment = """
 im, rgb = image2int(image_file)
 im = im.transpose()
 mat_id = np.unique(im)
-# Start writing the project file. To allow for headers we will start all 
-# pertinant information after 
+# Start writing the project file. To allow for headers we will start all
+# pertinant information after
 
 with open(project_file, 'w') as prj:
 	prj.write(header_comment)
@@ -140,8 +141,8 @@ with open(project_file, 'w') as prj:
 
 # ------------------------- Write Domain Parameters ---------------------------
 dim = 'D,dim,2'
-nx = 'D,nx,' + str(np.shape(im)[0]) 
-ny = 'D,ny,n/a' 
+nx = 'D,nx,' + str(np.shape(im)[0])
+ny = 'D,ny,n/a'
 nz = 'D,nz,' + str(np.shape(im)[1])
 dx = 'D,dx,'
 dy = 'D,dy,n/a'
@@ -178,11 +179,11 @@ with open(project_file, 'a') as prj:
 
 	prj.write(header + new_line )
 	for x in mat_id:
-		ln = ('M,' + str(x) + ',,' + str(rgb[x,0])  + '/' + 
-			str(rgb[x,1]) + '/' + str(rgb[x,2]) + 
+		ln = ('M,' + str(x) + ',,' + str(rgb[x,0])  + '/' +
+			str(rgb[x,1]) + '/' + str(rgb[x,2]) +
 			',,,,,,,')
 		prj.write( ln + new_line)
-	
+
 	prj.write(new_line)
 
 
@@ -216,7 +217,7 @@ with open(project_file, 'a') as prj:
 	prj.write(header + new_line )
 	for ind in mat_id:
 		prj.write( 'C,' + str(ind) + ',,,,,,,,,,' + new_line)
-	
+
 	prj.write(new_line)
 
 
@@ -240,11 +241,11 @@ with open(project_file, 'a') as prj:
 	prj.write('E,' + phi + new_line)
 
 	prj.write(new_line)
-	
+
 	prj.write(header + new_line )
 	for ind in mat_id:
 		prj.write( 'P,' + str(ind) + ',,,,,,,,,,' + new_line)
-	
+
 	prj.write(new_line)
 
 
@@ -253,35 +254,35 @@ with open(project_file, 'a') as prj:
 meta_header = """
 # Options for the following fields
 # project_file - (STRING) the file path to the project file
-# survey_type - (STRING) the type of survey you would like to model. Available 
-#				options are 'co' = common offset, 'cmp' = common midpoint, 
-#				'wa' = wide angle. 	
+# survey_type - (STRING) the type of survey you would like to model. Available
+#				options are 'co' = common offset, 'cmp' = common midpoint,
+#				'wa' = wide angle.
 #
-# The following inputs change given the survey type. There are additional 
+# The following inputs change given the survey type. There are additional
 # values that need to be passed in the wrapper
 #
-# delta (FLOAT) 	
+# delta (FLOAT)
 #					'wa' the spacing between each reciever
 #					'cmp' the change in the source and the reciever distance from
 #						the common midpoint (given below)
 #					'co' the shift in the same direction of the source and
-#						reciever. The spacing between the source and reciever 
+#						reciever. The spacing between the source and reciever
 #						remains constant so they are moved in the same direction
 #
 # initial_position (FLOAT)
 #					'wa' the initial reciever location along the array in meters
 #					'cmp' the reciever location
-#					'co'  the reciever location 
+#					'co'  the reciever location
 #
-# final_position (FLOAT) 
+# final_position (FLOAT)
 #					'wa' the final reciever location along the array in meters
 #					'cmp' this is the same value as initial position; moot
 #					'co' 			'' ''			''	''
 #
 """
 
-if metafile:
-	with open(metafile, 'w') as meta:
+if args.meta_file is not None:
+	with open(meta_file, 'w') as meta:
 		meta.write(meta_header + new_line)
 		meta.write('project_file: ' + project_file + new_line)
 		meta.write('survey_type: wa' + new_line)
