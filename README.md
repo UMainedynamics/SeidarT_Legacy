@@ -1,6 +1,6 @@
 # SeidarT
 
-Seismic and radar modeling using staggered grid finite differences (FDTD) and convolutional perfectly matched boundaries (CPML)
+Seismic and radar modeling using staggered grid finite differences (FDTD) and convolutional perfectly matched layer boundaries (CPML)
 
 ### Table of Contents
 [Introduction](#introduction)  
@@ -120,7 +120,7 @@ echo $PYTHONPATH
 
 # Getting Started <a name="getting_started"></a>
 
-Geometries are initiated with a PNG image and the program identifies unique RGB values. Everyone has their preferences to generate images but [*GIMP*](https://www.gimp.org/downloads/install_help.html) and [*Inkscape*](http://wiki.inkscape.org/wiki/index.php/Installing_Inkscape) provide free and open software that are more than sufficient. When creating a PNG anti-aliasing must be turned off to avoid color boundary gradients.  
+Geometries for the model domain within SeiDarT are initiated with a PNG image. The program identifies unique RGB values, setting material properties for each. For example, if you wanted to define a geometry with ice overlying bedrock, you would create a .png image that is one color for the ice and another for the rock below. Everyone has their preferences to generate images but [*GIMP*](https://www.gimp.org/downloads/install_help.html) and [*Inkscape*](http://wiki.inkscape.org/wiki/index.php/Installing_Inkscape) provide free and open software that are more than sufficient. When creating a PNG anti-aliasing must be turned off to avoid color boundary gradients.  
 
 To get started on a new project create a new folder and save the image to the folder. From the command line, change directories to the project folder then enter into the command line
 
@@ -128,9 +128,9 @@ To get started on a new project create a new folder and save the image to the fo
 prjbuild -i /path/to/geometry/image.png -o project_filename.prj
 ~~~
 
-The project filename is optional if the -o option is omitted and the default text file *jordan_downs.prj* will be generated. For any of the executables the -h or --help option will provide a quick reference to any positional, optional or required arguments.
+The project filename is optional if the -o option is omitted then the default text file *jordan_downs.prj* will be generated. For any of the executables the -h or --help option will provide a quick reference to any positional, optional or required arguments.
 
-Using the text editor of choice, you can edit the .prj file.  
+Using the text editor of choice, you can edit the .prj file. TODO: Describe what all is in this file? 
 
 
 [comment]: ======================================================================
@@ -216,14 +216,18 @@ then add the following material values
 
 the source parameters for a seismic source just below the surface on the right side of the domain
 
+>S,dt,
 >S,time_steps,2500
 >S,x,280
 >S,y,0
 >S,z,21
 >S,f0,80
+>S,theta,0
+>S,phi,0
 
 and the source parameters for a transverse radar pulse source in the same location as the seismic source except at the surface
 
+>E,dt,
 >E,time_steps,1600
 >E,x,150
 >E,y,0
@@ -256,7 +260,7 @@ prjrun dipping_bed.prj -M b
 When that is finished let's build the GIF to view the wavefield. Starting with the seismic wavefield, enter
 
 ~~~
-im2gif dipping_bed.prj -c Vx -f 30
+im2anim dipping_bed.prj -c -n 10 Vx -f 30
 ~~~
 
 then repeat when the command line returns but change the '-c' option to 'Vz', 'Ex', or 'Ez'. Alternatively, you could change the frame rate (-f) to a higher or smaller number to adjust the speed of the GIF. We specified the 'D,write' parameter to 10 which is a little undersampled to view seismograms or radargrams but creating the GIF takes some time and we don`t need that much resolution. If you would like to create the seismograms decrease the write parameter between 2-4. 
