@@ -56,7 +56,7 @@ if args.meta_file is not None:
 data = np.transpose(np.genfromtxt(data_file,delimiter=','))
 # Get the time step from the project file
 # can be seismic or electromagnetic and would have a different time step
-with open('dipping_bed.prj','r') as fid:
+with open(project_file,'r') as fid:
     prj_contents = fid.read()
 if seismic:
     dt_start = prj_contents.find("S,dt,") + 5
