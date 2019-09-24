@@ -2,7 +2,7 @@
 
 # Install script for SEISART toolbox
 if [ ! -d "bin" ]; then
-	mkdir bin	
+	mkdir bin
 fi
 
 # Compile the fortran code
@@ -30,10 +30,13 @@ cp exe/prjbuild.py bin/prjbuild
 cp exe/prjrun.py bin/prjrun
 cp materials/orientation_tensor.py bin/orientation_tensor
 
-# Move the visualization tools 
+# Move the visualization tools
 cp vis/arrayplot.py bin/arrayplot
 cp vis/codisplay.py bin/codisplay
 cp vis/im2anim.py bin/im2anim
+
+# move the conversion scripts
+cp io/array2segy.py bin/array2segy
 
 # Change them to executables
 chmod +x bin/prjbuild \
@@ -41,7 +44,8 @@ chmod +x bin/prjbuild \
         bin/arrayplot \
         bin/codisplay \
         bin/im2anim \
-        bin/orientation_tensor
+        bin/orientation_tensor \
+        bin/array2segy
 
 
 # Now do the bash scripts
