@@ -15,7 +15,8 @@ import segyio
 import numpy as np
 import argparse
 
-# -------------------------- Command Line Arguments ---------------------------
+# -------------------------- Command-Line Parser ---------------------------
+
 parser = argparse.ArgumentParser(description="""Write data to SEG-Y format. Data are in the form of traces from
                     multiple receivers (shot-gather) or from one receiver and multiple sources (receiver-gather). Multiple
                     transmits can be for common offset, cmp, etc.""" )
@@ -49,16 +50,25 @@ seismic = args.seismic
 if args.meta_file is not None:
     meta_file = ''.join(args.meta_file)
 
-# get data
-data = np.genfromtxt(data_file,delimiter=',')
-# get time step
+# -------------------------- Do the Conversion With segyio ---------------------------
+
+# Get the data from a .csv file
+data = np.transpose(np.genfromtxt(data_file,delimiter=','))
+# Get the time step from the project file
+# can be seismic or electromagnetic and would have a different time step
 with open('dipping_bed.prj','r') as fid:
     prj_contents = fid.read()
 if seismic:
     dt_start = prj_contents.find("S,dt,") + 5
+    dt_factor = 1e6
 else:
     dt_start = prj_contents.find("E,dt,") + 5
+    dt_factor = 1e12
 dt_end = prj_contents[dt_start:].find("\n") + dt_start
 dt = prj_contents[dt_start:dt_end]
+# dt needs to be an integer for the segy file, so multiply by a large number
+dt = int(float(dt)*dt_factor)
+
 # save as segy
 segyio.tools.from_array2D(segy_file,data,dt=dt)
+
