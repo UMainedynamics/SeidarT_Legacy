@@ -1,0 +1,304 @@
+#!/bin/bash
+
+: '
+COMMON_OFFSET.SH is a wrapper script to create a common offset survey using the
+SeidarT programs. The survey is along the x-direction, but can be extended to 
+other directions.
+
+INPUT
+	-f, --project 	Project file path
+	-F, --final		The final coordinates of the source. Requires 3
+					arguments  x y z
+	-o, --offset 	Source and reciever offset distance (meters)
+	-d, --delta		Source and reciever step length (meters)
+	-s, --seismic 	(OPTIONAL) Specifier to run seismic common offset 
+	-p, --plot 		(OPTIONAL) Show plot. Default is none
+'
+
+wild='.*'
+
+while [[ $# -gt 0 ]]; do
+	key="$1"
+
+	case $key in
+	    -f|--project_file)
+	    prjfile="$2"
+	    shift # past argument
+	    shift # past value
+	    ;;
+	    -F|--final) 
+	    xf="$2"
+	    yf="$3"
+	    zf="$4"
+	    shift;shift;shift;shift # past value
+	    ;;
+	    -o|--offset)
+		offset="$2"
+		shift;shift
+		;;
+		-d|--delta)
+		ds="$2"
+		shift;shift
+	    ;;
+	    -s|--seismic)
+		seismic=true
+		shift
+		;;
+		-p|--plot)
+		plot=true
+		shift
+		;;
+		-h|--help)
+		help=true
+		shift
+	esac
+done
+
+# ============================== Print Help Menu ============================== 
+if [ $help ]; then
+	echo
+	echo ' COMMON_OFFSET.SH is a wrapper script to create a common offset survey using the'
+	echo ' SeidarT programs. The survey is along the x-direction, but can be extended to '
+	echo ' other directions.'
+	echo 
+	echo ' INPUT'
+	echo '	-f, --project 	Project file path'
+	echo '	-F, --final	The final coordinates of the source. Requires 3'
+	echo ' 			arguments  x y z'
+	echo '	-o, --offset    Source and reciever offset distance (meters)'
+	echo '	-d, --delta	Source and reciever step length (meters)'
+	echo ' 	-s, --seismic 	(OPTIONAL) Specifier to run seismic common offset' 
+	echo '	-p, --plot	(OPTIONAL) Show plot. Default is none'
+	echo 
+
+	exit 1
+fi
+
+
+
+# ================================ Error Checks ===============================
+# A quick check to make sure required arguments are given
+if [ -z $prjfile ]; then
+	echo ERROR: Missing project file
+	exit 1
+elif [ -z $offset ]; then
+	echo ERROR: Missing source to reciever offset
+	exit 1
+elif [ -z $ds ]; then
+	echo ERROR: Missing step value for source
+	exit 1
+elif [[ -z $xf || -z $yf || -z $zf ]]; then
+	echo ERROR: Missing final coordinates
+	exit 1
+else
+	echo 
+fi
+
+# =========================== Create the output File ==========================
+
+# remove the extension of the project file
+base=`echo "$prjfile" | rev | cut -d"." -f2- | rev`
+
+time_stamp=`date +"%m%d%y%H%M"`
+
+if [ $seismic ]; then
+	cofilex=$base.$time_stamp.Vx.co.csv
+	cofilez=$base.$time_stamp.Vz.co.csv
+else
+	cofilex=$base.$time_stamp.Ex.co.csv
+	cofilez=$base.$time_stamp.Ez.co.csv
+fi
+
+
+# ================================ Get to work ================================
+
+
+if [ $seismic ]; then
+	xstring='S,x,'
+	ystring='S,y,'
+	zstring='S,z,'
+	c1='Vx'
+	c2='Vz'
+	mod=s
+else
+	xstring='E,x,'
+	ystring='E,y,'
+	zstring='E,z,'
+	c1='Ex'
+	c2='Ez'
+	mod=e
+fi
+
+# Create the common offset file
+touch $cofilex
+touch $cofilez
+
+# Get the initial reciever location
+x=`grep -F $xstring $prjfile`
+x=$(echo $x | cut -f3 -d,)
+xorig=$x
+
+y=`grep -F $ystring $prjfile`
+y=$(echo $y | cut -f3 -d,)
+
+z=`grep -F $zstring $prjfile`
+z=$(echo $z | cut -f3 -d,)
+
+# Set the initial values for the reciever 
+if (( $(echo "$x<$xf" | bc -l) )); then # Moving right
+	rx=`echo "$x - $offset" | bc` 
+else 
+	rx=`echo "$x + $offset" | bc -l` 
+fi
+
+ry=$y
+rz=$z	
+
+# Create the file that contains metadata of the survey
+metafile=$base.$time_stamp.meta.txt
+istr=initial_position: 
+fstr=final_position:
+touch $metafile
+echo project_file: $prjfile > $metafile
+echo survey_type: co >> $metafile
+echo offset: $offset >> $metafile
+echo delta: $ds >> $metafile
+echo $istr $rx $ry $rz >> $metafile
+echo $fstr $rx $ry $rz >> $metafile
+
+
+# For the time functions
+elapsed_time=0
+
+counter=1
+
+# The reciever will trail the source relative to the direction the source is 
+# moving. Negative direction is viewers left
+if (( $(echo "$x<$xf" | bc -l) )); then # Moving right
+	
+	# Determine the number of model runs to get to the final coordinates 
+	echo
+	num_total=`echo "($xf-$x)/$ds" | bc -l`
+	num_total=`echo "$num_total/1" | bc`
+
+	# Get going on the survey
+	while (( $(echo "$x<$xf" | bc -l) )); do
+		# We will time the blocks so the user knows how long this is taking
+		start=`date +%s`
+		
+		echo ---------------
+		echo Run $counter of $num_total 
+		prjrun $prjfile --model $mod
+		echo
+
+		# Get the reciever timeseries for the x-direction
+		arrayplot $metafile -c $c1 -g 0 -S 1
+
+		# append the timeseries to the others
+		paste -d',' $cofilex reciever_array.csv > temp.csv
+		mv temp.csv $cofilex
+		rm reciever_array.csv
+
+		# Get the reciever timeseries for the z-direction
+		arrayplot $metafile -c $c2 -g 0 -S 1
+
+		# append the timeseries to the others
+		paste -d',' $cofilez reciever_array.csv > temp.csv
+		mv temp.csv $cofilez
+		rm reciever_array.csv
+
+		# Shift the source
+		x=`echo "$x + $ds" | bc -l`
+		sed -i -e "s/$xstring$wild/$xstring$x/" $prjfile
+		# Shift the reciever
+		rx=`echo "$rx + $ds" | bc -l`
+
+		# Update the metafile
+		sed -i -e "s/$istr.*/$istr $rx $ry $rz/" $metafile
+		sed -i -e "s/$fstr.*/$fstr $rx $ry $rz/" $metafile
+		# Remove the dat files
+		rm *.dat
+
+		# 
+		end=`date +%s`
+
+		runtime=$((end-start))
+		elapsed_time=$((elapsed_time+runtime))
+
+		echo "Elapsed time of last model run:"
+		echo $runtime
+		echo "Total elapsed time:"
+		echo $elapsed_time 
+		echo
+		
+		counter=`echo "$counter+1" | bc`
+	done
+
+else # Moving left
+
+	# Determine the number of model runs to get to the final coordinates 
+	num_total=`echo "($x-$xf)/$ds" | bc -l`
+	num_total=`echo "$num_total/1" | bc `
+
+	while (( $(echo "$x>$xf" | bc -l) )); do
+		start=`date +%s`
+
+		echo ---------------
+		echo Run $counter of $num_total 
+		prjrun $prjfile --model $mod
+		echo 
+
+		# Get the reciever timeseries for the x-direction
+		arrayplot $metafile -c $c1 -g 0 -S 1
+
+		# append the timeseries to the others
+		paste -d',' $cofilex reciever_array.csv > temp.csv
+		mv temp.csv $cofilex
+		rm reciever_array.csv
+
+		# Get the reciever timeseries for the z-direction
+		arrayplot $metafile -c $c2 -g 0 -S 1
+
+		# append the timeseries to the others
+		paste -d',' $cofilez reciever_array.csv > temp.csv
+		mv temp.csv $cofilez
+		rm reciever_array.csv
+
+		# Shift the source
+		x=`echo "$x - $ds" | bc`
+		sed -i -e "s/$xstring.*/$xstring$x/" $prjfile
+		
+		# Shift the reciever
+		rx=`echo "$rx - $ds" | bc`
+
+		# Update the metafile
+		sed -i -e "s/$istr.*/$istr $rx $ry $rz/" $metafile
+		sed -i -e "s/$fstr.*/$fstr $rx $ry $rz/" $metafile
+
+		# remove the .dat files
+		rm *.dat
+
+		runtime=$((end-start))
+		elapsed_time=$((elapsed_time+runtime))
+
+		echo "Elapsed time of last survey point:"
+		echo $runtime
+		echo "Total elapsed time:"
+		echo $elapsed_time
+		echo 
+
+		counter=`echo "$counter+1" | bc`
+
+	done
+fi
+
+# Restore the initial source location
+sed -i -e "s/$xstring.*/$xstring$xorig/" $prjfile
+
+
+# Display the results if specified
+if [ $plot ]; then
+	codisplay $metafile -c $c1 -e 0.15 
+	codisplay $metafile -c $c2 -e 0.15 
+fi
+
