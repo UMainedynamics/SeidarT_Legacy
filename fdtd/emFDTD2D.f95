@@ -168,6 +168,7 @@ integer,parameter :: NP = 2, NPA = 2
 real(kind=dp) :: abscissa_in_pml, abscissa_normalized
 
 ! ===========================================================
+
 sigma(:) = 0.d0
 
 do i=1,nx 
@@ -354,8 +355,6 @@ real(kind=dp), parameter :: NP = 2.d0, NPA = 1.d0
 real(kind=dp) :: k_max!, parameter :: k_max = 1.2d5
 real(kind=dp) :: alpha_max !, parameter :: alpha_max = pi*f0 !7.0d-1 ! From Taflove ! PI*f0 ! from Festa and Vilotte 
 real(kind=dp) :: sig_x_max, sig_y_max
-real(kind=dp) :: abscissa_in_PML,abscissa_normalized, yval, xval
-real(kind=dp) :: xoriginleft, xoriginright, yorigintop, yoriginbottom
 
 
 ! 1D arrays for the damping profiles

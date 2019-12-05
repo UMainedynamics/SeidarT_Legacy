@@ -364,8 +364,7 @@ real(kind=dp), dimension(ny) :: d_y,K_y,alpha_y,a_y,b_y,d_y_half,K_y_half,alpha_
 real(kind=dp), dimension(nz) :: d_z,K_z,alpha_z,a_z,b_z,d_z_half,K_z_half,alpha_z_half,a_z_half,b_z_half
 
 real(kind=dp) :: thickness_PML_x,thickness_PML_y,thickness_PML_z
-real(kind=dp) :: xoriginleft,xoriginright,yoriginout, yoriginin, zoriginbottom,zorigintop
-real(kind=dp) :: Rcoef,d0_x,d0_y,d0_z,xval,yval,zval,abscissa_in_PML,abscissa_normalized
+real(kind=dp) :: Rcoef,d0_x,d0_y,d0_z
 
 ! for the source
 real(kind=dp) :: a,t,force_x,force_y,force_z,source_term

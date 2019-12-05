@@ -57,7 +57,7 @@ D,nz,200
 D,dx,1
 D,dy,1
 D,dz,1
-D,cpml,10
+D,cpml,30
 D,nmats,7
 D,tfile,
 
@@ -91,13 +91,13 @@ C,6.0,152943.7,152943.7,152943.7,152943.7,152943.7,152943.7,0.0,0.0,0.0,400.3
 
 # The source parameters for the elecromagnetic model
 E,dt,1.6678204759907602e-09
-E,time_steps,2500
+E,time_steps,1000
 E,x,170
 E,y,5
 E,z,20
 E,f0,1e7
 E,theta,90
-E,phi,0
+E,phi,90
 
 # id, e11, e22, e33, s11, s22, s33
 P,0.0,9.5,9.5,9.5,0.000112,0.000112,0.000112

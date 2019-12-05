@@ -53,9 +53,9 @@ from evtk.hl import imageToVTK
 
 
 project_file = "dipping_bed.prj"
-channel = "Ez"
+channel = 'Ex'
 frame_rate = 20
-num_steps = 20
+num_steps = 10
 
 # ------------------------------ Run the program ------------------------------
 
@@ -111,7 +111,6 @@ for line in f:
 			if temp[1] == 'z':
 				sz = float(temp[2].rsplit()[0])
 
-
 f.close()
 
 # Define some plotting inputs
@@ -139,7 +138,7 @@ for i in range(0, nx):
 
 
 # Add the source location to plot
-if channel == 'Ex' or channel == 'Ez':
+if channel == 'Ex' or channel == 'Ey' or channel == 'Ez':
     ex = (ex/dx + cpml+1)
     ey = (ey/dy + cpml+1)
     ez = (ez/dz + cpml+1)
@@ -151,8 +150,6 @@ else:
     sz = (sz/dz + cpml+1)
     source_location = np.array([sx, sy, sz])
     dt = sdt
-
-
 
 # Proceed accordingly to the channel flag
 
@@ -169,10 +166,8 @@ for fn in files:
 #        dat = f.read_reals('float32').reshape( (nx, ny, nz), order = "F" )
         dat = f.read_reals(dtype = 'float32')
 #        print(dat.min())
+        # dat = dat.reshape(nz, ny, nx) # This is what works with Ey and Ez 
         dat = dat.reshape(nz, ny, nx)
-        # Normalize the values
-#        max_amplitude = np.abs(dat).max()
-#        dat = dat/max_amplitude
         
         # Zero out any values below our given threshold
         duration = dt*ind
@@ -187,14 +182,11 @@ for fn in files:
         n = 1
         
         vtkfilename = "./image" + channel + "." + str(ind)
-#        print(dat.max() )
-#        print(dat.min() )
         imageToVTK(vtkfilename, cellData = {"Displacement" : dat} )
         
     else:
         ind = ind + 1
         n = n + 1
-
 
 # Dimensions 
 
