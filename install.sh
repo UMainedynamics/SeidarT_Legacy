@@ -10,12 +10,12 @@ fi
 cd fdtd
 f2py3 -c --fcompiler=gnu95 -m emfdtd2d emFDTD2D.f95
 f2py3 -c --fcompiler=gnu95 -m seismicfdtd2d seismicFDTD2D.f95
+f2py3 -c --fcompiler=gnu95 -m emfdtd25d emFDTD25D.f95
 mv *.so ../bin
 cd ..
 
 # 2.5D
 f2py3 -c --fcompiler=gnu95 -m seismicfdtd25d seismicFDTD25D.f95
-f2py3 -c --fcompiler=gnu95 -m emfdtd25d emFDTD25D.f95
 mv *.so bin
 
 # Synthetic microstructure
@@ -60,3 +60,4 @@ chmod +x bin/wide_angle bin/common_offset bin/common_midpoint bin/array2sac
 
 # ---------------- Move all other required files to bin folder ----------------
 cp materials/material_functions.py bin/material_functions.py
+cp exe/class_definitions.py bin/class_definitions.py

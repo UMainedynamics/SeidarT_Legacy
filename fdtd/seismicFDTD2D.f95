@@ -351,14 +351,6 @@ Rcoef = 0.001d0
   xoriginright = dx * dble(NX-1) - thickness_PML_x
 
 do i = 1,NX
-  ! to compute d0 below, and for stability estimate
-  ! quasi_cp_max = max(sqrt(c22(i,npoints_pml)/rho(i,npoints_pml)),&
-  !   sqrt(c11(i,npoints_pml)/rho(i,npoints_pml)))
-  ! compute d0 from INRIA report section 6.1 http://hal.inria.fr/docs/00/07/32/19/PDF/RR-3471.pdf
-  ! d0_x = - dble(NPOWER + 1) * quasi_cp_max * log(Rcoef) / (2.d0 * thickness_PML_x)
-  ! d0_y = - dble(NPOWER + 1) * quasi_cp_max * log(Rcoef) / (2.d0 * thickness_PML_y)
-
-
     ! abscissa of current grid point along the damping profile
     xval = DX * dble(i-1)
 
@@ -423,13 +415,6 @@ yoriginbottom = dble(thickness_PML_y)
 yorigintop = dy * dble(NY-1) - thickness_PML_y
 
 do j = 1,NY
-  ! to compute d0 below, and for stability estimate
-  ! quasi_cp_max = max(sqrt(c22(npoints_pml,j)/rho(npoints_pml,j)),&
-  !   sqrt(c11(npoints_pml,j)/rho(npoints_pml,j)))
-  ! ! compute d0 from INRIA report section 6.1 http://hal.inria.fr/docs/00/07/32/19/PDF/RR-3471.pdf
-  ! d0_x = - dble(NPOWER + 1) * quasi_cp_max * log(Rcoef) / (2.d0 * thickness_PML_x)
-  ! d0_y = - dble(NPOWER + 1) * quasi_cp_max * log(Rcoef) / (2.d0 * thickness_PML_y)
-
   ! abscissa of current grid point along the damping profile
   yval = DY * dble(j-1)
 

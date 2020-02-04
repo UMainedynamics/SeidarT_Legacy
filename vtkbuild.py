@@ -53,7 +53,7 @@ from evtk.hl import imageToVTK
 
 
 project_file = "dipping_bed.prj"
-channel = 'Ex'
+channel = 'Ez'
 frame_rate = 20
 num_steps = 10
 
@@ -167,7 +167,15 @@ for fn in files:
         dat = f.read_reals(dtype = 'float32')
 #        print(dat.min())
         # dat = dat.reshape(nz, ny, nx) # This is what works with Ey and Ez 
-        dat = dat.reshape(nz, ny, nx)
+        
+        if channel == 'Ex':
+            dat = dat.reshape(nz, ny, nx-1)
+        
+        if channel == 'Ey':
+            dat = dat.reshape(nz, ny-1, nx)
+        
+        if channel == 'Ez':
+            dat = dat.reshape(nz-1, ny, nx)
         
         # Zero out any values below our given threshold
         duration = dt*ind

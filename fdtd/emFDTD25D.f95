@@ -401,7 +401,7 @@ caEx(:,:) = ( 1.0d0 - sigmax * dt / ( 2.0d0 * epsilonx ) ) / &
 cbEx(:,:) = (dt / epsilonx ) / ( 1.0d0 + sigmax * dt / ( 2.0d0 * epsilonx ) )
 
 caEy(:,:) = ( 1.0d0 - sigmay * dt / ( 2.0d0 * epsilony ) ) / &
-            ( 1.0d0 + sigmay * dt / (2.0d0 * epsilonx ) )
+            ( 1.0d0 + sigmay * dt / (2.0d0 * epsilony ) )
 cbEy(:,:) = (dt / epsilony ) / ( 1.0d0 + sigmay * dt / ( 2.0d0 * epsilony ) )
 
 caEz(:,:) = ( 1.0d0 - sigmaz * dt / ( 2.0d0 * epsilonz ) ) / &
@@ -540,14 +540,14 @@ do it = 1,NSTEP
         ! Now update the Magnetic field
         Hx(i,j,k) = daHx*Hx(i,j,k) + dbHx*( value_dEy_dz + value_dEz_dy )
 
-      enddo
-    enddo  
-  enddo
+      ! enddo
+    ! enddo  
+  ! enddo
 
   !   ! Update Hy
-  do k = 1,nz-1
-    do i = 1,nx-1      
-      do j = 1,ny-1
+  ! do k = 1,nz-1
+    ! do i = 1,nx-1      
+      ! do j = 1,ny-1
       
         ! Values needed for the magnetic field updates
         value_dEx_dz = ( Ex(i,j,k) - Ex(i,j,k+1) )/dz
@@ -608,8 +608,10 @@ do it = 1,NSTEP
         Ex(i,j,k) = caEx(i,k)*Ex(i,j,k) + cbEx(i,k)*(value_dHz_dy + value_dHy_dz) 
       enddo
     enddo
+  ! enddo
 
   ! ! Compute the differences in the y-direction
+  ! do k = 2,nz-1
     do i = 2,nx-1 
       do j = 1,ny-1 
         ! Update the Ey field
@@ -656,6 +658,9 @@ do it = 1,NSTEP
   force_x = sin( ANGLE(1) ) * cos( ANGLE(2) ) * source_term
   force_y = sin( ANGLE(1) ) * sin( ANGLE(2) ) * source_term
   force_z = cos( ANGLE(1) ) * source_term
+  ! force_x = source_term 
+  ! force_y = source_term 
+  ! force_z = source_term 
 
   Ex(isource,jsource,ksource) = Ex(isource,jsource,ksource) + force_x !* DT / epsilonx(i,j)
   Ey(isource,jsource,ksource) = Ey(isource,jsource,ksource) + force_y !* DT / epsilony(i,j) !* cbEy(ISOURCE,JSOURCE) !* DT / (epsilony(i,j) )
@@ -707,9 +712,9 @@ do it = 1,NSTEP
   velocnorm = maxval(sqrt(Ex**2.0d0 + Ey**2.0d0 + Ez**2.0d0) )
   if (velocnorm > STABILITY_THRESHOLD) stop 'code became unstable and blew up'
 
-  call write_image(Ex, nx, ny, nz, it, 'Ex')
-  call write_image(Ey, nx, ny, nz, it, 'Ey')
-  call write_image(Ez, nx, ny, nz, it, 'Ez')
+  call write_image(Ex, nx-1, ny, nz, it, 'Ex')
+  call write_image(Ey, nx, ny-1, nz, it, 'Ey')
+  call write_image(Ez, nx, ny, nz-1, it, 'Ez')
 
 enddo   ! end of time loop
 
