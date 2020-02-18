@@ -29,11 +29,13 @@ cd ..
 cp exe/prjbuild.py bin/prjbuild
 cp exe/prjrun.py bin/prjrun
 cp materials/orientation_tensor.py bin/orientation_tensor
+cp materials/class_definitions.py bin/class_definitions
 
 # Move the visualization tools
 cp vis/arrayplot.py bin/arrayplot
 cp vis/codisplay.py bin/codisplay
 cp vis/im2anim.py bin/im2anim
+cp vis/vtkbuild.py bin/vtkbuild 
 
 # move the conversion scripts
 cp io/array2segy.py bin/array2segy

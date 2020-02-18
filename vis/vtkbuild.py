@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-#
+# 
 
 import numpy as np
 import glob
@@ -10,52 +10,41 @@ from scipy.io import FortranFile
 from evtk.hl import imageToVTK
 
 # -------------------------- Command Line Arguments ---------------------------
-# parser = argparse.ArgumentParser(description="""This program builds a gif from
-# 	the set of image output of the FDTD modeling. The images can be in csv or
-# 	unformatted Fortran binary, however, the program runs faster to use the
-# 	latter. """ )
+parser = argparse.ArgumentParser(description="""This program builds .VTI 
+    (Visualization Toolkit Image) files from the 3d array outputs of the FDTD 
+    modeling. These files can be displayed using Paraview.""" )
 
-# parser.add_argument( 'project_file', nargs=1, type=str,
-# 						help='the full file path for the project file')
+parser.add_argument( 'project_file', nargs=1, type=str,
+						help='the full file path for the project file')
 
-# parser.add_argument( '-c', '--channel', nargs = 1, type = str, required = True,
-# 	help = """Specify whether a particular channel is going to be used. The
-# 	available channels are Ex, Ez, Vx, and Vz for the electric field and
-# 	seismic velocities, respectively.""")
+parser.add_argument( '-c', '--channel', nargs = 1, type = str, required = True,
+	help = """Specify whether a particular channel is going to be used. The
+	available channels are Ex, Ez, Vx, and Vz for the electric field and
+	seismic velocities, respectively.""")
 
-# parser.add_argument( '-f', '--frames_per_second', nargs = 1, type = int,
-# 	required = False, default = 1, help = """The number of frames per second
-# 	to build the GIF.""")
+parser.add_argument( '-f', '--frames_per_second', nargs = 1, type = int,
+	required = False, default = 1, help = """The number of frames per second
+	to build the GIF.""")
 
-# parser.add_argument( '-n', '--num_steps', nargs = 1, type = int,
-# 	required = True, help = """The time step interval between the images that
-# 	are going to be used. Every time step is written to file which means that
-# 	we can take any equally spaced images to create the gif with an
-# 	appropriate resolution, time to compute, and file size. For example,
-# 	n=20 means that every 20 images will be used thus significantly reducing
-# 	how long it takes to compile the gif.""")
-
-# parser.add_argument( '-t', '--threshold', nargs = 1, type = float,
-# 	required = False, default=[0.0001], help = """Set values to zero when they
-# 	below a specific threshold. Default = 0.0001""")
-
-# parser.add_argument( '-o', '--output', nargs = 1, type = int, required = False,
-# 	default = [0], help = """Specify the output format. 0 - GIF (default), 1 - MP4 """)
+parser.add_argument( '-n', '--num_steps', nargs = 1, type = int,
+	required = True, help = """The time step interval between the images that
+	are going to be used. Every time step is written to file which means that
+	we can take any equally spaced images to create the gif with an
+	appropriate resolution, time to compute, and file size. For example,
+	n=20 means that every 20 images will be used thus significantly reducing
+	how long it takes to compile the gif.""")
 
 #-- Get the arguments
-# args = parser.parse_args()
-# project_file = ''.join(args.project_file)
-# channel = ''.join(args.channel)
-# frame_rate = args.frames_per_second[0]
-# num_steps = args.num_steps[0]
-# threshold = args.threshold[0]
-# output_format = args.output[0]
+args = parser.parse_args()
+project_file = ''.join(args.project_file)
+channel = ''.join(args.channel)
+frame_rate = args.frames_per_second[0]
+num_steps = args.num_steps[0]
 
-
-project_file = "dipping_bed.prj"
-channel = 'Ez'
-frame_rate = 20
-num_steps = 10
+# project_file = "dipping_bed.prj"
+# channel = 'Ez'
+# frame_rate = 20
+# num_steps = 10
 
 # ------------------------------ Run the program ------------------------------
 
@@ -163,11 +152,8 @@ n=num_steps
 for fn in files:
     if n == num_steps:
         f = FortranFile(fn, 'r')
-#        dat = f.read_reals('float32').reshape( (nx, ny, nz), order = "F" )
         dat = f.read_reals(dtype = 'float32')
-#        print(dat.min())
-        # dat = dat.reshape(nz, ny, nx) # This is what works with Ey and Ez 
-        
+    
         if channel == 'Ex':
             dat = dat.reshape(nz, ny, nx-1)
         
@@ -179,12 +165,7 @@ for fn in files:
         
         # Zero out any values below our given threshold
         duration = dt*ind
-        
-#        if channel == 'Vx' or channel == 'Vz':
-#            time_label = 'Time (s): ' + str(np.round(duration, 5) )
-#        else:
-#            time_label = 'Time (s): ' + str(np.round(duration, 8) )
-#			
+        		
 		# Reset the countern = 1 
         ind = ind + 1
         n = 1
@@ -196,7 +177,4 @@ for fn in files:
         ind = ind + 1
         n = n + 1
 
-# Dimensions 
-
-# Variables 
 
