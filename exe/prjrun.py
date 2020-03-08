@@ -229,7 +229,7 @@ if electromag.exit_status == 0 and not electromag.compute_coefficients:
 		else:
 			em2d.electromagfdtd2d.doall(domain.geometry+1, electromag.tensor_coefficients, 
 			domain.dx, domain.dz, domain.cpml, src, electromag.f0, 
-			electromag.time_steps, domain.write, electromag.theta)
+			electromag.time_steps, electromag.theta )
 
 elif electromag.exit_status == 0 and electromag.compute_coefficients and material.material_flag:
 	
@@ -273,7 +273,6 @@ elif electromag.exit_status == 0 and electromag.compute_coefficients and materia
 
 			print('Running 2.5D model')
 
-
 			em25d.electromagfdtd25d.permittivity_write(domain.geometry+1, electromag.tensor_coefficients,
 				domain.cpml, domain.nx, domain.nz)
 			em25d.electromagfdtd25d.electromag_cpml_25d(nx, ny, nz,
@@ -282,7 +281,7 @@ elif electromag.exit_status == 0 and electromag.compute_coefficients and materia
 		else:
 			em2d.electromagfdtd2d.doall(domain.geometry+1, electromag.tensor_coefficients, 
 			domain.dx, domain.dz, domain.cpml, src, electromag.f0, 
-			electromag.time_steps, domain.write, electromag.theta)
+			electromag.time_steps, electromag.theta)
 		
 else:
 	# We don't have the materials neither the coefficients

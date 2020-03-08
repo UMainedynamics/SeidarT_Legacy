@@ -122,6 +122,15 @@ echo $PYTHONPATH
 
 Geometries for the model domain within SeiDarT are initiated with a PNG image. The program identifies unique RGB values, setting material properties for each. For example, if you wanted to define a geometry with ice overlying bedrock, you would create a .png image that is one color for the ice and another for the rock below. Everyone has their preferences to generate images but [*GIMP*](https://www.gimp.org/downloads/install_help.html) and [*Inkscape*](http://wiki.inkscape.org/wiki/index.php/Installing_Inkscape) provide free and open software that are more than sufficient. When creating a PNG anti-aliasing must be turned off to avoid color boundary gradients.  
 
+Building images in *Inkscape* has some advantages other than being free. Saving a .svg to pdf allows the user to change the number of pixels and the spatial resolution of the image quite easy. With ghostscript the command 
+
+~~~
+gs -q -dNOPAUSE -sDEVICE=png16m -sOutputFile=<file> -r96 <input_file>
+~~~
+
+will generate a PNG file from a PDF. The resolution -r can be varied to change the pixels. In *Inkscape* the image pixels can be set in *Document Properties*. When saving the SVG as PDF you will be prompted with options, and the value for *Resolution for rasterization (dpi):* will determine - in order to get the same pixel setting that you set in *Inkscape* - the value for the *-r* (resolution) option above. If you want to double the resolution just double this number (i.e. -r192 ). 
+
+
 To get started on a new project create a new folder and save the image to the folder. From the command line, change directories to the project folder then enter into the command line
 
 ~~~

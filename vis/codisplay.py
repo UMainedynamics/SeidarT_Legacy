@@ -54,11 +54,15 @@ for line in f:
 	 	ds = float(temp[1])
 	 if temp[0] == 'survey_type:':
 	 	survey_type = temp[1]
+	 if temp[0] == 'project_file:':
+		project_file = temp[1]
+
+
 	 	
 f.close()
 
 cofile = '.'.join( meta_file.split('.')[:-2] )+ '.' + channel + '.' + survey_type + '.csv'
-project_file = '.'.join( meta_file.split('.')[:-3] )+ '.prj'
+# project_file = '.'.join( meta_file.split('.')[:-3] )+ '.prj'
 
 # -----------------------------------------------------------------------------
 # Get the values we need

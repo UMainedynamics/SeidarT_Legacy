@@ -92,10 +92,10 @@ C,6.0,53097618477.49,20375598025.02,20375598025.02,53097618477.49,20375598025.02
 # The source parameters for the elecromagnetic model
 E,dt,1.6678204759907602e-09
 E,time_steps,1000
-E,x,170
-E,y,5
-E,z,20
-E,f0,1e7
+E,x,5
+E,y,0
+E,z,12.5
+E,f0,4e7
 E,theta,0
 E,phi,0
 
