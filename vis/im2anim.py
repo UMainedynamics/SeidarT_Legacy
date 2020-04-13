@@ -54,38 +54,64 @@ num_steps = args.num_steps[0]
 threshold = args.threshold[0]
 output_format = args.output[0]
 # ===
+
+# 03/16/2020 matplotlib got COVID-19 and now there are issues saving images to
+# GIF so we're  trying some things 
+plt.rcParams['animation.ffmpeg_path'] = '/usr/bin/ffmpeg'
+
 # ----------------------- Definitions -----------------------
 
 class AnimatedGif:
-	def __init__(self, size=(640,480) ):
-		self.fig = plt.figure()
-		self.fig.set_size_inches(size[0]/100, size[1]/100)
-		ax = self.fig.add_axes([0, 0, 1, 1], frameon=False, aspect=1)
-		ax.set_xticks([])
-		ax.set_yticks([])
-		self.images = []
-		self.background = []
-		self.source_location = []
-
-	def add(self, image, label='', extent=None ):
-                bound = np.max([abs(np.min(image)),abs(np.max(image))])
-                plt_im = plt.imshow(image,cmap='seismic', animated=True, extent=(0, (nx), (nz), 0),vmin=-bound,vmax=bound)
-                plt_bg = plt.imshow(self.background,alpha = 0.3, extent=extent, animated = True)
-                plt.scatter(self.source_location[0], self.source_location[1],
-			marker = '*', s = 30, linewidths = 1,
-			edgecolor = (0.2, 0.2, 0.2, 1 ) )
-
-                plt_txt = plt.text(extent[0] + 20, extent[2] + 20, label, color='red') # Lower left corner
-                self.images.append([plt_im, plt_bg, plt_txt])
-
-	def save(self, filename, frame_rate = 50):
-		animation = anim.ArtistAnimation(self.fig, self.images, interval = frame_rate, blit = True)
-
-		if output_format == 1:
-			animation.save(filename, dpi = 200)
-		else:
-			animation.save(filename, dpi = 200, writer = 'imagemagick')
-
+    def __init__(self, size=(640,480) ):
+        self.fig = plt.figure()
+        self.fig.set_size_inches(size[0]/100, size[1]/100)
+        ax = self.fig.add_axes([0, 0, 1, 1], frameon=False, aspect=1)
+        ax.set_xticks([])
+        ax.set_yticks([])
+        self.images = []
+        self.background = []
+        self.source_location = []
+        
+    def add(self, image, label='', extent=None ):
+        bound = np.max([abs(np.min(image)),abs(np.max(image))])
+        plt_im = plt.imshow(
+            image,cmap='seismic', 
+            animated=True, 
+            extent=(0, (nx), (nz), 0),
+            vmin=-bound,vmax=bound
+        )
+        plt_bg = plt.imshow(
+            self.background,
+            alpha = 0.3, 
+            extent=extent, 
+            animated = True
+        )
+        plt.scatter(
+            self.source_location[0], 
+            self.source_location[1],
+            marker = '*', 
+            s = 30, 
+            linewidths = 1,
+            edgecolor = (0.2, 0.2, 0.2, 1 ) 
+        )
+        plt_txt = plt.text(
+            extent[0] + 20, 
+            extent[2] + 20, 
+            label, 
+            color='red'
+        ) # Lower left corner 
+        self.images.append([plt_im, plt_bg, plt_txt])
+                
+    def save(self, filename, frame_rate = 50):
+        animation = anim.ArtistAnimation(self.fig, 
+                                         self.images, 
+                                         interval = frame_rate, 
+                                         blit = True
+                                        )
+        if output_format == 1:
+            animation.save(filename, dpi = 200)
+        else:
+            animation.save(filename, dpi = 200, writer = 'imagemagick')
 
 
 # ------------------------------ Run the program ------------------------------
@@ -134,7 +160,6 @@ for line in f:
 			if temp[1] == 'z':
 				sz = float(temp[2].rsplit()[0])
 
-
 f.close()
 
 # Define some plotting inputs
@@ -143,9 +168,6 @@ nz = nz + 2*cpml
 x = np.linspace(1, nx, num = nx)*dx
 z = np.linspace(nz, 1, num = nz)*dz
 extent = (cpml, (nx-cpml), (nz-cpml), cpml)
-
-
-
 
 # Create the gif object
 animated_gif = AnimatedGif( size=(nx, nz) )
@@ -197,7 +219,6 @@ for fn in files:
 
 		# Zero out any values below our given threshold
 		dat_normalize[np.abs(dat_normalize) < (max_amplitude*threshold) ] = 0.0
-
 
 		duration = dt*ind
 
