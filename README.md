@@ -125,7 +125,7 @@ Geometries for the model domain within SeiDarT are initiated with a PNG image. T
 Building images in *Inkscape* has some advantages other than being free. Saving a .svg to pdf allows the user to change the number of pixels and the spatial resolution of the image quite easy. With ghostscript the command 
 
 ~~~
-gs -q -dNOPAUSE -sDEVICE=png16m -sOutputFile=<file> -r96 <input_file>
+gs -q -dBATCH -dNOPAUSE -sDEVICE=png16m -sOutputFile=<file> -r96 <input_file>
 ~~~
 
 will generate a PNG file from a PDF. The resolution -r can be varied to change the pixels. In *Inkscape* the image pixels can be set in *Document Properties*. When saving the SVG as PDF you will be prompted with options, and the value for *Resolution for rasterization (dpi):* will determine - in order to get the same pixel setting that you set in *Inkscape* - the value for the *-r* (resolution) option above. If you want to double the resolution just double this number (i.e. -r192 ). 

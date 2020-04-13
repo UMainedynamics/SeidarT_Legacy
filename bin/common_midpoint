@@ -1,0 +1,256 @@
+#!/bin/bash
+
+: '
+COMMON_MIDPOINT.SH is a wrapper script to create a common midpoint survey using 
+the SeidarT programs. The survey is along the x-direction, but can be extended 
+to other directions. The midpoint is initialized from the x, y, and z locations
+provided from the source location in the project file.
+
+INPUT
+	-f, --project 	Project file path
+	-t, --total		The terminal distance between the source and reciever. 
+	-o, --offset 	The initial source and reciever offset from the midpoint
+					given in (+/- meters). A negative value means that the 
+					source is on the lookers left of the midpoint. The total 
+					source and reciever distance is 2*offset. 
+	-d, --delta		Source and reciever step length (meters); total distance
+					between the source and reciever is 2*delta*i + 2*offset.
+	-s, --seismic 	(OPTIONAL) Specifier to run seismic common offset 
+	-p, --plot		(OPTIONAL) 
+'
+
+wild='.*'
+
+
+while [[ $# -gt 0 ]]; do
+	key="$1"
+
+	case $key in
+	    -f|--project_file)
+	    prjfile="$2"
+	    shift # past argument
+	    shift # past value
+	    ;;
+	    -t|--total)
+		total=$2
+		shift;shift
+		;;
+	    -o|--offset)
+		offset="$2"
+		shift;shift
+		;;
+		-d|--delta)
+		ds="$2"
+		shift;shift
+	    ;;
+	    -s|--seismic)
+		seismic=true
+		shift;;
+		-p|--plot)
+		plot=true
+		shift
+		;;
+		-h|--help)
+		help=true
+		shift
+	esac
+done
+
+# ============================== Print Help Menu ============================== 
+if [ $help ]; then
+
+	echo
+	echo ' COMMON_MIDPOINT is a wrapper script to create a common midpoint survey using'
+	echo ' the SeidarT programs. The survey is along the x-direction, but can be extended'
+	echo ' to other directions. The midpoint is initialized from the x, y, and z locations'
+	echo ' provided from the source location in the project file.'
+	echo 
+	echo ' INPUT'
+	echo '	-f, --project 	Project file path'
+	echo '	-t, --total	The terminal distance between the source and reciever. '
+	echo '	-o, --offset    The initial source and reciever offset from the midpoint'
+	echo '			given in (+/- meters). A negative value means that the'
+	echo '			source is on the lookers left of the midpoint. The total'
+	echo '			source and reciever distance is 2*offset.'
+	echo '	-d, --delta	Source and reciever step length (meters); total distance'
+	echo '			between the source and reciever is 2*delta*i + 2*offset.'
+	echo ' 	-s, --seismic 	(OPTIONAL) Specifier to run seismic common offset' 
+	echo '	-p, --plot	(OPTIONAL) Show plot. Default is none'
+	echo 
+
+	exit 1
+fi
+
+
+# ================================ Error Checks ===============================
+# A quick check to make sure required arguments are given
+if [ -z $prjfile ]; then
+	echo ERROR: Missing project file
+	exit 1
+elif [[ -z $total ]]; then
+	echo ERROR: Missing terminal offset distance
+	exit 1
+elif [ -z $offset ]; then
+	echo ERROR: Missing source to reciever offset
+	exit 1
+elif [ -z $ds ]; then
+	echo ERROR: Missing step value for source
+	exit 1
+else
+	echo 
+fi
+
+
+# =========================== Create the output File ==========================
+
+# remove the extension of the project file
+base=`echo "$prjfile" | rev | cut -d"." -f2- | rev`
+time_stamp=`date +"%m%d%y%H%M"`
+
+if [ $seismic ]; then
+	cmpfilex=$base.$time_stamp.Vx.cmp.csv
+	cmpfilez=$base.$time_stamp.Vz.cmp.csv
+else
+	cmpfilex=$base.$time_stamp.Ex.cmp.csv
+	cmpfilez=$base.$time_stamp.Ez.cmp.csv
+fi
+
+# ================================ Get to work ================================
+
+if [ $seismic ]; then
+	xstring='S,x,'
+	ystring='S,y,'
+	zstring='S,z,'
+	c1='Vx'
+	c2='Vz'
+	mod=s
+else
+	xstring='E,x,'
+	ystring='E,y,'
+	zstring='E,z,'
+	c1='Ex'
+	c2='Ez'
+	mod=e
+fi
+
+# Create the common midpoint file
+touch $cmpfilex
+touch $cmpfilez
+
+# Get the midpoint from the project file
+xs=`grep -F $xstring $prjfile`
+xs=$(echo $xs | cut -f3 -d,)
+
+ys=`grep -F $ystring $prjfile`
+ys=$(echo $ys | cut -f3 -d,)
+
+zs=`grep -F $zstring $prjfile`
+zs=$(echo $zs | cut -f3 -d,)
+
+
+# For now we aren't varying the other dimensions
+yr=$ys
+zr=$zs
+
+# We need to save the original value so that we can rewrite it at the end
+xorig=$xs
+
+# Check if the midpoint is given as negative or positive
+if [[ $xs -lt 0 ]]; then
+	echo Source is on left of midpoint
+	xs=`echo "$xs * -1" | bc `
+	ds=`echo "$ds * -1" | bc `
+	offset=`echo "$offset * -1" | bc `
+	sign=-1
+else
+	echo Source is on right of midpoint
+	sign=1
+fi
+
+# Initialize the source and reciever locations
+xr=`echo "$xs - $offset" | bc -l` 
+xs=`echo "$xs + $offset" | bc -l`
+total_offset=`echo "$sign*($xs - $xr)" | bc -l`
+
+# Create the file that contains metadata of the survey
+metafile=$base.$time_stamp.meta.txt
+istr=initial_position: 
+fstr=final_position:
+touch $metafile
+echo project_file: $prjfile > $metafile
+echo survey_type: cmp >> $metafile
+echo offset: $offset >> $metafile
+echo delta: $ds >> $metafile
+echo $istr $xr $yr $zr >> $metafile
+echo $fstr $xr $yr $zr >> $metafile
+
+
+# For the time functions
+elapsed_time=0
+num_total=`echo "($total-2*$offset)/(2*$ds)" | bc -l`
+num_total=`echo "$num_total/1" | bc`
+
+counter=1
+
+while (( $(echo "$total_offset<$total" | bc -l) )); do
+
+	start=`date +%s`
+	echo ---------------
+	echo Run $counter of $num_total 
+
+	prjrun $prjfile --model $mod
+	# Get the reciever timeser'es for the x-directon
+	arrayplot $metafile -c $c1 -g 0 -S 1
+	# append the timeseries to the othe's
+	paste -d',' $cmpfilex reciever_array.csv > temp.csv
+	mv temp.csv $cmpfilex
+	rm reciever_array.csv
+
+	# Get the reciever timeseries for the z-direction
+	arrayplot $metafile -c $c2 -g 0 -S 1
+
+	# append the timeseries to the others
+	paste -d',' $cmpfilez reciever_array.csv > temp.csv
+	mv temp.csv $cmpfilez
+	rm reciever_array.csv
+
+	# Shift the source
+	xs=`echo "$xs + $ds" | bc -l`
+	sed -i -e "s/$xstring$wild/$xstring$xs/" $prjfile
+	# Shift the reciever
+	xr=`echo "$xr - $ds" | bc -l`
+
+	# Update the metadata file with the new reciever location
+	sed -i -e "s/$istr.*/$istr $xr $yr $zr/" $metafile
+	sed -i -e "s/$fstr.*/$fstr $xr $yr $zr/" $metafile
+
+	total_offset=`echo "$sign*($xs - $xr)" | bc`
+	# echo $xr $xs $total_offset
+
+	# Remove .dat files
+	rm *.dat
+
+	# Update the times and print out the results
+	end=`date +%s`
+	runtime=$((end-start))
+	elapsed_time=$((elapsed_time+runtime))
+	echo "Elapsed time of last model run:"
+	echo $runtime
+	echo "Total elapsed time:"
+	echo $elapsed_time 
+	echo
+
+	# increase the counter
+	counter=`echo "$counter+1" | bc`
+
+done
+
+sed -i -e "s/$xstring$wild/$xstring$xorig/" $prjfile
+
+
+# Display the results for the Ex field. We can do the same for Ez if we like
+if [ $plot ]; then
+	codisplay $metafile -c $c1 -e 0.15 -g 7
+	codisplay $metafile -c $c2 -e 0.15 -g 7
+fi
+

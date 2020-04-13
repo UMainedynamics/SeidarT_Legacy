@@ -1,0 +1,145 @@
+#!/bin/bash
+
+: '
+WIDE_ANGLE is a wrapper script to create a wide angle survey using the
+SeidarT programs. For 2D, only the x and z coordinates are used and y is 
+ignored. 2.5D and 3D surveys will incorporate all three coordinates
+
+INPUT
+	-f, --project 	Project file path
+	-I, --initial 	The inital coordinates of the recievers in meters. Requires 3 
+					arguments x y z
+	-F, --final		The final coordinates of the recievers in meters. Requires 3
+					arguments  x y z 
+	-d, --delta		Reciever spacing (meters)
+	-g, --gif		Whether to create the gif
+	-s, --seismic 	(OPTIONAL) Specifier to run model; s-seismic, e-electromag,
+					b-both seismic and electromag, n-none (default) 
+'
+
+# ------------------------------ Input Arguments ------------------------------
+while [[ $# -gt 0 ]]; do
+	key="$1"
+	case $key in
+	    -f|--project_file)
+	    prjfile="$2"
+	    shift # past argument
+	    shift # past value
+	    ;;
+	    -F|--final) 
+	    xf="$2"
+	    yf="$3"
+	    zf="$4"
+	    shift;shift;shift;shift # past value
+	    ;;
+	    -I|--initial) 
+	    xi="$2"
+	    yi="$3"
+	    zi="$4"
+	    shift;shift;shift;shift # past value 
+	    ;;
+	    -d|--delta)
+	    ds="$2"
+	    shift;shift
+	    ;;
+	    -g|--gif)
+	    gif=true
+	    shift
+	    ;;
+	    -s|--seismic)
+	    seismic=true
+	    shift
+	    ;;
+		-h|--help)
+		help=true
+		shift
+	esac
+done
+
+
+# ============================== Print Help Menu ============================== 
+if [ $help ]; then
+	echo
+	echo ' WIDE_ANGLE is a wrapper script to create a wide angle survey using the'
+	echo ' SeidarT programs. For 2D, only the x and z coordinates are used and y is'
+	echo ' ignored. 2.5D and 3D surveys will incorporate all three coordinates.'
+	echo 
+	echo ' INPUT'
+	echo '	-f, --project 	Project file path'
+	echo '	-i, --initial	The inital coordinates of the recievers in meters. '
+	echo '			Requires 3 arguments x y z'
+	echo '	-F, --final	The final coordinates of the source. Requires 3'
+	echo ' 			arguments  x y z'
+	echo '	-o, --offset    Source and reciever offset distance (meters)'
+	echo '	-d, --delta	Reciever spacing (meters)'
+	echo ' 	-s, --seismic 	(OPTIONAL) Specifier to run model; s-seismic,' 
+	echo '			 e-electromag, b-both seismic and electromag,'
+	echo '			n-none (default)'
+	echo '	-g, --gif	(OPTIONAL) Whether to create the gif. '
+	echo 
+
+	exit 1
+fi
+
+
+# ------------------------------- Check Inputs --------------------------------
+
+if [[ -z $prjfile ]]; then
+	echo ERROR: Missing project file
+	exit 1
+elif [[ -z $xi || -z $yi || -z $zi ]]; then
+	echo ERROR: Missing initial reciever location
+	exit 1
+elif [[ -z $xf || -z $yf || -z $zf ]]; then
+	echo ERROR: Missing final reciever location
+	exit 1
+elif [[ -z $ds ]]; then
+	echo ERROR: Missing reciever spacing
+	exit 1
+else
+	echo
+fi
+
+# =========================== Create the output File ==========================
+# remove the extension of the project file
+base=`echo "$prjfile" | rev | cut -d"." -f2- | rev`
+
+time_stamp=`date +"%m%d%y%H%M"`
+
+# Create the file that contains metadata of the survey
+metafile=$base.$time_stamp.meta.txt
+touch $metafile
+echo project_file: $prjfile > $metafile
+echo survey_type: co >> $metafile
+echo delta: $ds >> $metafile
+echo initial_position: $xi $yi $zi >> $metafile
+echo final_position: $xf $yf $zf >> $metafile
+
+
+# ------------------------------- Run the Model -------------------------------
+if [[ $seismic ]]; then
+	c1=Vx
+	c2=Vz
+	mod=s
+	gain=7
+	echo Modeling seismic wave propagation
+else
+	c1=Ex
+	c2=Ez
+	mod=e
+	gain=7
+	echo Modeling electromagnetic wave propagation
+fi
+
+
+prjrun $prjfile --model $mod
+
+echo Creating reciever array
+arrayplot $metafile -c $c1 -g $gain
+arrayplot $metafile -c $c2 -g $gain
+
+
+if [[ $gif ]]; then
+	im2anim $prjfile -c $c1 -f 30
+	im2anim $prjfile -c $c2 -f 30
+fi
