@@ -56,19 +56,26 @@ contains
     c66(:,:) = 0.d0 
     rho(:,:) = 0.d0 
 
+    ! print *, mlist(1,:)
+    ! print *, mlist(2,:)
+    ! print *, mlist(3,:)
+    ! print *, mlist(4,:)
+    ! print *, mlist(5,:)
+    ! print *, mlist(6,:)
+
     !Assign between the PML regions
-    do i=npoints_pml+1, nx+npoints_pml
-      do j=npoints_pml+1, nz+npoints_pml
-        c11(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 2)
-        c12(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 3)
-        c13(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 4) 
-        c22(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 5)
-        c23(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 6)
-        c33(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 7)
-        c44(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 8)
-        c55(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 9)
-        c66(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 10)
-        rho(i,j) = mlist(im(i-npoints_pml,j-npoints_pml), 11) 
+    do i = npoints_pml+1, nx+npoints_pml
+      do j = npoints_pml+1, nz+npoints_pml
+        c11(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 2)
+        c12(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 3)
+        c13(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 4) 
+        c22(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 5)
+        c23(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 6)
+        c33(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 7)
+        c44(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 8)
+        c55(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 9)
+        c66(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 10)
+        rho(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 11) 
       enddo
     enddo
 
@@ -87,16 +94,16 @@ contains
       rho( i, :) = rho(npoints_pml+1,:)
 
       ! bottom
-      c11( nx+npoints_pml-1+i, :) = c11(nx+npoints_pml,:)
-      c12( nx+npoints_pml-1+i, :) = c12(nx+npoints_pml,:)
-      c13( nx+npoints_pml-1+i, :) = c13(nx+npoints_pml,:)
-      c22( nx+npoints_pml-1+i, :) = c22(nx+npoints_pml,:)
-      c23( nx+npoints_pml-1+i, :) = c23(nx+npoints_pml,:)
-      c33( nx+npoints_pml-1+i, :) = c33(nx+npoints_pml,:)
-      c44( nx+npoints_pml-1+i, :) = c44(nx+npoints_pml,:)
-      c55( nx+npoints_pml-1+i, :) = c55(nx+npoints_pml,:)
-      c66( nx+npoints_pml-1+i, :) = c66(nx+npoints_pml,:)
-      rho( nx+npoints_pml-1+i, :) = rho(nx+npoints_pml,:)
+      c11( nx+npoints_pml-1+i, :) = c11(nx+npoints_pml-1,:)
+      c12( nx+npoints_pml-1+i, :) = c12(nx+npoints_pml-1,:)
+      c13( nx+npoints_pml-1+i, :) = c13(nx+npoints_pml-1,:)
+      c22( nx+npoints_pml-1+i, :) = c22(nx+npoints_pml-1,:)
+      c23( nx+npoints_pml-1+i, :) = c23(nx+npoints_pml-1,:)
+      c33( nx+npoints_pml-1+i, :) = c33(nx+npoints_pml-1,:)
+      c44( nx+npoints_pml-1+i, :) = c44(nx+npoints_pml-1,:)
+      c55( nx+npoints_pml-1+i, :) = c55(nx+npoints_pml-1,:)
+      c66( nx+npoints_pml-1+i, :) = c66(nx+npoints_pml-1,:)
+      rho( nx+npoints_pml-1+i, :) = rho(nx+npoints_pml-1,:)
 
       ! left 
       c11( :, i) = c11(:, npoints_pml+1)
@@ -111,16 +118,16 @@ contains
       rho( :, i) = rho(:, npoints_pml+1)
 
       ! right
-      c11( :, nz+npoints_pml-1+i) = c11(:,nz+npoints_pml)
-      c12( :, nz+npoints_pml-1+i) = c12(:,nz+npoints_pml)
-      c13( :, nz+npoints_pml-1+i) = c12(:,nz+npoints_pml)      
-      c22( :, nz+npoints_pml-1+i) = c22(:,nz+npoints_pml)
-      c23( :, nz+npoints_pml-1+i) = c23(:,nz+npoints_pml)
-      c33( :, nz+npoints_pml-1+i) = c33(:,nz+npoints_pml)
-      c44( :, nz+npoints_pml-1+i) = c44(:,nz+npoints_pml)
-      c55( :, nz+npoints_pml-1+i) = c55(:,nz+npoints_pml)      
-      c66( :, nz+npoints_pml-1+i) = c66(:,nz+npoints_pml)
-      rho( :, nz+npoints_pml-1+i) = rho(:,nz+npoints_pml)
+      c11( :, nz+npoints_pml-1+i) = c11(:,nz+npoints_pml-1)
+      c12( :, nz+npoints_pml-1+i) = c12(:,nz+npoints_pml-1)
+      c13( :, nz+npoints_pml-1+i) = c12(:,nz+npoints_pml-1)      
+      c22( :, nz+npoints_pml-1+i) = c22(:,nz+npoints_pml-1)
+      c23( :, nz+npoints_pml-1+i) = c23(:,nz+npoints_pml-1)
+      c33( :, nz+npoints_pml-1+i) = c33(:,nz+npoints_pml-1)
+      c44( :, nz+npoints_pml-1+i) = c44(:,nz+npoints_pml-1)
+      c55( :, nz+npoints_pml-1+i) = c55(:,nz+npoints_pml-1)      
+      c66( :, nz+npoints_pml-1+i) = c66(:,nz+npoints_pml-1)
+      rho( :, nz+npoints_pml-1+i) = rho(:,nz+npoints_pml-1)
 
     end do 
 
@@ -229,7 +236,7 @@ do i=1,nx
     ! Compute the a_i coefficients
     ! this to avoid division by zero outside the PML
     if (abs(sigma(i)) > 1.d-6) then 
-      acoeff(i) = sigma(i) * (bcoeff(i) - 1.d0) / ( (sigma(i) + kappa(i) * alpha(i)) ) / kappa(i)
+      acoeff(i) = sigma(i) * (bcoeff(i) - 1.d0) / (kappa(i) * sigma(i) + kappa(i) * alpha(i) ) !( (sigma(i) + kappa(i) * alpha(i)) ) / kappa(i)
     endif
 
 enddo 
@@ -306,7 +313,7 @@ real(kind=dp) :: DT
 real(kind=dp) :: dx, dy, dz
 ! parameters for the source
 real(kind=dp) :: t0
-real(kind=dp), parameter :: factor = 1.d7
+real(kind=dp), parameter :: factor = 1.d0
 
 ! source
 integer,dimension(:) :: src
@@ -328,7 +335,9 @@ real(kind=dp), parameter :: HUGEVAL = 1.d+30
 real(kind=dp), parameter :: STABILITY_THRESHOLD = 1.d+25
 
 ! main arrays
-real(kind=dp), dimension(nx,ny,nz) :: vx,vy,vz,sigmaxx,sigmayy,sigmazz,sigmaxy,sigmaxz,sigmayz
+real(kind=dp), dimension(nx,ny,nz) :: vx,vy,vz, &
+                                      sigmaxx,sigmayy,sigmazz, &
+                                      sigmaxy,sigmaxz,sigmayz
 
 ! power to compute d0 profile. Increasing this value allows for a larger dampening gradient in the PML
 real(kind=dp), parameter :: NPOWER = 2.d0
@@ -364,8 +373,7 @@ real(kind=dp), dimension(ny) :: d_y,K_y,alpha_y,a_y,b_y,d_y_half,K_y_half,alpha_
 real(kind=dp), dimension(nz) :: d_z,K_z,alpha_z,a_z,b_z,d_z_half,K_z_half,alpha_z_half,a_z_half,b_z_half
 
 real(kind=dp) :: thickness_PML_x,thickness_PML_y,thickness_PML_z
-real(kind=dp) :: xoriginleft,xoriginright,yoriginout, yoriginin, zoriginbottom,zorigintop
-real(kind=dp) :: Rcoef,d0_x,d0_y,d0_z,xval,yval,zval,abscissa_in_PML,abscissa_normalized
+real(kind=dp) :: Rcoef,d0_x,d0_y,d0_z
 
 ! for the source
 real(kind=dp) :: a,t,force_x,force_y,force_z,source_term
@@ -395,17 +403,14 @@ call material_rw('c66.dat', c66, .TRUE.)
 call material_rw('rho.dat', rho, .TRUE.)
 
 ! ------------------------ Assign some constants -----------------------
-
 isource = src(1)+npoints_pml
 jsource = src(2)+npoints_pml
 ksource = src(3)+npoints_pml
 
-
 t0 = 1.0d0/f0
 DT = minval( (/dx,dy,dz/) )/ ( 2.0* sqrt( ( maxval( (/ c11/rho, c22/rho, c33/rho /) ) ) ) )
 
-
-ALPHA_MAX = PI*f0 ! from Festa and Vilotte
+ALPHA_MAX = 2.d0*pi*(f0/2.d0)  ! from Festa and Vilotte
 a = pi*pi*f0*f0
 angle_force = angle_force * degrees_to_radians
 ! ----------------------------------------------------------------------
@@ -469,9 +474,11 @@ thickness_PML_z = npoints_pml * dz
 
 ! ------------------------- damping in the X direction-------------------------
 
+! Full nodes
 call cpml_coeffs(nx, dx, dt, npoints_pml, d0_x, k_max, alpha_max, &
             K_x, alpha_x, a_x, b_x, .FALSE.)
 
+! Half nodes
 call cpml_coeffs(nx, dx, dt, npoints_pml, d0_x, k_max, alpha_max, &
             K_x_half, alpha_x_half, a_x_half, b_x_half, .TRUE.)
 
@@ -490,32 +497,6 @@ call cpml_coeffs(nz, dz, dt, npoints_pml, d0_z, k_max, alpha_max, &
 call cpml_coeffs(nz, dz, dt, npoints_pml, d0_z, k_max, alpha_max, &
             K_z_half, alpha_z_half, a_z_half, b_z_half, .TRUE.)
 
-
-
-
-! Print the PML values to a file to check the values
-  open(unit = 15, file = "x_values_sub.txt")
-  do i=1,nx
-    write(15,"(E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3)") &
-          a_x(i), a_x_half(i), b_x(i), b_x_half(i), alpha_x(i), alpha_x_half(i), K_x(i), K_x_half(i)
-  enddo
-  close(15)
-
-  open(unit = 16, file = "y_values_sub.txt")
-  do i = 1,ny
-    write(16,"(E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3)") &
-          a_y(i), a_y_half(i), b_y(i), b_y_half(i), alpha_y(i), alpha_y_half(i), K_y(i), K_y_half(i)
-  enddo
-  close(16)
-
-  open(unit = 17, file = "z_values_sub.txt")
-  do i = 1,nz
-    write(17, "(E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3)")  &
-          a_z(i), a_z_half(i), b_z(i), b_z_half(i), alpha_z(i), alpha_z_half(i), K_z(i), K_z_half(i)
-  enddo
-  close(17)
-
-stop
 
 ! =============================== Forward Model ===============================
 ! initialize arrays
@@ -554,11 +535,7 @@ memory_dsigmaxz_dz(:,:,:) = 0.d0
 memory_dsigmayz_dy(:,:,:) = 0.d0
 memory_dsigmayz_dz(:,:,:) = 0.d0
 
-
-! !---
-! !---  beginning of time loop
-! !---
-
+! Do it 
 do it = 1,NSTEP
   !------------------------------------------------------------
   ! compute stress sigma and update memory variables for C-PML
@@ -580,9 +557,20 @@ do it = 1,NSTEP
         value_dvy_dy = value_dvy_dy / K_y(j) + memory_dvy_dy(i,j,k)
         value_dvz_dz = value_dvz_dz / K_z(k) + memory_dvz_dz(i,j,k)
 
-        sigmaxx(i,j,k) = sigmaxx(i,j,k) + ( c11(i,k) * value_dvx_dx + c12(i,k) * value_dvy_dy + c13(i,k) * value_dvz_dz) * dt
-        sigmayy(i,j,k) = sigmayy(i,j,k) + ( c12(i,k) * value_dvx_dx + c22(i,k) * value_dvy_dy + c23(i,k) * value_dvz_dz) * dt
-        sigmazz(i,j,k) = sigmazz(i,j,k) + ( c13(i,k) * value_dvx_dx + c23(i,k) * value_dvy_dy + c33(i,k) * value_dvz_dz) * dt
+        sigmaxx(i,j,k) = sigmaxx(i,j,k) + &
+            ( c11(i,k) * value_dvx_dx + &
+              c12(i,k) * value_dvy_dy + &
+              c13(i,k) * value_dvz_dz) * dt
+
+        sigmayy(i,j,k) = sigmayy(i,j,k) + &
+            ( c12(i,k) * value_dvx_dx + &
+              c22(i,k) * value_dvy_dy + &
+              c23(i,k) * value_dvz_dz) * dt
+
+        sigmazz(i,j,k) = sigmazz(i,j,k) + &
+            ( c13(i,k) * value_dvx_dx + &
+              c23(i,k) * value_dvy_dy + &
+              c33(i,k) * value_dvz_dz) * dt
 
       enddo
     enddo
@@ -591,7 +579,7 @@ do it = 1,NSTEP
   ! Update sigmaxy, x-direction is full nodes
   do k = 1,nz
     do j = 1,ny-1
-      do i = 2,NX
+      do i = 2,nx
 
         value_dvy_dx = (vy(i,j,k) - vy(i-1,j,k)) / DX
         value_dvx_dy = (vx(i,j+1,k) - vx(i,j,k)) / DY
@@ -668,7 +656,7 @@ do it = 1,NSTEP
         value_dsigmaxy_dy = value_dsigmaxy_dy / K_y(j) + memory_dsigmaxy_dy(i,j,k)
         value_dsigmaxz_dz = value_dsigmaxz_dz / K_z(k) + memory_dsigmaxz_dz(i,j,k) 
 
-        vx(i,j,k) = vx(i,j,k) + (value_dsigmaxx_dx + value_dsigmaxy_dy + value_dsigmaxz_dz) * dt / rho(i,k)
+        vx(i,j,k) = vx(i,j,k) + (value_dsigmaxx_dx + value_dsigmaxy_dy + value_dsigmaxz_dz) * dt**2 / rho(i,k)
 
       enddo
     enddo
@@ -690,7 +678,7 @@ do it = 1,NSTEP
         value_dsigmayy_dy = value_dsigmayy_dy / K_y_half(j) + memory_dsigmayy_dy(i,j,k)
         value_dsigmayz_dz = value_dsigmayz_dz / K_z(k) + memory_dsigmayz_dz(i,j,k)
 
-        vy(i,j,k) = vy(i,j,k) + (value_dsigmaxy_dx + value_dsigmayy_dy + value_dsigmayz_dz) * dt / rho(i,k)
+        vy(i,j,k) = vy(i,j,k) + (value_dsigmaxy_dx + value_dsigmayy_dy + value_dsigmayz_dz) * dt**2 / rho(i,k)
 
       enddo
     enddo
@@ -713,7 +701,7 @@ do it = 1,NSTEP
         value_dsigmayz_dy = value_dsigmayz_dy / K_y(j) + memory_dsigmayz_dy(i,j,k)
         value_dsigmazz_dz = value_dsigmazz_dz / K_z_half(k) + memory_dsigmazz_dz(i,j,k)
 
-        vz(i,j,k) = vz(i,j,k) + (value_dsigmaxz_dx + value_dsigmayz_dy + value_dsigmazz_dz) * dt / rho(i,k)
+        vz(i,j,k) = vz(i,j,k) + (value_dsigmaxz_dx + value_dsigmayz_dy + value_dsigmazz_dz) * dt**2 / rho(i,k)
 
       enddo
     enddo
@@ -730,13 +718,16 @@ do it = 1,NSTEP
 
 
   ! Use spherical coordinates for the source rotation
-  force_x = sin( angle_force(1) ) * cos( angle_force(2) ) * source_term
-  force_y = sin( angle_force(1) ) * sin( angle_force(2) ) * source_term
+  force_x = sin( angle_force(1) ) * source_term!* cos( angle_force(2) ) * source_term
+  ! force_y = sin( angle_force(1) ) * sin( angle_force(2) ) * source_term
   force_z = cos( angle_force(1) ) * source_term
+  ! force_x = source_term 
+  ! force_y = source_term 
+  ! force_z = source_term 
 
-  vx(isource,jsource,ksource) = vx(isource,jsource,ksource) + force_x * DT / rho(i,k)
-  vy(isource,jsource,ksource) = vy(isource,jsource,ksource) + force_y * DT / rho(i,k)
-  vz(isource,jsource,ksource) = vz(isource,jsource,ksource) + force_z * DT / rho(i,k)
+  vx(isource,jsource,ksource) = vx(isource,jsource,ksource) + force_x * DT / rho(isource,ksource)
+  ! vy(isource,jsource,ksource) = vy(isource,jsource,ksource) + force_y * DT / rho(isource,ksource)
+  vz(isource,jsource,ksource) = vz(isource,jsource,ksource) + force_z * DT / rho(isource,ksource)
 
   ! Dirichlet conditions (rigid boundaries) on the edges or at the bottom of the PML layers
   vx(1,:,:) = 0.d0

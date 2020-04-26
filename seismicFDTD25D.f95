@@ -498,32 +498,6 @@ call cpml_coeffs(nz, dz, dt, npoints_pml, d0_z, k_max, alpha_max, &
             K_z_half, alpha_z_half, a_z_half, b_z_half, .TRUE.)
 
 
-
-
-! Print the PML values to a file to check the values
-  ! open(unit = 15, file = "x_values_sub.txt")
-  ! do i=1,nx
-  !   write(15,"(E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3)") &
-  !         a_x(i), a_x_half(i), b_x(i), b_x_half(i), alpha_x(i), alpha_x_half(i), K_x(i), K_x_half(i)
-  ! enddo
-  ! close(15)
-
-  ! open(unit = 16, file = "y_values_sub.txt")
-  ! do i = 1,ny
-  !   write(16,"(E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3)") &
-  !         a_y(i), a_y_half(i), b_y(i), b_y_half(i), alpha_y(i), alpha_y_half(i), K_y(i), K_y_half(i)
-  ! enddo
-  ! close(16)
-
-  ! open(unit = 17, file = "z_values_sub.txt")
-  ! do i = 1,nz
-  !   write(17, "(E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3)")  &
-  !         a_z(i), a_z_half(i), b_z(i), b_z_half(i), alpha_z(i), alpha_z_half(i), K_z(i), K_z_half(i)
-  ! enddo
-  ! close(17)
-
-
-
 ! =============================== Forward Model ===============================
 ! initialize arrays
 vx(:,:,:) = 0.d0
@@ -682,7 +656,7 @@ do it = 1,NSTEP
         value_dsigmaxy_dy = value_dsigmaxy_dy / K_y(j) + memory_dsigmaxy_dy(i,j,k)
         value_dsigmaxz_dz = value_dsigmaxz_dz / K_z(k) + memory_dsigmaxz_dz(i,j,k) 
 
-        vx(i,j,k) = vx(i,j,k) + (value_dsigmaxx_dx + value_dsigmaxy_dy + value_dsigmaxz_dz) * dt / rho(i,k)
+        vx(i,j,k) = vx(i,j,k) + (value_dsigmaxx_dx + value_dsigmaxy_dy + value_dsigmaxz_dz) * dt**2 / rho(i,k)
 
       enddo
     enddo
@@ -704,7 +678,7 @@ do it = 1,NSTEP
         value_dsigmayy_dy = value_dsigmayy_dy / K_y_half(j) + memory_dsigmayy_dy(i,j,k)
         value_dsigmayz_dz = value_dsigmayz_dz / K_z(k) + memory_dsigmayz_dz(i,j,k)
 
-        vy(i,j,k) = vy(i,j,k) + (value_dsigmaxy_dx + value_dsigmayy_dy + value_dsigmayz_dz) * dt / rho(i,k)
+        vy(i,j,k) = vy(i,j,k) + (value_dsigmaxy_dx + value_dsigmayy_dy + value_dsigmayz_dz) * dt**2 / rho(i,k)
 
       enddo
     enddo
@@ -727,7 +701,7 @@ do it = 1,NSTEP
         value_dsigmayz_dy = value_dsigmayz_dy / K_y(j) + memory_dsigmayz_dy(i,j,k)
         value_dsigmazz_dz = value_dsigmazz_dz / K_z_half(k) + memory_dsigmazz_dz(i,j,k)
 
-        vz(i,j,k) = vz(i,j,k) + (value_dsigmaxz_dx + value_dsigmayz_dy + value_dsigmazz_dz) * dt / rho(i,k)
+        vz(i,j,k) = vz(i,j,k) + (value_dsigmaxz_dx + value_dsigmayz_dy + value_dsigmazz_dz) * dt**2 / rho(i,k)
 
       enddo
     enddo
