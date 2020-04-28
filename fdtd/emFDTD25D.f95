@@ -383,7 +383,7 @@ jsource = int(src(2)) + npoints_pml
 ksource = int(src(3)) + npoints_pml
 
 ! Define the 
-DT = minval( (/dx, dy, dz/) )/ ( 2.0d0 * Clight)
+DT = minval( (/dx, dy, dz/) )/ ( 2.0d0 * Clight/ sqrt( minval( (/ epsilonx, epsilony, epsilonz /) ) ) )
 t0 = 1.0d0/f0
 tw = 4.0d0*t0
 
@@ -652,15 +652,10 @@ do it = 1,NSTEP
   t = dble(it-1)*DT
 
   source_term = factor*exp(-(1.0d0*pi*f0*(t-t0) )**2.0d0 )*sin(2.0d0*pi*f0*(t-t0) )
-
-  ! force_x = sin(ANGLE(1) ) * source_term
-  ! force_y = cos(ANGLE(1) ) * source_term
   force_x = sin( ANGLE(1) ) * cos( ANGLE(2) ) * source_term
   force_y = sin( ANGLE(1) ) * sin( ANGLE(2) ) * source_term
   force_z = cos( ANGLE(1) ) * source_term
-  ! force_x = source_term 
-  ! force_y = source_term 
-  ! force_z = source_term 
+
 
   Ex(isource,jsource,ksource) = Ex(isource,jsource,ksource) + force_x !* DT / epsilonx(i,j)
   Ey(isource,jsource,ksource) = Ey(isource,jsource,ksource) + force_y !* DT / epsilony(i,j) !* cbEy(ISOURCE,JSOURCE) !* DT / (epsilony(i,j) )
@@ -708,7 +703,8 @@ do it = 1,NSTEP
   Hz(nx-1,:,:) = 0.0d0
   Hz(:,ny-1,:) = 0.0d0
   Hz(:,:,nz) = 0.0d0
-  ! print maximum of norm of velocity
+
+  ! check norm of velocity to make sure the solution isn't diverging
   velocnorm = maxval(sqrt(Ex**2.0d0 + Ey**2.0d0 + Ez**2.0d0) )
   if (velocnorm > STABILITY_THRESHOLD) stop 'code became unstable and blew up'
 

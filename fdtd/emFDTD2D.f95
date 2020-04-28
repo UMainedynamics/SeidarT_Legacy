@@ -377,7 +377,7 @@ jsource = int(src(2)) + npoints_pml
 !   sisEy(nstep, nrec ) )
 
 ! Define the 
-DT = minval( (/dx, dy/) )/ ( 2.d0 * Clight)!/sqrt( minval( (/ epsilonx, epsilony /) ) ) )  ! 0.9/( 2 * Clight/sqrt( minval( (/ epsilonx, epsilony /) ) ) ) ! 0.99/(Clight*dx) ! dx/(2*Clight) ! min(dx,dy)/(2*Clight)  ! 
+DT = minval( (/dx, dy/) )/ ( Clight/sqrt( minval( (/ epsilonx, epsilony /) ) ) )  ! 0.9/( 2 * Clight/sqrt( minval( (/ epsilonx, epsilony /) ) ) ) ! 0.99/(Clight*dx) ! dx/(2*Clight) ! min(dx,dy)/(2*Clight)  ! 
 t0 = 1.0d0/f0
 tw = 4.0d0*t0
 

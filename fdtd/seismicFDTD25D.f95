@@ -56,13 +56,6 @@ contains
     c66(:,:) = 0.d0 
     rho(:,:) = 0.d0 
 
-    ! print *, mlist(1,:)
-    ! print *, mlist(2,:)
-    ! print *, mlist(3,:)
-    ! print *, mlist(4,:)
-    ! print *, mlist(5,:)
-    ! print *, mlist(6,:)
-
     !Assign between the PML regions
     do i = npoints_pml+1, nx+npoints_pml
       do j = npoints_pml+1, nz+npoints_pml
@@ -313,7 +306,7 @@ real(kind=dp) :: DT
 real(kind=dp) :: dx, dy, dz
 ! parameters for the source
 real(kind=dp) :: t0
-real(kind=dp), parameter :: factor = 1.d0
+real(kind=dp), parameter :: factor = 1.d07
 
 ! source
 integer,dimension(:) :: src
@@ -343,7 +336,7 @@ real(kind=dp), dimension(nx,ny,nz) :: vx,vy,vz, &
 real(kind=dp), parameter :: NPOWER = 2.d0
 
 ! from Stephen Gedney's unpublished class notes for class EE699, lecture 8, slide 8-11
-real(kind=dp), parameter :: K_MAX = 1.d1
+real(kind=dp), parameter :: K_MAX = 1.d0
 real(kind=dp) :: ALPHA_MAX
 
 ! arrays for the memory variables
@@ -407,10 +400,13 @@ isource = src(1)+npoints_pml
 jsource = src(2)+npoints_pml
 ksource = src(3)+npoints_pml
 
-t0 = 1.0d0/f0
-DT = minval( (/dx,dy,dz/) )/ ( 2.0* sqrt( ( maxval( (/ c11/rho, c22/rho, c33/rho /) ) ) ) )
+t0 = 2.0d0/ (pi * f0)
+! To ensure a courant number <= 1.0, we can calculate the time step from
+! the velocity
+DT = minval( (/dx,dy,dz/) )/ &
+    ( sqrt( 3.d0 * ( maxval( (/ c11/rho, c22/rho, c33/rho /) ) ) ) )
 
-ALPHA_MAX = 2.d0*pi*(f0/2.d0)  ! from Festa and Vilotte
+ALPHA_MAX = pi*f0  ! from Festa and Vilotte
 a = pi*pi*f0*f0
 angle_force = angle_force * degrees_to_radians
 ! ----------------------------------------------------------------------
@@ -614,15 +610,12 @@ do it = 1,NSTEP
 
       enddo
     enddo
-  ! enddo
 
   !   ! update sigmayz, y-direction is full nodes
-  ! do k = 1,nz-1
     do j = 1,ny-1
       do i = 1,nx
-
-        value_dvy_dz = (vy(i,j+1,k) - vy(i,j,k) ) / dz
-        value_dvz_dy = (vz(i,j,k+1) - vz(i,j,k) ) / dy
+        value_dvz_dy = (vz(i,j+1,k) - vz(i,j,k) ) / dy
+        value_dvy_dz = (vy(i,j,k+1) - vy(i,j,k) ) / dz
 
         memory_dvz_dy(i,j,k) = b_y_half(j) * memory_dvz_dy(i,j,k) + a_y_half(j) * value_dvz_dy
         memory_dvy_dz(i,j,k) = b_z_half(k) * memory_dvy_dz(i,j,k) + a_z_half(k) * value_dvy_dz 
@@ -656,13 +649,11 @@ do it = 1,NSTEP
         value_dsigmaxy_dy = value_dsigmaxy_dy / K_y(j) + memory_dsigmaxy_dy(i,j,k)
         value_dsigmaxz_dz = value_dsigmaxz_dz / K_z(k) + memory_dsigmaxz_dz(i,j,k) 
 
-        vx(i,j,k) = vx(i,j,k) + (value_dsigmaxx_dx + value_dsigmaxy_dy + value_dsigmaxz_dz) * dt**2 / rho(i,k)
+        vx(i,j,k) = vx(i,j,k) + (value_dsigmaxx_dx + value_dsigmaxy_dy + value_dsigmaxz_dz) * dt / rho(i,k)
 
       enddo
     enddo
-  ! enddo
 
-  ! do k = 2,nz
     do j = 1,ny-1
       do i = 1,nx-1
         ! ds6/dx, ds2/dy, ds4/dz
@@ -678,7 +669,7 @@ do it = 1,NSTEP
         value_dsigmayy_dy = value_dsigmayy_dy / K_y_half(j) + memory_dsigmayy_dy(i,j,k)
         value_dsigmayz_dz = value_dsigmayz_dz / K_z(k) + memory_dsigmayz_dz(i,j,k)
 
-        vy(i,j,k) = vy(i,j,k) + (value_dsigmaxy_dx + value_dsigmayy_dy + value_dsigmayz_dz) * dt**2 / rho(i,k)
+        vy(i,j,k) = vy(i,j,k) + (value_dsigmaxy_dx + value_dsigmayy_dy + value_dsigmayz_dz) * dt / rho(i,k)
 
       enddo
     enddo
@@ -701,7 +692,7 @@ do it = 1,NSTEP
         value_dsigmayz_dy = value_dsigmayz_dy / K_y(j) + memory_dsigmayz_dy(i,j,k)
         value_dsigmazz_dz = value_dsigmazz_dz / K_z_half(k) + memory_dsigmazz_dz(i,j,k)
 
-        vz(i,j,k) = vz(i,j,k) + (value_dsigmaxz_dx + value_dsigmayz_dy + value_dsigmazz_dz) * dt**2 / rho(i,k)
+        vz(i,j,k) = vz(i,j,k) + (value_dsigmaxz_dx + value_dsigmayz_dy + value_dsigmazz_dz) * dt / rho(i,k)
 
       enddo
     enddo
@@ -713,20 +704,13 @@ do it = 1,NSTEP
   ! Gaussian
   source_term = factor * 2.d0*exp(-a*(t-t0)**2)
 
-!   ! first derivative of a Gaussian
-!   source_term = - factor * 2.d0*a*(t-t0)*exp(-a*(t-t0)**2)
-
-
   ! Use spherical coordinates for the source rotation
-  force_x = sin( angle_force(1) ) * source_term!* cos( angle_force(2) ) * source_term
-  ! force_y = sin( angle_force(1) ) * sin( angle_force(2) ) * source_term
+  force_x = sin( angle_force(1) ) * cos( angle_force(2) ) * source_term
+  force_y = sin( angle_force(1) ) * sin( angle_force(2) ) * source_term
   force_z = cos( angle_force(1) ) * source_term
-  ! force_x = source_term 
-  ! force_y = source_term 
-  ! force_z = source_term 
 
   vx(isource,jsource,ksource) = vx(isource,jsource,ksource) + force_x * DT / rho(isource,ksource)
-  ! vy(isource,jsource,ksource) = vy(isource,jsource,ksource) + force_y * DT / rho(isource,ksource)
+  vy(isource,jsource,ksource) = vy(isource,jsource,ksource) + force_y * DT / rho(isource,ksource)
   vz(isource,jsource,ksource) = vz(isource,jsource,ksource) + force_z * DT / rho(isource,ksource)
 
   ! Dirichlet conditions (rigid boundaries) on the edges or at the bottom of the PML layers
@@ -754,11 +738,7 @@ do it = 1,NSTEP
   vy(:,:,NZ) = 0.d0
   vz(:,:,NZ) = 0.d0
 
-
-  ! output information
-  if (mod(it,40) == 0 .or. it == 1) then
-
-  ! print maximum of norm of velocity
+  ! check norm of velocity to make sure the solution isn't diverging
   velocnorm = maxval( sqrt(vx**2 + vy**2 + vz**2) )
   print *,'Time step # ',it,' out of ',NSTEP
   print *,'Time: ',(it-1)*DT,' seconds'
@@ -770,15 +750,14 @@ do it = 1,NSTEP
   call write_image(vy, nx, ny, nz, it, 'Vy')
   call write_image(vz, nx, ny, nz, it, 'Vz')
 
-  endif
-  
 enddo   ! end of time loop
 
 end subroutine seismic_cpml_25d
 
 
 !==============================================================================
-
+!==============================================================================
+!==============================================================================
 subroutine write_image(image_data, nx, ny, nz, it, channel)
 ! Write the 3D array out as single precision
 
@@ -798,7 +777,6 @@ write(10) sngl(image_data)
 close(unit = 10)
 
 end subroutine write_image
-
 
 
 end module seismicFDTD25d

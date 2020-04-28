@@ -296,8 +296,10 @@ real(kind=dp) :: quasi_cp_max
 isource = src(1)+npoints_pml
 jsource = src(2)+npoints_pml
 
-t0 = 1.0d0/f0
-DT = minval( (/dx,dy/) )/ ( 2.0* sqrt( ( maxval( (/ c11/rho, c22/rho, c12/rho, c66/rho /) ) ) ) )!dx/(256*f0)!dt)
+DT = minval( (/dx,dy/) )/ &
+    (sqrt( 3.d0*( maxval( (/ c11/rho, c22/rho, c12/rho, c66/rho /) ) ) ) )!dx/(256*f0)!dt)
+t0 = 2.d0 / (pi * f0)
+
 ALPHA_MAX_PML = PI*f0 ! from Festa and Vilotte
 ! ----------------------------------------------------------------------
 !---
