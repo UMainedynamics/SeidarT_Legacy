@@ -38,7 +38,7 @@ Permittivity values can be found in:
     will assume that relative permeability is unity; however, if we include
     materials that are high in magnetite, hematite, etc. then we will need to
     accomadate for better permeability estimates.
-    """
+"""
 
 
 isotropic_materials = {
@@ -141,7 +141,7 @@ def get_seismic(material_name = None, temp=None, rho=None, pore = 0,
             creuss = np.zeros([6,6])
             C = np.zeros([6,6])
             
-            # Assume a constant pressure of 0.1 MPa
+            # Assume a constant pressure of 0.1 MPa (Why? because this is approximately 1 ATM)
             C = ice_stiffness(temp[ind], 0.1)
             S = np.linalg.inv(C)
 

@@ -32,7 +32,7 @@ parser.add_argument( '-n', '--num_steps', nargs = 1, type = int,
 	we can take any equally spaced images to create the gif with an
 	appropriate resolution, time to compute, and file size. For example,
 	n=20 means that every 20 images will be used thus significantly reducing
-	how long it takes to compile the gif.""")
+	how long it takes to compile.""")
 
 #-- Get the arguments
 args = parser.parse_args()
@@ -147,21 +147,32 @@ files = glob.glob(channel + '*.dat')
 ind = 0
 files.sort()
 
+# There are slight differences between the seismic and radar domains in
+# terms of staggered grid geometry 
+if channel == 'Ex':
+	NX = nz
+	NY = ny
+	NZ = nx-1
+elif channel == 'Ey':
+	NX = nz
+	NY = ny-1
+	NZ = nx
+elif channel == 'Ez':
+	NX = nz-1
+	NY = ny
+	NZ = nx
+else:
+    NX = nz
+    NY = ny 
+    NZ = nx 
+
 # We'll start counting with the first frame
 n=num_steps
 for fn in files:
     if n == num_steps:
         f = FortranFile(fn, 'r')
         dat = f.read_reals(dtype = 'float32')
-    
-        if channel == 'Ex':
-            dat = dat.reshape(nz, ny, nx-1)
-        
-        if channel == 'Ey':
-            dat = dat.reshape(nz, ny-1, nx)
-        
-        if channel == 'Ez':
-            dat = dat.reshape(nz-1, ny, nx)
+        dat = dat.reshape(NX, NY, NZ)
         
         # Zero out any values below our given threshold
         duration = dt*ind

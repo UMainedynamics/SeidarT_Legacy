@@ -15,7 +15,9 @@ from class_definitions import *
 
 # Modeling modules
 import seismicfdtd2d as seis2d
+import seismicfdtd25d as seis25d
 import emfdtd2d as em2d
+import emfdtd25d as em25d
 
 # -------------------------- Command Line Arguments ---------------------------
 parser = argparse.ArgumentParser(description="""The seisarT software requires a 
@@ -135,7 +137,7 @@ elif seismic.exit_status == 0 and seismic.compute_coefficients and material.mate
 
 	ind = np.where(tensor.max() == tensor)
 	max_rho = tensor[ ind[0][0], -1]
-	dt = np.min([domain.dx, domain.dz])/(2.0*np.sqrt(tensor.max()/max_rho ))
+	dt = np.min([domain.dx, domain.dz]) / np.sqrt(3.0 * tensor.max()/max_rho )
 
 	# We're going to find the lines marked 'C' and input the values there
 	append_coefficients(project_file, tensor, CP = 'C', dt = dt)

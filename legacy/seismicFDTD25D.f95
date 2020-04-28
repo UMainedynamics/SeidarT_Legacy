@@ -313,7 +313,7 @@ real(kind=dp) :: DT
 real(kind=dp) :: dx, dy, dz
 ! parameters for the source
 real(kind=dp) :: t0
-real(kind=dp), parameter :: factor = 1.d0
+real(kind=dp), parameter :: factor = 1.d7
 
 ! source
 integer,dimension(:) :: src
