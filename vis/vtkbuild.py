@@ -7,7 +7,7 @@ import glob
 import argparse
 from scipy.io import FortranFile
 
-from evtk.hl import imageToVTK
+from pyevtk.hl import imageToVTK
 
 # -------------------------- Command Line Arguments ---------------------------
 parser = argparse.ArgumentParser(description="""This program builds .VTI 

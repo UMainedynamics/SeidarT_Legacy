@@ -73,6 +73,22 @@ call seismic_cpml_2d(nx+2*npoints_pml, ny+2*npoints_pml, c11, c12, c22, c66, rho
 
 end subroutine doall
 
+! -----------------------------------------------------------------------------
+subroutine loadsource(filename, N, srcfn)
+  
+  implicit none
+
+  integer,parameter :: dp = kind(0.d0)
+  character(len=18) :: filename
+  integer :: N
+  real(kind=dp),dimension(N) :: srcfn
+  
+  open(unit = 13, form="unformatted", file = trim(filename))
+  read(13) srcfn
+  
+  close(unit = 13)
+
+end subroutine loadsource
 
 !==============================================================================
 subroutine stiffness_arrays(im, mlist, c11, c12, c22, c66, rho, npoints_pml) 
@@ -281,7 +297,8 @@ real(kind=dp) :: thickness_PML_x,thickness_PML_y,xoriginleft,xoriginright,yorigi
 real(kind=dp) :: Rcoef,d0_x,d0_y,xval,yval,abscissa_in_PML,abscissa_normalized
 
 ! for the source
-real(kind=dp) :: a,t,force_x,force_y,source_term
+real(kind=dp) :: a!, t
+real(kind=dp),dimension(nstep) :: srcx, srcy
 
 integer :: i,j,it
 
@@ -305,7 +322,14 @@ ALPHA_MAX_PML = PI*f0 ! from Festa and Vilotte
 !---
 !--- program starts here
 !---
+! ================================ LOAD SOURCE ================================
 
+call loadsource('seismicsourcex.dat', nstep, srcx)
+! We are using the coordinate names x, y but the math computes the source in 
+! the x-z plane
+call loadsource('seismicsourcez.dat', nstep, srcy)
+
+! -----------------------------------------------------------------------------
 !--- define profile of absorption in PML region
 
 ! thickness of the PML layer in meters
