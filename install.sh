@@ -25,6 +25,7 @@ cd ..
 # Start with the python scripts
 cp exe/prjbuild.py bin/prjbuild
 cp exe/prjrun.py bin/prjrun
+cp exe/sourcefunction.py bin/sourcefunction
 cp materials/orientation_tensor.py bin/orientation_tensor
 # cp materials/class_definitions.py bin/class_definitions
 
@@ -40,6 +41,7 @@ cp io/array2segy.py bin/array2segy
 # Change them to executables
 chmod +x bin/prjbuild \
         bin/prjrun \
+        bin/sourcefunction \
         bin/arrayplot \
         bin/codisplay \
         bin/im2anim \

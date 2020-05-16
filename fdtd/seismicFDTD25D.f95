@@ -8,14 +8,11 @@
 ! Department of Earth and Environmental Sciences 
 ! 
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
 module seismicFDTD25d
 
 implicit none
 
 contains
-
 
   !==============================================================================
   subroutine stiffness_write(im, mlist, npoints_pml, nx, nz) 
@@ -161,6 +158,24 @@ contains
   
   end subroutine material_rw
 
+
+!==============================================================================
+  subroutine loadsource(filename, N, srcfn)
+  
+    implicit none
+  
+    integer,parameter :: dp = kind(0.d0)
+    character(len=18) :: filename
+    integer :: N
+    real(kind=dp),dimension(N) :: srcfn
+    
+    open(unit = 13, form="unformatted", file = trim(filename))
+    read(13) srcfn
+    
+    close(unit = 13)
+  
+  end subroutine loadsource
+
 ! -----------------------------------------------------------------------------
 
 subroutine cpml_coeffs(nx, dx, dt, npml, sig_max, k_max, alpha_max, &
@@ -236,12 +251,10 @@ enddo
 
 end subroutine cpml_coeffs
 
-!==============================================================================
-
 
 !==============================================================================
 subroutine seismic_cpml_25d(nx, ny, nz, dx, dy, dz, &
-                      npoints_pml, src, f0, nstep, angle_force)
+                      npoints_pml, src, f0, nstep)
 
 ! 2D elastic finite-difference code in velocity and stress formulation
 ! with Convolutional-PML (C-PML) absorbing conditions for an anisotropic medium
@@ -312,7 +325,7 @@ real(kind=dp), parameter :: factor = 1.d07
 integer,dimension(:) :: src
 integer :: isource, jsource, ksource
 ! angle of source force clockwise with respect to vertical (Y) axis
-real(kind=dp), dimension(2) :: ANGLE_FORCE 
+! real(kind=dp), dimension(2) :: ANGLE_FORCE 
 
 
 ! value of PI
@@ -369,7 +382,8 @@ real(kind=dp) :: thickness_PML_x,thickness_PML_y,thickness_PML_z
 real(kind=dp) :: Rcoef,d0_x,d0_y,d0_z
 
 ! for the source
-real(kind=dp) :: a,t,force_x,force_y,force_z,source_term
+real(kind=dp) :: a!, t
+real(kind=dp),dimension(nstep) :: srcx, srcy, srcz
 
 integer :: i,j,k,it
 
@@ -380,7 +394,7 @@ real(kind=dp) :: quasi_cp_max
 
 ! Name the f2py inputs 
 !f2py3 intent(in) :: nx, ny, nz, dx, dy, dz,
-!f2py3 intent(in) :: noints_pml, src, f0, nstep, angle_force
+!f2py3 intent(in) :: noints_pml, src, f0, nstep
 
 ! ------------------------ Load Stiffness Coefficients ------------------------
 
@@ -408,18 +422,27 @@ DT = minval( (/dx,dy,dz/) )/ &
 
 ALPHA_MAX = pi*f0  ! from Festa and Vilotte
 a = pi*pi*f0*f0
-angle_force = angle_force * degrees_to_radians
+! angle_force = angle_force * degrees_to_radians
+
 ! ----------------------------------------------------------------------
 !---
 !--- program starts here
 !---
+
+! ================================ LOAD SOURCE ================================
+
+call loadsource('seismicsourcex.dat', nstep, srcx)
+call loadsource('seismicsourcey.dat', nstep, srcy)
+call loadsource('seismicsourcez.dat', nstep, srcz)
+
+! =============================================================================
 
 ! reflection coefficient (INRIA report section 6.1) http://hal.inria.fr/docs/00/07/32/19/PDF/RR-3471.pdf
 Rcoef = 0.001d0
 
 ! check that NPOWER is okay
   if (NPOWER < 1) stop 'NPOWER must be greater than 1'
-
+  
 ! ==================================== PML ====================================
 ! ---------------- define profile of absorption in PML region -----------------
 
@@ -698,20 +721,9 @@ do it = 1,NSTEP
     enddo
   enddo
 
-  ! add the source (force vector located at a given grid point)
-  t = dble(it-1)*DT
-
-  ! Gaussian
-  source_term = factor * 2.d0*exp(-a*(t-t0)**2)
-
-  ! Use spherical coordinates for the source rotation
-  force_x = sin( angle_force(1) ) * cos( angle_force(2) ) * source_term
-  force_y = sin( angle_force(1) ) * sin( angle_force(2) ) * source_term
-  force_z = cos( angle_force(1) ) * source_term
-
-  vx(isource,jsource,ksource) = vx(isource,jsource,ksource) + force_x * DT / rho(isource,ksource)
-  vy(isource,jsource,ksource) = vy(isource,jsource,ksource) + force_y * DT / rho(isource,ksource)
-  vz(isource,jsource,ksource) = vz(isource,jsource,ksource) + force_z * DT / rho(isource,ksource)
+  vx(isource,jsource,ksource) = vx(isource,jsource,ksource) + srcx(it) * DT / rho(isource,ksource)
+  vy(isource,jsource,ksource) = vy(isource,jsource,ksource) + srcy(it) * DT / rho(isource,ksource)
+  vz(isource,jsource,ksource) = vz(isource,jsource,ksource) + srcz(it) * DT / rho(isource,ksource)
 
   ! Dirichlet conditions (rigid boundaries) on the edges or at the bottom of the PML layers
   vx(1,:,:) = 0.d0
@@ -740,15 +752,23 @@ do it = 1,NSTEP
 
   ! check norm of velocity to make sure the solution isn't diverging
   velocnorm = maxval( sqrt(vx**2 + vy**2 + vz**2) )
-  print *,'Time step # ',it,' out of ',NSTEP
-  print *,'Time: ',(it-1)*DT,' seconds'
-  print *,'Max vals for vx, vy, vz: ', maxval(vx), maxval(vy), maxval(vz)
+  ! print *,'Time step # ',it,' out of ',NSTEP
+  ! print *,'Time: ',(it-1)*DT,' seconds'
+  ! print *,'Max vals for vx, vy, vz: ', maxval(vx), maxval(vy), maxval(vz)
 
   if (velocnorm > STABILITY_THRESHOLD) stop 'code became unstable and blew up'
 
+  ! Write the velocity values to an unformatted binary file
   call write_image(vx, nx, ny, nz, it, 'Vx')
   call write_image(vy, nx, ny, nz, it, 'Vy')
   call write_image(vz, nx, ny, nz, it, 'Vz')
+  ! Now write the stress Values
+  call write_image(sigmaxx, nx, ny, nz, it, 'S1')
+  call write_image(sigmayy, nx, ny, nz, it, 'S2')
+  call write_image(sigmazz, nx, ny, nz, it, 'S3')
+  call write_image(sigmaxy, nx, ny, nz, it, 'S6')
+  call write_image(sigmayz, nx, ny, nz, it, 'S4')
+  call write_image(sigmaxz, nx, ny, nz, it, 'S5')
 
 enddo   ! end of time loop
 
@@ -769,7 +789,7 @@ real(kind=dp) :: image_data(nx, ny, nz)
 character(len=2) :: channel
 character(len=100) :: filename
 
-WRITE (filename, "(a2, i6.6, '.dat')" ) channel, it
+WRITE (filename, "(a2, a1, i6.6, '.dat')" ) channel, '.', it
 
 open(unit = 10, form = "unformatted", file = trim(filename) )
 write(10) sngl(image_data)

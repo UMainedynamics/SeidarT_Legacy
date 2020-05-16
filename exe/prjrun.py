@@ -20,7 +20,7 @@ import emfdtd2d as em2d
 import emfdtd25d as em25d
 
 # -------------------------- Command Line Arguments ---------------------------
-parser = argparse.ArgumentParser(description="""The seisarT software requires a 
+parser = argparse.ArgumentParser(description="""The SeidarT software requires a 
 	.PNG image that is used to construct the model domain for seismic and 
 	electromagnetic wave propagation. Given the image file, a project file 
 	will be constructed which contains all the necessary parameters to be 
@@ -113,7 +113,7 @@ if seismic.exit_status == 0 and not seismic.compute_coefficients:
    
 			seis25d.seismicfdtd25d.seismic_cpml_25d(nx, ny, nz,
 				domain.dx, domain.dy, domain.dz, domain.cpml, 
-				src, seismic.f0, seismic.time_steps, force)
+				src, seismic.f0, seismic.time_steps)
 
 		else:
 			src = np.array([seismic.x/domain.dx, seismic.z/domain.dz]).astype(int)
@@ -174,7 +174,7 @@ elif seismic.exit_status == 0 and seismic.compute_coefficients and material.mate
 				domain.cpml, domain.nx, domain.nz)
 			seis25d.seismicfdtd25d.seismic_cpml_25d(nx, ny, nz,
 				domain.dx, domain.dy, domain.dz, domain.cpml, 
-				src, seismic.f0, seismic.time_steps, force)
+				src, seismic.f0, seismic.time_steps)
 
 		else:
 			src = np.array([seismic.x/domain.dx, seismic.z/domain.dz]).astype(int)
