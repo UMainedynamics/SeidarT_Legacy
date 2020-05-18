@@ -294,7 +294,6 @@ subroutine seismic_cpml_25d(nx, ny, nz, dx, dy, dz, &
 !   c11, c12, c22, c66, rho (REAL)
 !   dx, dy (REAL)
 !   npoints_pml (INTEGER) - the thickness of the pml
-!
 
 
 implicit none
@@ -324,9 +323,6 @@ real(kind=dp), parameter :: factor = 1.d07
 ! source
 integer,dimension(:) :: src
 integer :: isource, jsource, ksource
-! angle of source force clockwise with respect to vertical (Y) axis
-! real(kind=dp), dimension(2) :: ANGLE_FORCE 
-
 
 ! value of PI
 real(kind=dp), parameter :: PI = 3.141592653589793238462643d0
@@ -362,7 +358,6 @@ real(kind=dp), dimension(nx,ny,nz) :: &
     memory_dsigmaxy_dx, memory_dsigmaxy_dy, &
     memory_dsigmaxz_dx, memory_dsigmaxz_dz, &
     memory_dsigmayz_dy, memory_dsigmayz_dz
-
 
 real(kind=dp) :: &
     value_dvx_dx, value_dvx_dy, value_dvx_dz, &
@@ -422,7 +417,6 @@ DT = minval( (/dx,dy,dz/) )/ &
 
 ALPHA_MAX = pi*f0  ! from Festa and Vilotte
 a = pi*pi*f0*f0
-! angle_force = angle_force * degrees_to_radians
 
 ! ----------------------------------------------------------------------
 !---

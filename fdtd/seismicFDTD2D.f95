@@ -16,62 +16,170 @@ implicit none
 
 contains
 
-subroutine doall(im, mlist, nx, ny, dx, dy, npoints_pml, & 
-                  src, f0, nstep, angle_force)
-! DOALL This is kind of a wrapper function for the subsequent subroutines 
-! because this will be implemented via Python or some other dynamic front end 
-! language. Of course I would name this in the fashion of the Computer Programs in
-! Seismology naming. 
-!
-! INPUT
-!   im (INTEGER) - m-by-n array of integer values corresponding to different
-!         materials.
-!   mlist (REAL) - the p-by-13 array containing in each column:
-!
-!   MATERIAL_ID,TEMPERATURE,PRESSURE,C11,C12,C13,C22,C23,C33,C44,C55,C66,RHO
-!   
-!   nx,ny (INTEGER) - the shape variables of the input arrays in order to 
-!         allocate space and other static language headaches 
-!   dx,dy (REAL) - the inteval length values in the x and y directions
-!   npoints_pml (INTEGER) - the number of points for the CPML layer. This is 
-!         a constant value for all four sides. 
-!   rcx,src (INTEGER) - the indices of the locations of the receivers 
-!   f0 (REAL) - the center frequency of the source function. The time step is
-!         inversely proportional to the center frequency 
-! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+! subroutine doall(im, mlist, nx, ny, dx, dy, npoints_pml, & 
+!                   src, f0, nstep)
+! ! DOALL This is kind of a wrapper function for the subsequent subroutines 
+! ! because this will be implemented via Python or some other dynamic front end 
+! ! language. Of course I would name this in the fashion of the Computer Programs in
+! ! Seismology naming. 
+! !
+! ! INPUT
+! !   im (INTEGER) - m-by-n array of integer values corresponding to different
+! !         materials.
+! !   mlist (REAL) - the p-by-13 array containing in each column:
+! !
+! !   MATERIAL_ID,TEMPERATURE,PRESSURE,C11,C12,C13,C22,C23,C33,C44,C55,C66,RHO
+! !   
+! !   nx,ny (INTEGER) - the shape variables of the input arrays in order to 
+! !         allocate space and other static language headaches 
+! !   dx,dy (REAL) - the inteval length values in the x and y directions
+! !   npoints_pml (INTEGER) - the number of points for the CPML layer. This is 
+! !         a constant value for all four sides. 
+! !   rcx,src (INTEGER) - the indices of the locations of the receivers 
+! !   f0 (REAL) - the center frequency of the source function. The time step is
+! !         inversely proportional to the center frequency 
+! ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-implicit none
+! implicit none
 
-integer,parameter :: dp = kind(0.d0)
-integer :: nx, ny, nstep, npoints_pml
-integer,dimension(nx,ny) :: im
-! integer,dimension(:,:) :: rcx
-integer,dimension(:) :: src 
-real(kind=dp), dimension(:,:) :: mlist
-real(kind=dp) :: f0, angle_force
-real(kind=dp) :: dx, dy
-real(kind=dp), dimension(nx+2*npoints_pml,ny+2*npoints_pml) :: c11, c12, c22, c66, rho
-! character(len=6) :: src_type
+! integer,parameter :: dp = kind(0.d0)
+! integer :: nx, ny, nstep, npoints_pml
+! integer,dimension(nx,ny) :: im
+! ! integer,dimension(:,:) :: rcx
+! integer,dimension(:) :: src 
+! real(kind=dp), dimension(:,:) :: mlist
+! real(kind=dp) :: f0
+! real(kind=dp) :: dx, dy
+! real(kind=dp), dimension(nx+2*npoints_pml,ny+2*npoints_pml) :: c11, c12, c22, c66, rho
 
-!f2py3 intent(in) :: im, mlist, nx, ny, dx, dy, npoints_pml, src
-!f2py3 intent(in) :: f0, nstep, angle_force
-!f2py3 intent(hide), depend(im) :: nx = shape(im, 0), ny = shape(im,1)
+! !f2py3 intent(in) :: im, mlist, nx, ny, dx, dy, npoints_pml, src
+! !f2py3 intent(in) :: f0, nstep
+! !f2py3 intent(hide), depend(im) :: nx = shape(im, 0), ny = shape(im,1)
 
-! Preallocate arrays
-c11(:,:) = 0.0
-c12(:,:) = 0.0
-c66(:,:) = 0.0
-rho(:,:) = 0.0
-
-
-! Setup arrays
-call stiffness_arrays(im, mlist, c11, c12, c22, c66, rho, npoints_pml)
-
-call seismic_cpml_2d(nx+2*npoints_pml, ny+2*npoints_pml, c11, c12, c22, c66, rho, dx, dy, &
-                      npoints_pml, src, f0, nstep, angle_force)
+! ! Preallocate arrays
+! c11(:,:) = 0.0
+! c12(:,:) = 0.0
+! c66(:,:) = 0.0
+! rho(:,:) = 0.0
 
 
-end subroutine doall
+! ! Setup arrays
+! call stiffness_arrays(im, mlist, c11, c12, c22, c66, rho, npoints_pml)
+
+! call seismic_cpml_2d(nx+2*npoints_pml, ny+2*npoints_pml, c11, c12, c22, c66, rho, dx, dy, &
+!                       npoints_pml, src, f0, nstep)
+
+
+! end subroutine doall
+
+  !==============================================================================
+subroutine stiffness_write(im, mlist, npoints_pml, nx, nz) 
+  ! STIFFNESS_ARRAYS takes a matrix containing the material integer identifiers 
+  ! and creates the same size array for each independent coefficient of the 
+  ! stiffness matrix along with a density matrix. Since we ae using PML
+  ! boundaries, we will extend the the boundary values through the PML region.
+  ! 
+  ! INPUT 
+  !   im (INTEGER)  
+  !   mlist (REAL)
+  !   c11(i,j), c12(i,j), c22(i,j), c66, rho(i,j) (REAL) -
+  !   npoints_pml (INTEGER) - the 
+  !   
+  ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  implicit none 
+
+  integer,parameter :: dp = kind(0.d0)
+  integer :: nx, nz
+  integer,dimension(nx,nz) :: im
+  integer :: i, j, npoints_pml
+  real(kind=dp), dimension(:,:) :: mlist
+  real(kind=dp), dimension(2*npoints_pml+nx,2*npoints_pml+nz) :: c11, c12, &
+                                                              c22, c66, rho
+
+  !f2py3 intent(in):: im, mlist, npoints_pml, nx, nz
+
+  c11(:,:) = 0.d0 
+  c12(:,:) = 0.d0 
+  c22(:,:) = 0.d0 
+  c66(:,:) = 0.d0 
+  rho(:,:) = 0.d0 
+
+  !Assign between the PML regions
+  do i = npoints_pml+1, nx+npoints_pml
+    do j = npoints_pml+1, nz+npoints_pml
+      c11(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 2)
+      c12(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 3)
+      c22(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 5)
+      c66(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 10)
+      rho(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 11) 
+    enddo
+  enddo
+
+  ! Extend the boundary values of the stiffnesses into the PML region
+  do i = 1,npoints_pml+1
+    ! top 
+    c11( i, :) = c11(npoints_pml+1,:)
+    c12( i, :) = c12(npoints_pml+1,:)
+    c22( i, :) = c22(npoints_pml+1,:)
+    c66( i, :) = c66(npoints_pml+1,:)
+    rho( i, :) = rho(npoints_pml+1,:)
+
+    ! bottom
+    c11( nx+npoints_pml-1+i, :) = c11(nx+npoints_pml-1,:)
+    c12( nx+npoints_pml-1+i, :) = c12(nx+npoints_pml-1,:)
+    c22( nx+npoints_pml-1+i, :) = c22(nx+npoints_pml-1,:)
+    c66( nx+npoints_pml-1+i, :) = c66(nx+npoints_pml-1,:)
+    rho( nx+npoints_pml-1+i, :) = rho(nx+npoints_pml-1,:)
+
+    ! left 
+    c11( :, i) = c11(:, npoints_pml+1)
+    c12( :, i) = c12(:, npoints_pml+1)
+    c22( :, i) = c22(:, npoints_pml+1)
+    c66( :, i) = c66(:, npoints_pml+1)
+    rho( :, i) = rho(:, npoints_pml+1)
+
+    ! right
+    c11( :, nz+npoints_pml-1+i) = c11(:,nz+npoints_pml-1)
+    c12( :, nz+npoints_pml-1+i) = c12(:,nz+npoints_pml-1)
+    c22( :, nz+npoints_pml-1+i) = c22(:,nz+npoints_pml-1)
+    c66( :, nz+npoints_pml-1+i) = c66(:,nz+npoints_pml-1)
+    rho( :, nz+npoints_pml-1+i) = rho(:,nz+npoints_pml-1)
+
+  end do 
+
+  ! Write each of the matrices to file
+  call material_rw('c11.dat', c11, .FALSE.)
+  call material_rw('c12.dat', c12, .FALSE.)
+  call material_rw('c22.dat', c22, .FALSE.)
+  call material_rw('c66.dat', c66, .FALSE.)
+  call material_rw('rho.dat', rho, .FALSE. )
+
+end subroutine stiffness_write
+
+  ! ---------------------------------------------------------------------------
+subroutine material_rw(filename, image_data, readfile)
+
+  implicit none
+
+  integer,parameter :: dp = kind(0.d0)
+  character(len=7) :: filename
+  real(kind=dp),dimension(:,:) :: image_data
+  logical :: readfile
+
+  
+  open(unit = 13, form="unformatted", file = trim(filename))
+
+  if ( readfile ) then
+    read(13) image_data
+  else
+    write(13) image_data
+  endif
+
+  close(unit = 13)
+  
+  end subroutine material_rw
+
 
 ! -----------------------------------------------------------------------------
 subroutine loadsource(filename, N, srcfn)
@@ -169,8 +277,7 @@ end subroutine stiffness_arrays
 !==============================================================================
 
 
-subroutine seismic_cpml_2d(nx, ny, c11, c12, c22, c66, rho, dx, dy, &
-                      npoints_pml, src, f0, nstep, angle_force)
+subroutine seismic_cpml_2d(nx, ny, dx, dy, npoints_pml, src, f0, nstep)
 
 ! 2D elastic finite-difference code in velocity and stress formulation
 ! with Convolutional-PML (C-PML) absorbing conditions for an anisotropic medium
@@ -242,8 +349,6 @@ real(kind=dp), parameter :: factor = 1.d7
 ! source
 integer,dimension(:) :: src
 integer :: isource, jsource
-! angle of source force clockwise with respect to vertical (Y) axis
-real(kind=dp) :: ANGLE_FORCE
 
 ! value of PI
 real(kind=dp), parameter :: PI = 3.141592653589793238462643d0
@@ -307,6 +412,18 @@ real(kind=dp) :: velocnorm
 ! for stability estimate
 real(kind=dp) :: quasi_cp_max
 
+! Name the f2py inputs 
+!f2py3 intent(in) :: nx, ny, dx, dy,
+!f2py3 intent(in) :: noints_pml, src, f0, nstep
+
+
+! ------------------------ Load Stiffness Coefficients ------------------------
+
+call material_rw('c11.dat', c11, .TRUE.)
+call material_rw('c12.dat', c12, .TRUE.)
+call material_rw('c22.dat', c22, .TRUE.)
+call material_rw('c66.dat', c66, .TRUE.)
+call material_rw('rho.dat', rho, .TRUE.)
 
 ! ------------------------ Assign some constants -----------------------
 
@@ -614,16 +731,10 @@ do it = 1,NSTEP
 
   ! add the source (force vector located at a given grid point)
   a = pi*pi*f0*f0
-  t = dble(it-1)*DT
 
-  ! Gaussian
-  source_term = factor * 2.d0*exp(-a*(t-t0)**2)
-
-  force_x = sin(ANGLE_FORCE * DEGREES_TO_RADIANS) * source_term
-  force_y = cos(ANGLE_FORCE * DEGREES_TO_RADIANS) * source_term
-
-  vx(isource,jsource) = vx(isource,jsource) + force_x * DT / rho(i,j)
-  vy(isource,jsource) = vy(isource,jsource) + force_y * DT / rho(i,j)
+  ! Add the source term
+  vx(isource,jsource) = vx(isource,jsource) + srcx(it) * DT / rho(i,j)
+  vy(isource,jsource) = vy(isource,jsource) + srcy(it) * DT / rho(i,j)
 
   ! Dirichlet conditions (rigid boundaries) on the edges or at the bottom of the PML layers
   vx(1,:) = 0.d0
