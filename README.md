@@ -1,17 +1,5 @@
 # SeidarT
 
-Seismic and radar modeling using staggered grid finite differences (FDTD) and convolutional perfectly matched layer boundaries (CPML)
-done via **apt** with 
-
-`sudo apt update`
-
-`sudo apt upgrade`
-
-`pip3 install numpy matplotlib scipy glob mplstereonet`
-
-and with homebrew using the command 
-
-
 ### Table of Contents
 [Introduction](#introduction)  
 [Installation](#install)  
