@@ -1,6 +1,15 @@
+
 #!/bin/bash
 
 # Install script for SEIDART toolbox
+
+# Anaconda has issues.
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    f2pypath=`which f2py3`
+else 
+    f2pypath=`which pythonw3`
+fi
+f2pypath=`dirname $f2pypath`
 
 # Make sure we have a folder to put everything in
 if [ ! -d "bin" ]; then
@@ -10,16 +19,16 @@ fi
 # Compile the fortran code
 #2D
 cd fdtd
-f2py3 -c --fcompiler=gnu95 -m emfdtd2d emFDTD2D.f95
-f2py3 -c --fcompiler=gnu95 -m seismicfdtd2d seismicFDTD2D.f95
-f2py3 -c --fcompiler=gnu95 -m emfdtd25d emFDTD25D.f95
-f2py3 -c --fcompiler=gnu95 -m seismicfdtd25d seismicFDTD25D.f95
+$f2pypath/f2py3 -c --fcompiler=gnu95 -m emfdtd2d emFDTD2D.f95
+$f2pypath/f2py3 -c --fcompiler=gnu95 -m seismicfdtd2d seismicFDTD2D.f95
+$f2pypath/f2py3 -c --fcompiler=gnu95 -m emfdtd25d emFDTD25D.f95
+$f2pypath/f2py3 -c --fcompiler=gnu95 -m seismicfdtd25d seismicFDTD25D.f95
 mv *.so ../bin
 cd ..
 
 # Synthetic microstructure
 cd materials
-f2py3 -c --fcompiler=gnu95 -m orientsynth orientsynth.f95
+$f2pypath/f2py3 -c --fcompiler=gnu95 -m orientsynth orientsynth.f95
 mv *.so ../bin
 cd ..
 
