@@ -1,7 +1,5 @@
 # SeidarT
 
-Seismic and radar modeling using staggered grid finite differences (FDTD) and convolutional perfectly matched layer boundaries (CPML)
-
 ### Table of Contents
 [Introduction](#introduction)  
 [Installation](#install)  

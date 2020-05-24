@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Create a reciever array and plot the timeseries
+# Create a receiver array and plot the timeseries
 
 import numpy as np
 import glob
@@ -251,7 +251,6 @@ class Array:
         
         f.close()
         return(dat)
-
 
 # ==================== Create the object and assign inputs ====================
 array = Array()
