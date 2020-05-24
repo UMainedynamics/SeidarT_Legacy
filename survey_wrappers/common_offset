@@ -103,9 +103,11 @@ time_stamp=`date +"%m%d%y%H%M"`
 
 if [ $seismic ]; then
 	cofilex=$base.$time_stamp.Vx.co.csv
+	cofilex=$base.$time_stamp.Vy.co.csv
 	cofilez=$base.$time_stamp.Vz.co.csv
 else
 	cofilex=$base.$time_stamp.Ex.co.csv
+	cofilex=$base.$time_stamp.Ey.co.csv
 	cofilez=$base.$time_stamp.Ez.co.csv
 fi
 
@@ -118,20 +120,31 @@ if [ $seismic ]; then
 	ystring='S,y,'
 	zstring='S,z,'
 	c1='Vx'
-	c2='Vz'
+	c2='Vy'
+	c3='Vz'
 	mod=s
 else
 	xstring='E,x,'
 	ystring='E,y,'
 	zstring='E,z,'
 	c1='Ex'
-	c2='Ez'
+	c2='Ey'
+	c3='Ez'
 	mod=e
 fi
 
+# Determine if it is 2D
+dim=`grep -F 'D,dim,' $prjfile`
+dim=$(echo $dim | cut -f3 -d,)
+
 # Create the common offset file
-touch $cofilex
-touch $cofilez
+if (( $(echo "$dim==2.5" | bc -l) )); then
+	touch $cofilex
+	touch $cofiley
+	touch $cofilez
+fi
+
+
 
 # Get the initial reciever location
 x=`grep -F $xstring $prjfile`
@@ -191,6 +204,7 @@ if (( $(echo "$x<$xf" | bc -l) )); then # Moving right
 		prjrun $prjfile --model $mod
 		echo
 
+		# -----------------------------------------------
 		# Get the reciever timeseries for the x-direction
 		arrayplot $metafile -c $c1 -g 0 -S 1
 
@@ -199,8 +213,20 @@ if (( $(echo "$x<$xf" | bc -l) )); then # Moving right
 		mv temp.csv $cofilex
 		rm reciever_array.csv
 
+		# -----------------------------------------------
+		# Get the reciever timeseries for the y-direction
+		if (( $(echo "$dim==2.5" | bc -l) )); then
+			arrayplot $metafile -c $c2 -g 0 -S 1
+
+			# append the timeseries to the others
+			paste -d',' $cofiley reciever_array.csv > temp.csv
+			mv temp.csv $cofiley
+			rm reciever_array.csv
+		fi
+		
+		# -----------------------------------------------
 		# Get the reciever timeseries for the z-direction
-		arrayplot $metafile -c $c2 -g 0 -S 1
+		arrayplot $metafile -c $c3 -g 0 -S 1
 
 		# append the timeseries to the others
 		paste -d',' $cofilez reciever_array.csv > temp.csv
