@@ -52,7 +52,7 @@ I,dipping_bed.png
 
 D,dim,2.5
 D,nx,300
-D,ny,10
+D,ny,3
 D,nz,200
 D,dx,1
 D,dy,1
@@ -72,7 +72,7 @@ M,6,air,200/240/255,0,0,600,0,0,False,
 
 # The source parameters for the seismic model
 S,dt,0.00012564267392548183
-S,time_steps,2300
+S,time_steps,1000
 S,x,270
 S,y,5
 S,z,12.5
