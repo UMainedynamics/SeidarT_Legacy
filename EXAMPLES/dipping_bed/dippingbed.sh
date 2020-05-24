@@ -2,7 +2,7 @@
 
 prjfile='dipping_bed.prj'
 mod='s' 
-
+rcxfile='receivers.xyz'
 
 # Run a 2.5D model and output VTI files to be viewed in Paraview 
 
@@ -14,3 +14,6 @@ prjrun $prjfile -M $mod
 
 # Create the .vti files 
 vtkbuild $prjfile -c Vx -f 10 -n 10 
+
+# plot the array of recievers
+arrayplot -p $prjfile -r $rcxfile -g 101 -e 0.1 -S 0 

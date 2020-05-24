@@ -65,3 +65,4 @@ chmod +x bin/wide_angle bin/common_offset bin/common_midpoint bin/array2sac
 # ---------------- Move all other required files to bin folder ----------------
 cp materials/material_functions.py bin/material_functions.py
 cp materials/class_definitions.py bin/class_definitions.py
+cp vis/imdefinitions.py bin/imdefinitions.py 

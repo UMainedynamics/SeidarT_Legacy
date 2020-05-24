@@ -10,51 +10,57 @@ import matplotlib.image as mpimg
 from scipy.io import FortranFile
 
 # import io_functions as iof
+from imdefinitions import * 
 
 # -------------------------- Command Line Arguments ---------------------------
 parser = argparse.ArgumentParser(description="""This program creates an equally
 	spaced array of receivers given the x, y, and z coordinates. If the model 
 	isn't specified as 2.5d in the project file then """ )
 
-parser.add_argument( 
-	'-p', '--prjfile', 
-	nargs = 1, type = str, required = True,
-	help = 'The project file path.'
+parser.add_argument(
+    '-p', '--prjfile',
+    nargs = 1, type = str, required = True,
+    help = 'The project file path.'
 )
 
-parser.add_argument( 
-	'-r', '--rcxfile', 
-	nargs=1, type=str, required = True, 
-	help='the file path for the text file of receiver locations'
+parser.add_argument(
+    '-r', '--rcxfile',
+    nargs=1, type=str, required = True,
+    help='the file path for the text file of receiver locations'
 )
 
-parser.add_argument( 
-	'-c', '--channel', 
-	nargs = 1, type = str, required = True,
-	help = """The channel to query. """)
+parser.add_argument(
+    '-c', '--channel',
+    nargs = 1, type = str, required = True,
+    help = """The channel to query. """
+)
 
 parser.add_argument(
-	'-g', '--gain', 
-	nargs = 1, type = float, required = False,
-	help = "The exponential value for 2^m of the gain function (default=None)", default = None)
+    '-g', '--gain',
+    nargs = 1, type = float, required = False,
+    help = "The exponential value for 2^m of the gain function (default=None)", default = None
+)
 
 parser.add_argument(
-	'-L', '--layout', 
-	nargs = 1, type = int, required = False,
-	help = """Plot the receiver layout (1/0). This suppresses generating the 
-	t-x timeseries plot.""", default = [0])
+    '-L', '--layout', 
+    nargs = 1, type = int, required = False,
+    help = """Plot the receiver layout (1/0). This suppresses generating the
+    t-x timeseries plot.""", default = [0]
+)
 
 parser.add_argument(
-	'-S', '--suppress_plotting', 
-	nargs = 1, type = int, 
-	help = """Suppress all plotting (1/0). The receiver outputs will be located in 
-	the receiver_array.csv file.""", required = False, default = [0])
+    '-S', '--suppress_plotting',
+    nargs = 1, type = int,
+    help = """Suppress all plotting (1/0). The receiver outputs will be located in
+    the receiver_array.csv file.""", required = False, default = [0]
+)
 
 parser.add_argument(
-	'-e', '--exaggeration', 
-	nargs=1, type = float, required = False,
-	help = """Set the aspect ratio between the x and y axes for 
-	plotting. Default is 0.5""", default = [0.5])
+    '-e', '--exaggeration',
+    nargs=1, type = float, required = False,
+    help = """Set the aspect ratio between the x and y axes for
+    plotting. Default is 0.5""", default = [0.5]
+)
 
 
 # ---
@@ -63,198 +69,188 @@ parser.add_argument(
 
 # The timeseries plot
 class Array:
-	def __init__(self):
-		super().__init__()
-		self.build()
-
-	def build(self):
-		# Initialize variables
-		self.dt = None
-		self.dx = None
-		self.dy = None
-		self.dz = None
-		self.source_location = None # Must be m-by-2 array in indices [x_ind, y_ind]
-		self.initial_position = None
-		self.final_position = None
-		self.receiver_locations = None
-		self.modelfile = None
-		# self.dr = None
-		self.timeseries = None
-		self.t = None
-		self.channel = None
-		self.color = ['red', 'blue'] # The default positive and negative fill
-		self.nx = None
-		self.ny = None
-		self.nz = None
-		self.dim = None
-
-	# -------------------------- Function Definitions -------------------------
-	def getrcx(self):
-	# input rcx as an n-by-2 array integer values for their indices. 
-
-		all_files = glob.glob(self.channel + '*.dat')
-		all_files.sort()
-
-		m = len(all_files)
-		n = len(self.receiver_locations[:,1])
-
-		self.timeseries = np.zeros([m,n])
-
-		i = 0
-		if self.dim == '2':
-			self.ny = None
-		
-		if self.dim == '2.5':
-			for fn in all_files:
-				npdat = self.read_dat(fn)
-				for j in range(0, n):
-					# Don't forget x is columns and z is rows
-					self.timeseries[i,j] = npdat[ 
-						int(self.receiver_locations[j,2]),
-						int(self.receiver_locations[j,1]),
-						int(self.receiver_locations[j,0])
+    def __init__(self):
+        super().__init__()
+        self.build()
+        
+    def build(self):
+        # Initialize variables
+        self.dt = None
+        self.dx = None
+        self.dy = None
+        self.dz = None
+        self.source_location = None # Must be m-by-2 array in indices [x_ind, y_ind]
+        self.initial_position = None
+        self.final_position = None
+        self.receiver_locations = None
+        self.modelfile = None
+        # self.dr = None 
+        self.timeseries = None
+        self.t = None
+        self.channel = None
+        self.color = ['red', 'blue'] # The default positive and negative fill
+        self.nx = None
+        self.ny = None
+        self.nz = None
+        self.dim = None
+        
+    # -------------------------- Function Definitions -------------------------
+    def getrcx(self):
+        # input rcx as an n-by-2 array integer values for their indices. 
+        all_files = glob.glob(self.channel + '*.dat')
+        all_files.sort()
+        
+        m = len(all_files)
+        n = len(self.receiver_locations[:,1])
+        self.timeseries = np.zeros([m,n])
+        i = 0
+        if self.dim == '2':
+        	self.ny = None
+        
+        if self.dim == '2.5':
+            for fn in all_files:
+                npdat = self.read_dat(fn)
+                for j in range(0, n):
+                    # Don't forget x is columns and z is rows
+                    self.timeseries[i,j] = npdat[
+                        int(self.receiver_locations[j,2]),
+                        int(self.receiver_locations[j,1]),
+                        int(self.receiver_locations[j,0])
 					]
-		else:
-			for fn in all_files:
-				npdat = self.read_dat(fn)
-				for j in range(0, n):
-					# Don't forget x is columns and z is rows
-					self.timeseries[i,j] = npdat[ 
-						int(self.receiver_locations[j,2]), 
-						int(self.receiver_locations[j,0]) 
-					]	
-			
-			i = i + 1
+                    
+                i = i + 1
+        else:
+            for fn in all_files:
+                npdat = self.read_dat(fn)
+                for j in range(0, n):
+                    # Don't forget x is columns and z is rows
+                    self.timeseries[i,j] = npdat[
+                        int(self.receiver_locations[j,2]),
+                        int(self.receiver_locations[j,0])
+                    ]
+                    
+                i = i + 1
+        
+        # if the gain is 0, then the window is 1
+        if self.gain == 0:
+            self.gain = int(1)
+        # The gain can't exceed the length of the time series
+        if self.gain > m:
+            self.gain = m 
 
-		# Save the array as csv for other types of processing
-		np.savetxt("receiver_array.csv", self.timeseries, delimiter = ",")
-
-	# -------------------------------------------------------------------------
-	def tsplot(self):
-		
-		fig, ax = plt.subplots()
-		# fig.set_size_inches(8, 10)
-		m,n = self.timeseries.shape 
-		self.t = np.linspace(1, m, m)*self.dt 
-
-		# extent = (1, n, self.t[-1], self.t[0])
-		if gain:
-			gain_function = np.zeros([m,n])
-			for j in range(0, m):
-				gain_function[j,:] = np.exp(-j/(2**gain))
-			im = ax.imshow(self.timeseries/gain_function, cmap = 'Greys' )
-		else:
-			im = ax.imshow(self.timeseries, cmap = 'Greys')
-
-		# Label the x-axis
-		ax.xaxis.tick_top()
-		ax.xaxis.set_label_position('top')
-		ax.set_xlabel(r"Receiver #")
-		
-		# Label the y-axis
-		if self.channel == 'Vx' or self.channel == 'Vz':
-			mult = 1e2
-		else:
-			mult = 1e6
-
-		time_locations = np.linspace(1, m, 10) 
-		time_labels = np.round( time_locations*self.dt*mult, 4)
-		ax.set_ylabel(r"Two way travel time (s)")
-		plt.yticks(ticks=time_locations, labels = time_labels.astype(str) )
-
-		# Other figure operations
-		if self.channel == 'Vx' or self.channel == 'Vz':
-			plt.figtext(0.30, 0.07, 'x $10^{-2}$')	
-		else:
-			plt.figtext(0.30, 0.07, 'x $10^{-6}$')
-
-		ax.set_aspect(aspect = exaggeration	)
-		plt.show()
-
-	# -------------------------------------------------------------------------
-	# def arraybuild(self):
-		
-	# 	# Calculate the length
-	# 	rcx_len = np.sqrt( sum( (self.final_position - self.initial_position)**2) )
-		
-	# 	# the receiver spacing must be the same as the 
-
-	# 	if rcx_len == 0:
-	# 		rxc_len = 1 # This is for common offset
-	# 		nrcx = 1
-	# 		xz = np.zeros([nrcx, 2])
-	# 	else:
-	# 		nrcx = np.floor(rcx_len/self.dr)
-	# 		xz = np.zeros([nrcx.astype(int),2])
-		
-		 
-
-	# 	xz[:,0] = np.linspace(self.initial_position[0], 
-	# 		self.final_position[0], nrcx)/self.dx
-	# 	xz[:,1] = np.linspace(self.initial_position[2], 
-	# 		self.final_position[2], nrcx)/self.dz
-
-	# 	self.receiver_locations = xz.astype(int) + self.cpml
-
-	# -------------------------------------------------------------------------
-	def plot_layout(self):
-		# Right now this only works for 2D
-		figmod, axmod = plt.subplots()
-
-		img = mpimg.imread(self.modelfile)
-		axes_extent = [0, img.shape[1],img.shape[0], 0 ]
-
-		implot = axmod.imshow(img, extent = extent)
-
-		# add white upside down triangle receivers
-		axmod.scatter(self.receiver_locations[:,0]- self.cpml, 
-			self.receiver_locations[:,1] - self.cpml, 
-			marker = 'v', s = 30, c = (0.8, 0.8, 0.8, 1), 
-		    linewidths = 0.5, edgecolor = (0.2, 0.2, 0.2, 1 ) )
-
-		# add white star source
-		axmod.scatter(self.source_location[0], self.source_location[1], 
-			marker = '*', s = 30, c = (0.8, 0.8, 0.8, 1 ), 
-		    linewidths = 1, edgecolor = (0.2, 0.2, 0.2, 1 ) )
-
-		axmod.set_ylabel("z-indice")
-		axmod.set_xlabel("x-indice")
-
-		plt.show()
-
-	# ------------- One more quick global definition
-
-	def read_dat(self, fn):
-		if self.ny:
-			if self.channel == 'Ex':
-				NX = self.nz
-				NY = ny
-				NZ = nx-1
-			elif self.channel == 'Ey':
-				NX = self.nz
-				NY = self.ny-1
-				NZ = self.nx
-			elif self.channel == 'Ez':
-				NX = self.nz-1
-				NY = self.ny
-				NZ = self.nx
-			else:
-				NX = self.nz
-				NY = self.ny 
-				NZ = self.nx 
-		
-		f = FortranFile(fn, 'r')
-		dat = f.read_reals(dtype = 'float32')
-		
-		if self.ny:
-			dat = dat.reshape(NX, NY, NZ)
-		else:
-			dat = dat.reshape(self.nx, self.nz)
-
-		f.close()
-
-		return(dat)
-
+        for ind in range(0, n):
+            self.timeseries[:,ind] = agc(
+                self.timeseries[:,ind], self.gain, "mean"
+            )
+        # Save the array as csv for other types of processing
+        np.savetxt("receiver_array.csv", self.timeseries, delimiter = ",")
+        
+    def tsplot(self):
+        m, n = self.timeseries.shape
+        # fig = plt.figure(figsize =(n/2,m/2) )
+        # ax1 = plt.gca()
+        fig, ax1 = plt.subplots()
+        # ax2 = ax1.twinx() 
+        ax1.imshow(self.timeseries, cmap = 'Greys', aspect = 'auto')
+        ax1.set_xlabel('Location (m)')
+        # ax1.xaxis.tick_top()
+        # ax1.xaxis.set_label_position('top')
+        # ax1.set_xticks(xlocs)
+        # ax1.set_xticklabels(xvals)
+        ax1.set_ylabel(r'Two-way Travel Time (s)')
+        # ax1.set_yticks(timelocs)
+        # ax1.set_yticklabels(timevals)
+        
+        # ax2.set_ylabel('Depth (m)')
+        # ax2.set_yticks(timelocs) 
+        # ax2.set_yticklabels(twt)
+        
+        # fig, ax = plt.subplots()
+        # fig.set_size_inches(8, 10)
+        # m,n = self.timeseries.shape 
+        # self.t = np.linspace(1, m, m)*self.dt 
+        
+        # # Label the x-axis
+        # ax.xaxis.tick_top()
+        # ax.xaxis.set_label_position('top')
+        # ax.set_xlabel(r"Receiver #")
+        
+        # Label the y-axis
+        if self.channel == 'Vx' or self.channel == 'Vz':
+            mult = 1e2
+        else:
+            mult = 1e6
+        
+        time_locations = np.linspace(1, m, 10)
+        time_labels = np.round( time_locations*self.dt*mult, 4)
+        # ax.set_ylabel(r"Two way travel time (s)")
+        plt.yticks(ticks=time_locations, labels = time_labels.astype(str) )
+        
+        # # Other figure operations
+        # if self.channel == 'Vx' or self.channel == 'Vz':
+        #     plt.figtext(0.30, 0.07, 'x $10^{-2}$')	
+        # else:
+        #     plt.figtext(0.30, 0.07, 'x $10^{-6}$')
+        
+        ax1.set_aspect(aspect = exaggeration	)
+        plt.show()
+    
+    def plot_layout(self):
+        figmod, axmod = plt.subplots()
+        img = mpimg.imread(self.modelfile)
+        axes_extent = [0, img.shape[2],img.shape[0], 0 ]
+        
+        implot = axmod.imshow(img, extent = extent)
+        
+        # add white upside down triangle receivers
+        axmod.scatter(
+            self.receiver_locations[:,0]- self.cpml,
+            self.receiver_locations[:,1] - self.cpml,
+            marker = 'v', s = 30, c = (0.8, 0.8, 0.8, 1),
+            linewidths = 0.5, edgecolor = (0.2, 0.2, 0.2, 1 )
+        )
+        
+        # add white star source
+        axmod.scatter(
+            self.source_location[0], self.source_location[1],
+            marker = '*', s = 30, c = (0.8, 0.8, 0.8, 1 ),
+            linewidths = 1, edgecolor = (0.2, 0.2, 0.2, 1 ) 
+        )
+        
+        axmod.set_ylabel("z-indice")
+        axmod.set_xlabel("x-indice")
+        plt.show()
+    
+    # ------------- 
+    def read_dat(self, fn):
+        if self.ny:
+            if self.channel == 'Ex':
+                NX = self.nz
+                NY = ny
+                NZ = nx-1
+            elif self.channel == 'Ey':
+                NX = self.nz
+                NY = self.ny-1
+                NZ = self.nx
+            elif self.channel == 'Ez':
+                NX = self.nz-1
+                NY = self.ny
+                NZ = self.nx
+            else:
+                NX = self.nz
+                NY = self.ny 
+                NZ = self.nx
+            
+        f = FortranFile(fn, 'r')
+        dat = f.read_reals(dtype = 'float32')
+        
+        if self.ny:
+            dat = dat.reshape(NX, NY, NZ)
+        else:
+            dat = dat.reshape(self.nx, self.nz)
+        
+        f.close()
+        return(dat)
 
 # ==================== Create the object and assign inputs ====================
 array = Array()
@@ -269,35 +265,12 @@ array.channel = ''.join(args.channel)
 
 
 # Optional inputs
-gain = args.gain[0]
+array.gain = args.gain[0]
 layout = args.layout[0] == 1
 showplots = args.suppress_plotting[0] == 1
 exaggeration = args.exaggeration[0]
 
-# --------------------- Get the values from the meta file ---------------------
-
-# f = open(meta_file)
-
-# # If running the wrapper functions, the meta file will save the same each time,
-# # but for whatever reason we'll assume that this isn't the case
-# for line in f:
-# 	temp = line.rstrip().rsplit()
-	
-# 	if temp[0] == 'delta:':
-# 		array.dr = float(temp[1])
-	
-# 	if temp[0] == 'initial_position:':
-# 		array.initial_position = np.asarray(temp[1:]).astype(float)
-	
-# 	if temp[0] == 'final_position:':
-# 		array.final_position = np.asarray( temp[1:]).astype(float)
-
-# f.close()
-
-
 # --------------------------- Query the project file --------------------------
-#!!!!!! Add the 2.5D components later
-
 # Get the values we need
 f = open(project_file)
 
@@ -407,4 +380,3 @@ if layout:
 	array.plot_layout()
 else:
 	array.tsplot()
-
