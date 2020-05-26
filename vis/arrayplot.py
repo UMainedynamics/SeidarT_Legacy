@@ -30,6 +30,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    '-i', '--index',
+    nargs = 1, type = int, default = [0], required = False,
+    help = """Indicate whether the receiver file contains coordinate indices or
+    if these are the locations in meters. Default (0 - meters)"""
+)
+
+parser.add_argument(
     '-c', '--channel',
     nargs = 1, type = str, required = True,
     help = """The channel to query. """
@@ -131,6 +138,12 @@ class Array:
                     
                 i = i + 1
         
+        # Save the array as csv for other types of processing
+        np.savetxt("receiver_array.csv", self.timeseries, delimiter = ",")
+    
+    # ---------------------------------------
+    def tsplot(self):
+        m, n = self.timeseries.shape
         # if the gain is 0, then the window is 1
         if self.gain == 0:
             self.gain = int(1)
@@ -142,33 +155,31 @@ class Array:
             self.timeseries[:,ind] = agc(
                 self.timeseries[:,ind], self.gain, "mean"
             )
-        # Save the array as csv for other types of processing
-        np.savetxt("receiver_array.csv", self.timeseries, delimiter = ",")
         
-    def tsplot(self):
-        m, n = self.timeseries.shape
-        # fig = plt.figure(figsize =(n/2,m/2) )
-        # ax1 = plt.gca()
-        fig, ax1 = plt.subplots()
+        # Create the values for the y-axis
+        timelocs = np.arange(0,m, int(m/10) ) #10 tick marks
+        timevals = timelocs*self.dt
+        
+        # Create the reciever location
+        xlocs = np.arange(0, n, int(n/5) ) #5 tick marks 
+        
+        # Create the figure
+        fig = plt.figure(figsize =(n/2,m/2) )
+        ax1 = plt.gca()
         # ax2 = ax1.twinx() 
         ax1.imshow(self.timeseries, cmap = 'Greys', aspect = 'auto')
-        ax1.set_xlabel('Location (m)')
-        # ax1.xaxis.tick_top()
-        # ax1.xaxis.set_label_position('top')
-        # ax1.set_xticks(xlocs)
-        # ax1.set_xticklabels(xvals)
+        ax1.set_xlabel(r'Receiver #')
+        ax1.xaxis.tick_top()
+        ax1.xaxis.set_label_position('top')
+        ax1.set_xticks(xlocs)
+        ax1.set_xticklabels(xlocs)
         ax1.set_ylabel(r'Two-way Travel Time (s)')
-        # ax1.set_yticks(timelocs)
-        # ax1.set_yticklabels(timevals)
+        ax1.set_yticks(timelocs)
+        ax1.set_yticklabels(timevals)
         
         # ax2.set_ylabel('Depth (m)')
         # ax2.set_yticks(timelocs) 
         # ax2.set_yticklabels(twt)
-        
-        # fig, ax = plt.subplots()
-        # fig.set_size_inches(8, 10)
-        # m,n = self.timeseries.shape 
-        # self.t = np.linspace(1, m, m)*self.dt 
         
         # # Label the x-axis
         # ax.xaxis.tick_top()
@@ -262,7 +273,7 @@ args = parser.parse_args()
 project_file = ''.join(args.prjfile)
 receiver_file = ''.join(args.rcxfile)
 array.channel = ''.join(args.channel)
-
+rind = args.index[0] == 0
 
 # Optional inputs
 array.gain = args.gain[0]
@@ -330,45 +341,56 @@ for line in f:
 
 f.close()
 
-# ----------------------------- Create the object -----------------------------
-xyz = np.genfromtxt(receiver_file, delimiter = ',', names = True, dtype = float)
-array.receiver_locations = np.vstack(
-	[
-		xyz['X']/array.dx + array.cpml,
-		xyz['Y']/array.dy + array.cpml,
-		xyz['Z']/array.dz + array.cpml
-	]
-).T
+# ------------------------------ Build the object -----------------------------
+xyz = np.genfromtxt(
+    receiver_file, 
+    delimiter = ',', 
+    names = True, 
+    dtype = float
+)
+
+# We need to make sure the recievers are ordered correctly and the absorbing 
+# boundary is corrected for
+# First check to see if the inputs are indices or 
+if rind:
+    array.receiver_locations = np.vstack(
+        [
+            xyz['X']/array.dx + array.cpml,
+            xyz['Y']/array.dy + array.cpml,
+            xyz['Z']/array.dz + array.cpml
+        ]
+    ).T
+else:
+    array.receiver_locations = np.vstack(
+        [
+            xyz['X'] + array.cpml,
+            xyz['Y'] + array.cpml,
+            xyz['Z'] + array.cpml
+        ]
+    ).T
 
 # Adjust the object fields relative to the cpml
 array.nx = array.nx + 2*array.cpml
 array.ny = array.ny + 2*array.cpml
 array.nz = array.nz + 2*array.cpml
-# array.dx = array.dx
-# array.dy = array.dy
-# array.dz = array.dz
 
-
-extent = (array.cpml, array.nx-array.cpml, array.nz-array.cpml, array.cpml)
+# extent = (array.cpml, array.nx-array.cpml, array.nz-array.cpml, array.cpml)
 if array.channel == 'Ex' or array.channel == 'Ey' or array.channel == 'Ez':
 	array.source_location = np.array(
 		[ 
-			(ex + array.cpml)/array.dx, 
-			(ey + array.cpml)/array.dy,
-			(ez + array.cpml)/array.dz
+			ex/array.dx + array.cpml,
+			ey/array.dy + array.cpml,
+			ez/array.dz + array.cpml
 		]
 	)
 else:
 	array.source_location = np.array(
 		[
-			(sx + array.cpml)/array.dx,
-			(sy + array.cpml)/array.dy,
-			(sz + array.cpml)/array.dz
+			sx/array.dx + array.cpml,
+			sy/array.dy + array.cpml,
+			sz/array.dz + array.cpml
 		]
 	) 
-
-# # Construct the array
-# array.arraybuild()
 
 # Get the timeseries for each receiver
 array.getrcx()

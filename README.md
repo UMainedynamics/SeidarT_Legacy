@@ -29,7 +29,7 @@ and additionally, the **Python** dependencies: *numpy*, *scipy*, *glob3*, *matpl
 ~~~
 sudo apt update
 sudo apt upgrade
-pip3 install numpy matplotlib scipy glob mplstereonet
+pip3 install numpy matplotlib scipy glob mplstereonet pyevtk
 ~~~
 
 and with homebrew using the command 
@@ -37,7 +37,8 @@ and with homebrew using the command
 ~~~
 brew update
 brew upgrade
-pip3 install numpy matplotlib scipy glob3 mplstereonet
+pip3 install numpy matplotlib scipy glob3 mplstereonet 
+brew install vtk 
 ~~~
 
 Installation of these packages is different between MacOSx and Linux distributions. [*Anaconda*](https://docs.continuum.io/anaconda/) provides a convenient **Python** environment for installing and developing programs, however, Anaconda doesn't provide *GCC-7* or later so compilation of the **Fortran** code will return an error. This can be remedied by uninstalling **GCC** from *Anaconda* and upgrading via *apt* to *GCC-7* or greater. For *Anaconda* users, it might be necessary to install via **conda** and **pip**.
@@ -101,10 +102,11 @@ and input into the command line
 sudo nano .bashrc
 ~~~
 
-or 
+or either
 
 ~~~
 sudo nano /etc/paths
+sudo nano ~/.profile
 ~~~
 
 then scroll down to the bottom of the file and append the path. Save and close (*Ctrl-x* then *Y* and enter) the file then check to make sure it is included in the path 
@@ -156,33 +158,27 @@ constructs a template and assigns default values from a PNG image.
 reads the project file assigns coefficients given that all the required fields are satisfied then runs the specified 2D forward model. You can suppress modeling and edit the stiffness and/or permittivity and conductivity coefficients. Once they are provided in the project file, they won't be computed or overwritten from the material values. If you would like to change the material values and recompute the tensor coefficients, you need to delete the existing tensor coefficients if included in the project file.  
 
 *im2gif.py*  
-Create a gif from the model outputs. Currently, this takes some time to run which you can speed up by increasing the 'write' value in the project file.  
+Create a gif from the model outputs. Currently, this takes some time to run which you can speed up by increasing the 'write' value in the project file. This only takes 2D models, and there are bugs with matplotlib that cause red/blue flashing.
 
 *arrayplot.py*  
-Plot the seismograms or radargrams for the wide angle survey. You can suppress plotting which will return a .csv file. A simple exponential gain function can be called and applied to each of the time series.  
-
+Plot the seismograms or radargrams for the wide angle survey. You can suppress plotting which will return a .csv file. An auto-controlled gain function can be called for better visualization. The receiver locations are given by a text file with the header X,Y,Z. These locations can be given in meters relative to (0,0,0) or in indices. (0,0,0) is top left when viewing the image.  
 
 *codisplay.py*  
 Display the outputs of the common offset survey. This is also called to display the common midpoint survey. Similar to arrayplot.py, the gain function can be called.  
-
 
 *orientation_tensor.py*  
 Compute the Euler angles and orientation tensor for a fabric defined by it's trend and plunge angles. The orientation tensor isn't required by the program but it provides useful quantitative information describing the orientation of the fabric.   
 
 
-
 <u>Wrappers</u>
 
-*wide_angle.sh*  
-Script to model and display an equally spaced reciever array. If the .dat files are not deleted, any node within the model domain can be called. The time series for the recievers are saved as 'reciever_array.csv'. A default gain is set in the script file but can be varied by editing the appropriate line.  
-
 *common_offset.sh*  
-This is a wrapper that shifts the source and queries the respective reciever location over a given distance and assembles the subsequent time series into a common offset image. The reciever trails the source so leave space for the reciever location. The initial source location is given in the corresponding .prj file. During the routine this value is changed each iteration then restored to the original value when it is complete. A default gain is set in the script file but can be varied by editing the appropriate line.  
+This is a wrapper that simulates a common offset survey. The receiver .xyz file is input to give the points of the survey and the source is offset from this location given the offsets for the x, y, and z directions.
 
 *common_midpoint.sh*  
-This is similar to the common offset survey but it shifts the source and reciever away from a common midpoint. The midpoint is specified by the source location in the project file. By default the source will be to the viewer's right of the midpoint but to flip the location of the source and reciever, set the midpoint x-value to negative. A default gain is set in the script file but can be varied by editing the appropriate line.  
+This is similar to the common offset survey but it shifts the source and reciever away from a common midpoint. The midpoint is specified by the source location in the project file. By default the source will be to the viewer's right of the midpoint but to flip the location of the source and reciever, set the midpoint x-value to negative. 
 
-#### *Note: The aspect ratio for the wide angle, common offset and common midpoint surveys determines the axis exaggeration. This will be updated in the future to be easier to adjust but to change this value edit the line 'ax.set_aspect(aspect=??)' in arrayplot.py and codisplay.py then run the plotting scripts individually not the wrapper scripts. 
+#### *Note: The aspect ratio for the common offset and common midpoint surveys determines the axis exaggeration. This will be updated in the future to be easier to adjust but to change this value edit the line 'ax.set_aspect(aspect=??)' in arrayplot.py and codisplay.py then run the plotting scripts individually not the wrapper scripts. 
 
 
 

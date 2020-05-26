@@ -54,9 +54,9 @@ D,dim,2.5
 D,nx,300
 D,ny,3
 D,nz,200
-D,dx,1
-D,dy,1
-D,dz,1
+D,dx,0.5
+D,dy,0.5
+D,dz,0.5
 D,cpml,5
 D,nmats,7
 D,tfile,
@@ -72,11 +72,11 @@ M,6,air,200/240/255,0,0,600,0,0,False,
 
 # The source parameters for the seismic model
 S,dt,0.00012564267392548183
-S,time_steps,1000
+S,time_steps,3500
 S,x,270
 S,y,2
 S,z,12.5
-S,f0,40
+S,f0,100
 S,theta,30
 S,phi,45
 

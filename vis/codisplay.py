@@ -45,17 +45,15 @@ f = open(meta_file)
 # If running the wrapper functions, the meta file will save the same each time,
 # but for whatever reason we'll assume that this isn't the case
 for line in f:
-
-	 temp = line.rstrip().rsplit()
-
-	 if temp[0] == 'offset:':
-	 	offset = float(temp[1])
-	 if temp[0] == 'delta:':
-	 	ds = float(temp[1])
-	 if temp[0] == 'survey_type:':
-	 	survey_type = temp[1]
-	 if temp[0] == 'project_file:':
-		project_file = temp[1]
+    temp = line.rstrip().rsplit()
+    if temp[0] == 'offset:':
+        offset = float(temp[1])
+    if temp[0] == 'delta:':
+        ds = float(temp[1])
+    if temp[0] == 'survey_type:':
+        survey_type = temp[1]
+    if temp[0] == 'project_file:':
+        project_file = temp[1]
 
 
 	 	
@@ -69,51 +67,50 @@ cofile = '.'.join( meta_file.split('.')[:-2] )+ '.' + channel + '.' + survey_typ
 f = open(project_file)
 
 for line in f:
-	if channel == 'Vx' or channel == 'Vz':
-		# Source
-		if line[0] == 'S':
-			temp = line.split(',')
-			if temp[1] == 'dt':
-				dt = float(temp[2].rsplit()[0])
-	else:
-		if line[0] == 'E':
-			temp = line.split(',')
-			if temp[1] == 'dt':
-				dt = float(temp[2].rsplit()[0])
+    if channel == 'Vx' or channel == 'Vz':
+        # Source
+        if line[0] == 'S':
+            temp = line.split(',')
+            if temp[1] == 'dt':
+                dt = float(temp[2].rsplit()[0])
+    else:
+        if line[0] == 'E':
+            temp = line.split(',')
+            if temp[1] == 'dt':
+                dt = float(temp[2].rsplit()[0])
 
 f.close()
-
 
 dat = np.genfromtxt(cofile, delimiter = ',')
 m,n = dat.shape
 
 if channel == 'Vx' or channel == 'Vz':
-	mult = 1e2
+    mult = 1e2
 else:
-	mult = 1e6
+    mult = 1e6
 
 time_locations = np.linspace(1, m, 10) 
 time_labels = np.round( time_locations*dt*mult, 4)
 
 if survey_type == 'cmp':
-	dist_locations = np.round( np.linspace(1, n, 7) )
-	dist_labels = 2*dist_locations*ds + offset*2
-	dist_labels = dist_labels.astype(int)
+    dist_locations = np.round( np.linspace(1, n, 7) )
+    dist_labels = 2*dist_locations*ds + offset*2
+    dist_labels = dist_labels.astype(int)
 else:
-	dist_locations = np.round(np.linspace(0, n-1, 7) )
-	dist_labels = dist_locations*ds
-	dist_labels = dist_labels.astype(int)
+    dist_locations = np.round(np.linspace(0, n-1, 7) )
+    dist_labels = dist_locations*ds
+    dist_labels = dist_labels.astype(int)
 
 # Create the figure object using subplots
 fig, ax = plt.subplots()
 
 if gain:
-	gain_function = np.zeros([m,n])
-	for j in range(0, m):
-		gain_function[j,:] = np.exp(-j/(2**gain))
-	im = ax.imshow(dat/gain_function, cmap = 'Greys' )
+    gain_function = np.zeros([m,n])
+    for j in range(0, m):
+        gain_function[j,:] = np.exp(-j/(2**gain))
+    im = ax.imshow(dat/gain_function, cmap = 'Greys' )
 else:
-	im = ax.imshow(dat, cmap = 'Greys')
+    im = ax.imshow(dat, cmap = 'Greys')
 
 # Label the x axis
 plt.xticks(dist_locations, dist_labels.astype(str) )
