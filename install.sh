@@ -36,6 +36,7 @@ cp vis/arrayplot.py bin/arrayplot
 cp vis/codisplay.py bin/codisplay
 cp vis/im2anim.py bin/im2anim
 cp vis/vtkbuild.py bin/vtkbuild 
+cp vis/wiggleplot.py bin/wiggleplot 
 
 # move the conversion scripts
 cp io/array2segy.py bin/array2segy
@@ -46,10 +47,11 @@ chmod +x bin/prjbuild \
         bin/sourcefunction \
         bin/arrayplot \
         bin/codisplay \
+        bin/wiggleplot \
         bin/im2anim \
         bin/orientation_tensor \
         bin/array2segy \
-	bin/vtkbuild
+	bin/vtkbuild 
 
 
 # Now do the bash scripts

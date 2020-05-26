@@ -24,16 +24,10 @@ parser.add_argument( '-o', '--project_file', nargs=1, type=str, required = False
 	help = """name of output file path with extension .prj and excluding
 				the full path directory""")
 
-parser.add_argument( '-m', '--meta_file', nargs=1, type = str, required = False,
-	help = """name of the metadata file template that will be produced corresponding to the
-	project. Default is NoneType which will not return a file. """, default = None)
-
 # Get the arguments
 args = parser.parse_args()
 image_file = ''.join(args.image_file)
 project_file = ''.join(args.project_file)
-if args.meta_file is not None:
-    meta_file = ''.join(args.meta_file)
 
 new_line = '\n'
 # ------------------------ Some Necessary Definitions -------------------------
@@ -150,7 +144,6 @@ dz = 'D,dz,'
 cpml = 'D,cpml,20'
 nmat = 'D,nmats,' + str(len( np.unique(im) ))
 tfile = 'D,tfile,'
-# rundur = 'D,write,64'
 with open(project_file, 'a') as prj:
 	prj.write(dim+new_line)
 	prj.write(nx+new_line)
@@ -162,7 +155,6 @@ with open(project_file, 'a') as prj:
 	prj.write(cpml+new_line)
 	prj.write(nmat+new_line)
 	prj.write(tfile + new_line)
-	# prj.write(rundur + new_line)
 	prj.write(new_line)
 
 
@@ -251,46 +243,46 @@ with open(project_file, 'a') as prj:
 
 
 # ------------------- Write Additional Survey File Tempates -------------------
-meta_header = """
-# Options for the following fields
-# project_file - (STRING) the file path to the project file
-# survey_type - (STRING) the type of survey you would like to model. Available
-#				options are 'co' = common offset, 'cmp' = common midpoint,
-#				'wa' = wide angle.
-#
-# The following inputs change given the survey type. There are additional
-# values that need to be passed in the wrapper
-#
-# delta (FLOAT)
-#					'wa' the spacing between each reciever
-#					'cmp' the change in the source and the reciever distance from
-#						the common midpoint (given below)
-#					'co' the shift in the same direction of the source and
-#						reciever. The spacing between the source and reciever
-#						remains constant so they are moved in the same direction
-#
-# initial_position (FLOAT)
-#					'wa' the initial reciever location along the array in meters
-#					'cmp' the reciever location
-#					'co'  the reciever location
-#
-# final_position (FLOAT)
-#					'wa' the final reciever location along the array in meters
-#					'cmp' this is the same value as initial position; moot
-#					'co' 			'' ''			''	''
-#
-"""
+# meta_header = """
+# # Options for the following fields
+# # project_file - (STRING) the file path to the project file
+# # survey_type - (STRING) the type of survey you would like to model. Available
+# #				options are 'co' = common offset, 'cmp' = common midpoint,
+# #				'wa' = wide angle.
+# #
+# # The following inputs change given the survey type. There are additional
+# # values that need to be passed in the wrapper
+# #
+# # delta (FLOAT)
+# #					'wa' the spacing between each reciever
+# #					'cmp' the change in the source and the reciever distance from
+# #						the common midpoint (given below)
+# #					'co' the shift in the same direction of the source and
+# #						reciever. The spacing between the source and reciever
+# #						remains constant so they are moved in the same direction
+# #
+# # initial_position (FLOAT)
+# #					'wa' the initial reciever location along the array in meters
+# #					'cmp' the reciever location
+# #					'co'  the reciever location
+# #
+# # final_position (FLOAT)
+# #					'wa' the final reciever location along the array in meters
+# #					'cmp' this is the same value as initial position; moot
+# #					'co' 			'' ''			''	''
+# #
+# """
 
-if args.meta_file is not None:
-	with open(meta_file, 'w') as meta:
-		meta.write(meta_header + new_line)
-		meta.write('project_file: ' + project_file + new_line)
-		meta.write('survey_type: wa' + new_line)
-		meta.write('delta: 1' + new_line)
-		meta.write('initial_position: 0  0  0' + new_line)
-		meta.write('final_position: ' + str(np.shape(im)[0]) + '0 ' + str(np.shape(im)[0]) + new_line )
-		meta.write('reciever_file: None' + new_line)
-		meta.write('source_file: None' )
+# if args.meta_file is not None:
+# 	with open(meta_file, 'w') as meta:
+# 		meta.write(meta_header + new_line)
+# 		meta.write('project_file: ' + project_file + new_line)
+# 		meta.write('survey_type: wa' + new_line)
+# 		meta.write('delta: 1' + new_line)
+# 		meta.write('initial_position: 0  0  0' + new_line)
+# 		meta.write('final_position: ' + str(np.shape(im)[0]) + '0 ' + str(np.shape(im)[0]) + new_line )
+# 		meta.write('reciever_file: None' + new_line)
+# 		meta.write('source_file: None' )
 
 
 
