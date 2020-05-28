@@ -29,7 +29,7 @@ while [[ $# -gt 0 ]]; do
 	    -o|--offset)
 		xoffset="$2"
 		yoffset="$3"
-		zoffset="$5"
+		zoffset="$4"
 		shift;shift;shift;shift
 		;;
 	    -s|--seismic)
