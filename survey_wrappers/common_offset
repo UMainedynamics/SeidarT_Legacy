@@ -6,7 +6,7 @@ SeidarT programs. The survey is along the x-direction, but can be extended to
 other directions.
 
 INPUT
-	-f, --project 	Project file path
+	-p, --project 	Project file path
 	-F, --final		The final coordinates of the source. Requires 3
 					arguments  x y z
 	-o, --offset 	Source and reciever offset distance (meters)
@@ -21,7 +21,7 @@ while [[ $# -gt 0 ]]; do
 	key="$1"
 
 	case $key in
-	    -f|--project_file)
+	    -p|--project_file)
 	    prjfile="$2"
 	    shift # past argument
 	    shift # past value
