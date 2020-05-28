@@ -7,6 +7,12 @@ if [ ! -d "bin" ]; then
 	mkdir bin
 fi
 
+# Make sure everything is in unix format 
+dos2unix vis/* 
+dos2unix survey_wrappers/*
+dos2unix exe/* 
+dos2unix materials/*
+
 # Compile the fortran code
 #2D
 cd fdtd
