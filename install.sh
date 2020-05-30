@@ -61,13 +61,12 @@ chmod +x bin/prjbuild \
 
 
 # Now do the bash scripts
-cp survey_wrappers/wide_angle bin/wide_angle
 cp survey_wrappers/common_offset bin/common_offset
 cp survey_wrappers/common_midpoint bin/common_midpoint
 
 cp io/array2sac bin/array2sac
 
-chmod +x bin/wide_angle bin/common_offset bin/common_midpoint bin/array2sac
+chmod +x bin/common_offset bin/common_midpoint bin/array2sac
 
 
 # ---------------- Move all other required files to bin folder ----------------
