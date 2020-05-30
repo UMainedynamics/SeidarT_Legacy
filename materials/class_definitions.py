@@ -148,6 +148,7 @@ class Model:
 		self.f0 = None
 		self.theta = None
 		self.phi = None
+		self.src = None
 		self.tensor_coefficients = None
 		self.compute_coefficients = True
 		self.exit_status = 0
@@ -345,7 +346,7 @@ def loadproject(project_file, domain, material, seismic, electromag):
 			if temp[1] == '0' or temp[1] == '0.0':
 				seismic.tensor_coefficients = temp[1:]
 			else:
-				seismic.tensor_coefficients = np.row_stack( (seismic.tensor_coefficients, temp[1:]))
+				seismic.tensor_coefficients = np.row_stack((seismic.tensor_coefficients, temp[1:]))
 
 		if line[0] == 'P':
 			temp = line.split(',')
@@ -362,3 +363,44 @@ def loadproject(project_file, domain, material, seismic, electromag):
 	f.close()
 	return domain, material, seismic, electromag
 
+
+
+# -----------------------------------------------------------------------------
+# Make sure variables are in the correct type for Fortran
+def prepme(modobj, domain):
+    # Check if there are no errors and the coefficients have been computed
+    modobj.time_steps = int(modobj.time_steps[0])
+    modobj.f0 = float(modobj.f0[0])
+    modobj.theta = float(modobj.theta[0])
+    modobj.x = float(modobj.x[0])
+    modobj.z = float(modobj.z[0])
+    modobj.tensor_coefficients = modobj.tensor_coefficients.astype(float)
+    # Put source and domain parameters in correct order
+    if domain.dim == 2.5:
+        # There are additional values we need to assign
+        domain.ny = int(domain.ny[0])
+        domain.dy = float(domain.dy[0])
+        modobj.y = float(modobj.y[0])
+        modobj.phi = float(modobj.phi[0])
+        
+        modobj.src = np.array(
+            [
+            	modobj.x/domain.dx, 
+            	modobj.y/domain.dy, 
+            	modobj.z/domain.dz
+        	]
+        ).astype(int)
+    else:
+        modobj.src = np.array(
+            [
+                modobj.x/domain.dx, 
+                modobj.z/domain.dz
+            ]
+        ).astype(int)
+    
+    return(modobj, domain)
+
+# ----------------------
+# Append coefficients
+def coefs2prj(modobj, matobj, domobj, modtype):
+    pass

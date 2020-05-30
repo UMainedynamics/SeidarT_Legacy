@@ -106,17 +106,21 @@ def pressure_array(im, temp, rho, dz, pore = 0, wc = 0):
 
 
 def anisotrpic_boolean(im, matbool, angvect):
-
     m,n = im.shape
-
     abool = np.zeros([m,n], dtype = bool)
     afile = np.zeros([m,n], dtype = str)
 
     for i in range(0, m):
         for j in range(0,n):
 
-            if matbool[ im[i,j] ] == 'True':
-                abool[i,j] = True
+            # The booolean in abool could be true, True, TRUE     
+            abool[i,j] = (
+                matbool[ im[i,j] ] == 'true' or \
+                matbool[ im[i,j] ] == 'TRUE' or \
+                matbool[ im[i,j] ] == 'True'
+            )
+            
+            if abool[i,j]:
                 afile[i,j] = angvect[ im[i,j] ]
 
     return(abool, afile)
