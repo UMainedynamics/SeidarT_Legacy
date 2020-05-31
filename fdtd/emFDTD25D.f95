@@ -133,6 +133,24 @@ close(unit = 13)
 end subroutine material_rw
 
 
+!==============================================================================
+subroutine loadsource(filename, N, srcfn)
+  
+  implicit none
+
+  integer,parameter :: dp = kind(0.d0)
+  character(len=26) :: filename
+  integer :: N
+  real(kind=dp),dimension(N) :: srcfn
+  
+  open(unit = 13, form="unformatted", file = trim(filename))
+  read(13) srcfn
+  
+  close(unit = 13)
+
+end subroutine loadsource
+
+
 ! -----------------------------------------------------------------------------
 
 subroutine cpml_coeffs(nx, dx, dt, npml, k_max, alpha_max, &
@@ -214,7 +232,7 @@ end subroutine cpml_coeffs
 
 !==============================================================================
 subroutine electromag_cpml_25d(nx, ny, nz, dx, dy, dz, &
-                      npoints_pml, src, f0, nstep, angle)
+                      npoints_pml, src, f0, nstep)
 
 ! 2.5D elastic finite-difference code in velocity and stress formulation
 ! with Convolutional-PML (C-PML) absorbing conditions for an anisotropic medium
@@ -275,9 +293,9 @@ integer :: isource,jsource,ksource
 
 
 real(kind=dp), dimension(nx,nz) :: epsilonx, epsilony, epsilonz, &
-                                      sigmax, sigmay, sigmaz
-real(kind=dp) :: DT
-real(kind=dp) :: dx, dy, dz
+                                    sigmax, sigmay, sigmaz
+
+real(kind=dp) :: DT, dx, dy, dz, f0
 
 ! value of PI
 real(kind=dp), parameter :: PI = 3.141592653589793238462643d0
@@ -336,11 +354,8 @@ real(kind=dp),dimension(nx,ny,nz) :: memory_dHz_dx, memory_dHx_dz, &
 ! parameters for the source
 ! angle of source force clockwise with respect to vertical (Y) axis
 ! this will later be treated as an input
-real(kind=dp) :: f0, t0, tw
-real(kind=dp),dimension(2) :: angle
-real(kind=dp),parameter :: factor = 1.0d0
-! character(len=6) :: src_type
-real(kind=dp) :: t,force_x,force_y,force_z,source_term
+real(kind=dp),dimension(nstep) :: srcx, srcy, srcz
+
 integer :: i,j,k,it
 
 real(kind=dp) :: velocnorm
@@ -363,6 +378,12 @@ real(kind=dp),dimension(nz) :: K_z,alpha_z,a_z,b_z, &
 
 integer :: thickness_PML_x,thickness_PML_y, thickness_PML_z
 
+
+! Name the f2py inputs 
+!f2py3 intent(in) :: nx, ny, nz, dx, dy, dz,
+!f2py3 intent(in) :: noints_pml, src, f0, nstep
+
+
 ! ------------------------ Load Stiffness Coefficients ------------------------
 
 call material_rw('epsx.dat', epsilonx, .TRUE.)
@@ -374,9 +395,6 @@ call material_rw('sigz.dat', sigmaz, .TRUE.)
 
 
 ! ------------------------ Assign some constants -----------------------
-! Change the source angle from degrees to radians 
-angle(:) = angle(:) * DEGREES_TO_RADIANS
-
 ! Assign the source location indices
 isource = int(src(1)) + npoints_pml
 jsource = int(src(2)) + npoints_pml
@@ -384,11 +402,11 @@ ksource = int(src(3)) + npoints_pml
 
 ! Define the 
 DT = minval( (/dx, dy, dz/) )/ ( 2.0d0 * Clight/ sqrt( minval( (/ epsilonx, epsilony, epsilonz /) ) ) )
-t0 = 1.0d0/f0
-tw = 4.0d0*t0
-
 alpha_max = 2*pi*eps0*f0/10
 k_max = 1.0d1
+
+
+
 
 ! Compute the coefficients of the FD scheme. First scale the relative 
 ! permittivity and permeabilities to get the absolute values 
@@ -425,6 +443,15 @@ daHz = 1.0d0 ! (1-daHz)/(1+daHz) !
 !---
 !--- program starts here
 !---
+
+! ================================ LOAD SOURCE ================================
+
+call loadsource('electromagneticsourcex.dat', nstep, srcx)
+call loadsource('electromagneticsourcey.dat', nstep, srcy)
+call loadsource('electromagneticsourcez.dat', nstep, srcz)
+
+! =============================================================================
+
 
 !--- define profile of absorption in PML region
 
@@ -647,19 +674,10 @@ do it = 1,NSTEP
   enddo
 
 
-  !----------------------------------------------------------------------------
   ! add the source (force vector located at a given grid point)
-  t = dble(it-1)*DT
-
-  source_term = factor*exp(-(1.0d0*pi*f0*(t-t0) )**2.0d0 )*sin(2.0d0*pi*f0*(t-t0) )
-  force_x = sin( ANGLE(1) ) * cos( ANGLE(2) ) * source_term
-  force_y = sin( ANGLE(1) ) * sin( ANGLE(2) ) * source_term
-  force_z = cos( ANGLE(1) ) * source_term
-
-
-  Ex(isource,jsource,ksource) = Ex(isource,jsource,ksource) + force_x !* DT / epsilonx(i,j)
-  Ey(isource,jsource,ksource) = Ey(isource,jsource,ksource) + force_y !* DT / epsilony(i,j) !* cbEy(ISOURCE,JSOURCE) !* DT / (epsilony(i,j) )
-  Ez(isource,jsource,ksource) = Ez(isource,jsource,ksource) + force_z
+  Ex(isource,jsource,ksource) = Ex(isource,jsource,ksource) + srcx(it) * DT / epsilonx(isource,ksource)
+  Ey(isource,jsource,ksource) = Ey(isource,jsource,ksource) + srcy(it) * DT / epsilony(isource,ksource) 
+  Ez(isource,jsource,ksource) = Ez(isource,jsource,ksource) + srcz(it) * DT / epsilonz(isource,ksource)
   
   ! Dirichlet conditions (rigid boundaries) on the edges or at the bottom of the PML layers
   Ex(1,:,:) = 0.0d0
