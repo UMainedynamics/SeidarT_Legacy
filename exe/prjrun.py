@@ -157,7 +157,7 @@ if model_type == 's':
                 domain.cpml,
                 seismic.src,
                 seismic.f0,
-                seismic.time_steps,
+                seismic.time_steps
             )
 
 # ------------------------------ ELECTROMAGNETIC ------------------------------
@@ -187,7 +187,6 @@ if model_type == 'e':
                 electromag.src,
                 electromag.f0,
                 electromag.time_steps,
-                force
             )
         else:
             print('Running 2 D model')
