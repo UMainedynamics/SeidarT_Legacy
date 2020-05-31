@@ -145,8 +145,14 @@ class Array:
     def tsplot(self):
         m, n = self.timeseries.shape
         # if the gain is 0, then the window is 1
+        
+        # The default is a NoneType so we won't apply gain
+        if self.gain is None:
+            self.gain = m
+        
         if self.gain == 0:
             self.gain = int(1)
+        
         # The gain can't exceed the length of the time series
         if self.gain > m:
             self.gain = m 
