@@ -7,6 +7,23 @@ if [ ! -d "bin" ]; then
 	mkdir bin
 fi
 
+# --------------------------------- Clean Up ----------------------------------
+# Typically, install will overwrite everything but when there is a compile 
+# error this can make debugging difficult if it goes unnoticed. Not everyone 
+# can read the f2py or gfortran outputs
+
+# Just clean up if specified 
+clean=${1:-"none"}
+if [[ $clean == "clean" ]] ; then 
+        # Clear the bin folder
+        rm -rf bin/* 
+        # Remove .mod and .o (if any) files generated during the fortran compile
+        rm fdtd/*.mod
+        rm fdtd/*.o
+        exit 1
+fi
+
+# -----------------------------------------------------------------------------
 # Make sure everything is in unix format 
 dos2unix vis/* 
 dos2unix survey_wrappers/*
@@ -38,7 +55,7 @@ cp materials/orientation_tensor.py bin/orientation_tensor
 # cp materials/class_definitions.py bin/class_definitions
 
 # Move the visualization tools
-cp vis/arrayplot.py bin/arrayplot
+cp vis/arraybuild.py bin/arraybuild
 cp vis/codisplay.py bin/codisplay
 cp vis/im2anim.py bin/im2anim
 cp vis/vtkbuild.py bin/vtkbuild 
@@ -51,7 +68,7 @@ cp io/array2segy.py bin/array2segy
 chmod +x bin/prjbuild \
         bin/prjrun \
         bin/sourcefunction \
-        bin/arrayplot \
+        bin/arraybuild \
         bin/codisplay \
         bin/wiggleplot \
         bin/im2anim \

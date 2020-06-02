@@ -7,125 +7,135 @@ import argparse
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
+from class_definitions import * 
 
 # -------------------------- Command Line Arguments ---------------------------
-parser = argparse.ArgumentParser(description="""CODISPLAY reads the common 
-	offset or midpoint survey file created from common_offset.sh. The """ )
+parser = argparse.ArgumentParser(
+    description="""CODISPLAY reads the common offset or midpoint survey file 
+    created from common_offset.sh. The """ )
 
-parser.add_argument( 'meta_file', nargs=1, type=str,
-	help='File path that contains the survey metadata.', )
+parser.add_argument(
+    '-p', '--prjfile',
+    nargs = 1, type = str, required = True,
+    help = """Path to the project file."""
+)
 
-parser.add_argument( '-c', '--channel', nargs=1, type=str, required=True,
-	help="""The channel that you would like to plot. Valid options 
-	are Ex, Ez, Vx, Vz.""")
+parser.add_argument(
+    '-f', '--file',
+    nargs=1, type=str, required=True,
+    help="""You have a csv file generated from the that you want plotted? Call 
+    it here."""
+)
 
-parser.add_argument('-g', '--gain', nargs = 1, type = float, required = False,
-	help = "The exponential value for 2^m of the gain function (default=None)", default = None)
+parser.add_argument(
+    '-g', '--gain',
+    nargs = 1, type = float, required = False, default = None,
+    help = "The exponential value for 2^m of the gain function (default=None)"
+)
 
-parser.add_argument('-e', '--exaggeration', nargs=1, type = float, required = False,
+parser.add_argument(
+    '-e', '--exaggeration',
+    nargs=1, type = float, required = False, default = [0.5],
 	help = """Set the aspect ratio between the x and y axes for 
-	plotting. Default is 0.5""", default = [0.5])
+	plotting. Default is 0.5"""
+ )
 
-# ----------------- Delete after debug -------------------
+parser.add_argument(
+    '-r', '--receiver',
+    nargs = 1, type = str, required = True,
+    help = """The csv file path that contains the receiver locations"""
+)
+parser.add_argument(
+    '-s', '--seismic',
+    nargs = 1, type = int, required = False, default = [1],
+    help = """Flag whether this is a seismic or electromagnetic model"""
+)
+
+parser.add_argument(
+    '-s', '--surveytype',
+    nargs = 1, type = str, required = True,
+    help = """The type of survey that you are plotting. The available options 
+    are: war, co, cmp. The correspond to wide angle, common offset, and common
+    midpoint, respectively."""
+)
 
 
 args = parser.parse_args()
-meta_file = ''.join(args.meta_file)
+project_file = ''.join(args.prjfile)
+cofile = ''.join(args.file)
 gain = args.gain
 exaggeration = args.exaggeration[0]
-channel = ''.join(args.channel)
-
-if gain:
-	gain = gain[0]
-
-# --------------------- Get the values from the meta file ---------------------
-
-f = open(meta_file)
-
-# If running the wrapper functions, the meta file will save the same each time,
-# but for whatever reason we'll assume that this isn't the case
-for line in f:
-    temp = line.rstrip().rsplit()
-    if temp[0] == 'offset:':
-        offset = float(temp[1])
-    if temp[0] == 'delta:':
-        ds = float(temp[1])
-    if temp[0] == 'survey_type:':
-        survey_type = temp[1]
-    if temp[0] == 'project_file:':
-        project_file = temp[1]
+seismic = args.seismic[0] == 0
+survey_type = ''.join(args.surveytype) 
 
 
-	 	
-f.close()
-
-cofile = '.'.join( meta_file.split('.')[:-2] )+ '.' + channel + '.' + survey_type + '.csv'
-# project_file = '.'.join( meta_file.split('.')[:-3] )+ '.prj'
-
+project_file = 'easy_greenland.prj'
+cofile = 'receiver_array.csv'
+gain = 101 
+exaggeration = 0.25 
+seismic = True
 # -----------------------------------------------------------------------------
-# Get the values we need
-f = open(project_file)
+# Load the values from the project file
+domain, material, seismic, electromag = loadproject(
+    project_file,
+    Domain(),
+    Material(),
+    Model(),
+    Model()
+)
 
-for line in f:
-    if channel == 'Vx' or channel == 'Vz':
-        # Source
-        if line[0] == 'S':
-            temp = line.split(',')
-            if temp[1] == 'dt':
-                dt = float(temp[2].rsplit()[0])
-    else:
-        if line[0] == 'E':
-            temp = line.split(',')
-            if temp[1] == 'dt':
-                dt = float(temp[2].rsplit()[0])
-
-f.close()
-
+# Open the csv containing time series values
 dat = np.genfromtxt(cofile, delimiter = ',')
 m,n = dat.shape
 
-if channel == 'Vx' or channel == 'Vz':
+if seismic:
     mult = 1e2
 else:
     mult = 1e6
 
-time_locations = np.linspace(1, m, 10) 
-time_labels = np.round( time_locations*dt*mult, 4)
+timelocs = np.arange(0, m, int(m/10) ) # 10 tick marks along y-axis
+rcxlocs = np.arange(0, n, int(n/5) ) # 5 tick marks along x-axis 
 
-if survey_type == 'cmp':
-    dist_locations = np.round( np.linspace(1, n, 7) )
-    dist_labels = 2*dist_locations*ds + offset*2
-    dist_labels = dist_labels.astype(int)
+if seismic:
+    timevals = np.round(timelocs*float(seismic.dt[0]) * mult, 2)
 else:
-    dist_locations = np.round(np.linspace(0, n-1, 7) )
-    dist_labels = dist_locations*ds
-    dist_labels = dist_labels.astype(int)
+    timevals = np.round(timelocs*float(electromag.dt[0]), mulst, 2)
 
-# Create the figure object using subplots
-fig, ax = plt.subplots()
+# if survey_type == 'cmp':
+#     dist_locations = np.round( np.linspace(1, n, 7) )
+#     dist_labels = 2*dist_locations*ds + offset*2
+#     dist_labels = dist_labels.astype(int)
+# else:
+#     dist_locations = np.round(np.linspace(0, n-1, 7) )
+#     dist_labels = dist_locations*ds
+#     dist_labels = dist_labels.astype(int)
 
-if gain:
-    gain_function = np.zeros([m,n])
-    for j in range(0, m):
-        gain_function[j,:] = np.exp(-j/(2**gain))
-    im = ax.imshow(dat/gain_function, cmap = 'Greys' )
-else:
-    im = ax.imshow(dat, cmap = 'Greys')
 
-# Label the x axis
-plt.xticks(dist_locations, dist_labels.astype(str) )
-ax.set_xlabel(r"Source-Reciever Distance (m)")
-ax.xaxis.tick_top()
-ax.xaxis.set_label_position('top')
+if gain == 0:
+    gain = 1 
 
-# Label the y axis
-ax.set_ylabel(r"Two way travel time (s)")
-plt.yticks(time_locations, time_labels.astype(str) )
+if gain < m:
+    for j in range(0, n):
+        dat[:,j] = agc(dat[:,j], gain, "mean")
+
+fig = plt.figure(figsize =(n/2,m/2) )
+ax1 = plt.gca()
+# ax2 = ax1.twinx() 
+ax1.imshow(dat, cmap = 'Greys', aspect = 'auto')
+ax1.set_xlabel(r'Receiver #')
+ax1.xaxis.tick_top()
+ax1.xaxis.set_label_position('top')
+ax1.set_xticks(rcxlocs)
+ax1.set_xticklabels(rcxlocs)
+ax1.set_ylabel(r'Two-way Travel Time (s)')
+ax1.set_yticks(timelocs)
+ax1.set_yticklabels(timevals)
+
 
 # Other figure handle operations
-ax.set_aspect(aspect = exaggeration)
+ax1.set_aspect(aspect = exaggeration)
 
-if channel == 'Vx' or channel == 'Vz':
+if seismic:
 	plt.figtext(0.30, 0.07, 'x $10^{-2}$')	
 else:
 	plt.figtext(0.30, 0.07, 'x $10^{-6}$')
