@@ -3,6 +3,10 @@ import material_functions as mf
 import matplotlib.image as mpimg
 import os.path
 from subprocess import call
+from scipy.io import FortranFile
+import glob
+
+from imdefinitions import * 
 
 # =============================================================================
 # =========================== Define Class Variables ==========================
@@ -87,7 +91,7 @@ class Material:
     	self.attenuation = None
     	self.rho = None
     	self.pore = None
-    	self.wc = None    	
+    	self.wc = None
     	self.abool = None
     	self.angfiles = None
 
@@ -190,7 +194,72 @@ class Model:
 			self.phi = 0
 
 
-# -----------------------------------------------------------------------------
+    # -------------------------- Function Definitions -------------------------
+def getrcx(channel, rcx, domain):
+    # input rcx as an n-by-2 array integer values for their indices. 
+    all_files = glob.glob(channel + '*.dat')
+    all_files.sort()
+    m = len(all_files)
+    n = len(rcx[:,1])
+    timeseries = np.zeros([m,n])
+    
+    if domain.dim == '2':
+        domain.ny = None
+    
+    if domain.dim == '2.5':
+        for i, fn in enumerate(all_files, start = 0):
+            npdat = read_dat(fn,channel,domain)
+            for j in range(0, n):
+                # Don't forget x is columns and z is rows
+                timeseries[i,j] = npdat[
+                    int(rcx[j,2]),
+                    int(rcx[j,1]),
+                    int(rcx[j,0])
+				]
+    else:
+        for i, fn in enumerate(all_files, start = 0):
+            npdat = read_dat(fn, channel, domain)
+            for j in range(0, n):
+                # Don't forget x is columns and z is rows
+                timeseries[i,j] = npdat[
+                    int(rcx[j,2]),
+                    int(rcx[j,0])
+                ]
+    
+    # Save the array as csv for other types of processing
+    np.savetxt("receiver_array.csv", timeseries, delimiter = ",")
+
+
+def read_dat(fn, channel, domain):
+	if domain.dim == '2.5':
+		if channel == 'Ex':
+			NX = domain.nz
+			NY = domain.ny
+			NZ = domain.nx-1
+		elif channel == 'Ey':
+			NX = domain.nz
+			NY = domain.ny-1
+			NZ = domain.nx
+		elif channel == 'Ez':
+			NX = domain.nz-1
+			NY = domain.ny
+			NZ = domain.nx
+		else:
+			NX = domain.nz
+			NY = domain.ny 
+			NZ = domain.nx
+		
+	f = FortranFile(fn, 'r')
+	dat = f.read_reals(dtype = 'float32')
+	
+	if domain.ny:
+		dat = dat.reshape(NX, NY, NZ)
+	else:
+		dat = dat.reshape(NX, NZ)
+	
+	f.close()
+	return(dat)
+
 # =============================================================================
 # ============================== Useful Functions =============================
 # =============================================================================
@@ -246,6 +315,7 @@ def append_coefficients(prjfile, tensor, CP = None, dt=1 ):
 		# 		temp.write( mt + ',dt,' + str(dt) + '\n' )
 
 	call('mv ' + newfile + ' ' + prjfile, shell = True)
+
 
 
 # =============================================================================
@@ -362,6 +432,9 @@ def loadproject(project_file, domain, material, seismic, electromag):
 
 	f.close()
 	return domain, material, seismic, electromag
+
+
+
 
 
 
