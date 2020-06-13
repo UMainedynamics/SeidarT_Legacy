@@ -48,11 +48,12 @@ parser.add_argument(
 parser.add_argument(
     '-s', '--seismic',
     nargs = 1, type = int, required = False, default = [1],
-    help = """Flag whether this is a seismic or electromagnetic model"""
+    help = """Flag whether this is a seismic or electromagnetic model
+    (1 - seismic, 0 - electromagnetic, default = 1)"""
 )
 
 parser.add_argument(
-    '-s', '--surveytype',
+    '-t', '--surveytype',
     nargs = 1, type = str, required = True,
     help = """The type of survey that you are plotting. The available options 
     are: war, co, cmp. The correspond to wide angle, common offset, and common
@@ -63,17 +64,17 @@ parser.add_argument(
 args = parser.parse_args()
 project_file = ''.join(args.prjfile)
 cofile = ''.join(args.file)
-gain = args.gain
+gain = args.gain[0]
 exaggeration = args.exaggeration[0]
-seismic = args.seismic[0] == 0
-survey_type = ''.join(args.surveytype) 
+seismic = args.seismic[0] == 1
+survey_type = ''.join(args.surveytype)
 
 
-project_file = 'easy_greenland.prj'
-cofile = 'receiver_array.csv'
-gain = 101 
-exaggeration = 0.25 
-seismic = True
+# project_file = 'easy_greenland.prj'
+# cofile = 'receiver_array.csv'
+# gain = 101 
+# exaggeration = 0.25 
+# seismic = True
 # -----------------------------------------------------------------------------
 # Load the values from the project file
 domain, material, seismic, electromag = loadproject(
@@ -101,6 +102,12 @@ if seismic:
 else:
     timevals = np.round(timelocs*float(electromag.dt[0]), mulst, 2)
 
+# if surveytype == 'cmp':
+#     midpointorigin = np.array(
+#         [
+            
+#         ]
+#     )
 # if survey_type == 'cmp':
 #     dist_locations = np.round( np.linspace(1, n, 7) )
 #     dist_labels = 2*dist_locations*ds + offset*2
@@ -112,7 +119,7 @@ else:
 
 
 if gain == 0:
-    gain = 1 
+    gain = 1
 
 if gain < m:
     for j in range(0, n):
@@ -136,9 +143,9 @@ ax1.set_yticklabels(timevals)
 ax1.set_aspect(aspect = exaggeration)
 
 if seismic:
-	plt.figtext(0.30, 0.07, 'x $10^{-2}$')	
+	ax1.text(0, m + 0.03*m, 'x $10^{-2}$')	
 else:
-	plt.figtext(0.30, 0.07, 'x $10^{-6}$')
+	ax1.text(0, 0, 'x $10^{-6}$')
 
 
 plt.show()

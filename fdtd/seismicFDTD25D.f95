@@ -15,7 +15,7 @@ implicit none
 contains
 
   !==============================================================================
-  subroutine stiffness_write(im, mlist, npoints_pml, nx, nz) 
+  subroutine stiffness_write(im, mlist, npoints_pml, nx, nz, gradient, zerostress) 
     ! STIFFNESS_ARRAYS takes a matrix containing the material integer identifiers 
     ! and creates the same size array for each independent coefficient of the 
     ! stiffness matrix along with a density matrix. Since we ae using PML
@@ -35,12 +35,15 @@ contains
     integer :: nx, nz
     integer,dimension(nx,nz) :: im
     integer :: i, j, npoints_pml
-    real(kind=dp), dimension(:,:) :: mlist
-    real(kind=dp), dimension(2*npoints_pml+nx,2*npoints_pml+nz) :: c11, c12, c13, &
-                                                                c22, c23, c33, &
-                                                                c44, c55, c66, rho
+    real(kind=dp),dimension(:,:) :: mlist
+    real(kind=dp),dimension(nx,nz) :: gradient
+    real(kind=dp),dimension(2*npoints_pml+nx,2*npoints_pml+nz) :: c11,c12,c13,&
+                                                                c22,c23,c33, &
+                                                                c44,c55,c66, &
+                                                                rho, zerostress
+    
 
-    !f2py3 intent(in):: im, mlist, npoints_pml, nx, nz
+    !f2py3 intent(in) :: im, mlist, npoints_pml, nx, nz, gradient, zerostress
 
     c11(:,:) = 0.d0 
     c12(:,:) = 0.d0 
@@ -68,6 +71,9 @@ contains
         rho(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 11) 
       enddo
     enddo
+
+    rho(npoints_pml+1:nx+npoints_pml,npoints_pml+1:nz+npoints_pml) = &
+        rho(npoints_pml+1:nx+npoints_pml,npoints_pml+1:nz+npoints_pml)*gradient
 
     ! Extend the boundary values of the stiffnesses into the PML region
     do i = 1,npoints_pml+1
@@ -132,6 +138,7 @@ contains
     call material_rw('c55.dat', c55, .FALSE.)
     call material_rw('c66.dat', c66, .FALSE.)
     call material_rw('rho.dat', rho, .FALSE. )
+    call material_rw('sig.dat', zerostress, .FALSE.)
 
   end subroutine stiffness_write
 
@@ -245,7 +252,8 @@ contains
       ! Compute the a_i coefficients
       ! this to avoid division by zero outside the PML
       if (abs(sigma(i)) > 1.d-6) then 
-        acoeff(i) = sigma(i) * (bcoeff(i) - 1.d0) / (kappa(i) * sigma(i) + kappa(i) * alpha(i) ) !( (sigma(i) + kappa(i) * alpha(i)) ) / kappa(i)
+        acoeff(i) = sigma(i) * (bcoeff(i) - 1.d0) / &
+        (kappa(i) * sigma(i) + kappa(i) * alpha(i) ) !( (sigma(i) + kappa(i) * alpha(i)) ) / kappa(i)
       endif
 
   enddo 
@@ -306,8 +314,11 @@ integer :: nx, ny, nz
 
 ! thickness of the PML layer in grid points
 integer :: npoints_pml
-real(kind=dp), dimension(nx,nz) :: c11, c12, c13, c22, c23, c33, c44, c55, c66, rho
-real(kind=dp) :: f0
+real(kind=dp), dimension(nx,nz) :: c11, c12, c13, &
+                                    c22, c23, c33, &
+                                    c44, c55, c66, &
+                                    rho, zerostress
+real(kind=dp) :: f0, deltarho
 
 ! total number of time steps
 integer :: nstep
@@ -369,9 +380,12 @@ real(kind=dp) :: &
     value_dsigmayz_dy, value_dsigmayz_dz
 
 ! 1D arrays for the damping profiles
-real(kind=dp), dimension(nx) :: d_x,K_x,alpha_x,a_x,b_x,d_x_half,K_x_half,alpha_x_half,a_x_half,b_x_half
-real(kind=dp), dimension(ny) :: d_y,K_y,alpha_y,a_y,b_y,d_y_half,K_y_half,alpha_y_half,a_y_half,b_y_half
-real(kind=dp), dimension(nz) :: d_z,K_z,alpha_z,a_z,b_z,d_z_half,K_z_half,alpha_z_half,a_z_half,b_z_half
+real(kind=dp), dimension(nx) :: d_x,K_x,alpha_x,a_x,b_x,d_x_half, &
+                                K_x_half,alpha_x_half,a_x_half,b_x_half
+real(kind=dp), dimension(ny) :: d_y,K_y,alpha_y,a_y,b_y,d_y_half, &
+                                K_y_half,alpha_y_half,a_y_half,b_y_half
+real(kind=dp), dimension(nz) :: d_z,K_z,alpha_z,a_z,b_z,d_z_half, &
+                                K_z_half,alpha_z_half,a_z_half,b_z_half
 
 real(kind=dp) :: thickness_PML_x,thickness_PML_y,thickness_PML_z
 real(kind=dp) :: Rcoef,d0_x,d0_y,d0_z
@@ -403,6 +417,7 @@ call material_rw('c44.dat', c44, .TRUE.)
 call material_rw('c55.dat', c55, .TRUE.)
 call material_rw('c66.dat', c66, .TRUE.)
 call material_rw('rho.dat', rho, .TRUE.)
+call material_rw('sig.dat', zerostress, .TRUE.)
 
 ! ------------------------ Assign some constants -----------------------
 isource = src(1)+npoints_pml
@@ -570,19 +585,20 @@ do it = 1,NSTEP
         value_dvz_dz = value_dvz_dz / K_z(k) + memory_dvz_dz(i,j,k)
 
         sigmaxx(i,j,k) = sigmaxx(i,j,k) + &
-            ( c11(i,k) * value_dvx_dx + &
-              c12(i,k) * value_dvy_dy + &
-              c13(i,k) * value_dvz_dz) * dt
+            ( ( ( c11(i+1,k) + 4*c11(i,k) + c11(i,k-1) )/6 ) * value_dvx_dx + &
+              ( ( c12(i+1,k) + 4*c12(i,k) + c12(i,k-1) )/6 ) * value_dvy_dy + &
+              ( ( c13(i+1,k) + 4*c13(i,k) + c13(i,k-1) )/6 ) * value_dvz_dz ) * dt
 
+        ! Full 3D will need a gradient in the y-direction
         sigmayy(i,j,k) = sigmayy(i,j,k) + &
-            ( c12(i,k) * value_dvx_dx + &
-              c22(i,k) * value_dvy_dy + &
-              c23(i,k) * value_dvz_dz) * dt
+            ( ( ( c12(i+1,k) + 4*c12(i,k) + c12(i, k-1) )/6 ) * value_dvx_dx + &
+              ( ( c22(i+1,k) + 4*c22(i,k) + c22(i, k-1) )/6 )* value_dvy_dy + &
+              ( ( c23(i+1,k) + 4*c23(i,k) + c23(i, k-1) )/6 )* value_dvz_dz ) * dt
 
         sigmazz(i,j,k) = sigmazz(i,j,k) + &
-            ( c13(i,k) * value_dvx_dx + &
-              c23(i,k) * value_dvy_dy + &
-              c33(i,k) * value_dvz_dz) * dt
+            ( ( ( c13(i+1,k) + 4*c13(i,k) + c13(i,k-1))/6 ) * value_dvx_dx + &
+              ( ( c23(i+1,k) + 4*c23(i,k) + c23(i,k-1))/6 ) * value_dvy_dy + &
+              ( ( c33(i+1,k) + 4*c33(i,k) + c33(i,k-1))/6 ) * value_dvz_dz ) * dt
 
       enddo
     enddo
@@ -602,7 +618,8 @@ do it = 1,NSTEP
         value_dvy_dx = value_dvy_dx / K_x(i) + memory_dvy_dx(i,j,k)
         value_dvx_dy = value_dvx_dy / K_y_half(j) + memory_dvx_dy(i,j,k)
 
-        sigmaxy(i,j,k) = sigmaxy(i,j,k) + c66(i,k) * (value_dvy_dx + value_dvx_dy) * DT
+        sigmaxy(i,j,k) = sigmaxy(i,j,k) + &
+              ( (3*c66(i,k) + c66(i-1,k) )/4) * (value_dvy_dx + value_dvx_dy) * DT
 
       enddo
     enddo
@@ -622,7 +639,9 @@ do it = 1,NSTEP
         value_dvz_dx = value_dvz_dx / K_x(i) + memory_dvz_dx(i,j,k) 
         value_dvx_dz = value_dvx_dz / K_z_half(k) + memory_dvx_dz(i,j,k)
 
-        sigmaxz(i,j,k) = sigmaxz(i,j,k) + c55(i,k) * ( value_dvx_dz + value_dvz_dx) * dt 
+        sigmaxz(i,j,k) = sigmaxz(i,j,k) + &
+              ( ( c55(i,k+1) + 2*c55(i,k) + c55(i-1,k) )/4 ) * &
+              ( value_dvx_dz + value_dvz_dx) * dt 
 
       enddo
     enddo
@@ -630,6 +649,8 @@ do it = 1,NSTEP
   !   ! update sigmayz, y-direction is full nodes
     do j = 1,ny-1
       do i = 1,nx
+        
+
         value_dvz_dy = (vz(i,j+1,k) - vz(i,j,k) ) / dy
         value_dvy_dz = (vy(i,j,k+1) - vy(i,j,k) ) / dz
 
@@ -639,7 +660,9 @@ do it = 1,NSTEP
         value_dvy_dz = value_dvy_dz / K_z_half(k) + memory_dvy_dz(i,j,k)
         value_dvz_dy = value_dvz_dy / K_y_half(j) + memory_dvz_dy(i,j,k)
 
-        sigmayz(i,j,k) = sigmayz(i,j,k)  + c44(i,k) * ( value_dvy_dz + value_dvz_dy) * dt 
+        sigmayz(i,j,k) = sigmayz(i,j,k)  + &
+              ( ( 3*c44(i,k) + c44(i,k+1) )/4 ) * &
+              ( value_dvy_dz + value_dvz_dy) * dt 
 
       enddo
     enddo
@@ -653,19 +676,26 @@ do it = 1,NSTEP
     do j = 2,NY
       do i = 2,NX
         ! ds1/dx, ds6/dy, ds5,dz
+        deltarho = (4 * rho(i,k) + rho(i-1,k) + rho(i,k-1) )/6
+        
         value_dsigmaxx_dx = (sigmaxx(i,j,k) - sigmaxx(i-1,j,k) ) / dx
         value_dsigmaxy_dy = (sigmaxy(i,j,k) - sigmaxy(i,j-1,k) ) / dy
         value_dsigmaxz_dz = (sigmaxz(i,j,k) - sigmaxz(i,j,k-1) ) / dz
 
-        memory_dsigmaxx_dx(i,j,k) = b_x(i) * memory_dsigmaxx_dx(i,j,k) + a_x(i) * value_dsigmaxx_dx
-        memory_dsigmaxy_dy(i,j,k) = b_y(j) * memory_dsigmaxy_dy(i,j,k) + a_y(j) * value_dsigmaxy_dy
-        memory_dsigmaxz_dz(i,j,k) = b_z(k) * memory_dsigmaxz_dz(i,j,k) + a_z(k) * value_dsigmaxz_dz
+        memory_dsigmaxx_dx(i,j,k) = b_x(i) * &
+                  memory_dsigmaxx_dx(i,j,k) + a_x(i) * value_dsigmaxx_dx
+        memory_dsigmaxy_dy(i,j,k) = b_y(j) * &
+                  memory_dsigmaxy_dy(i,j,k) + a_y(j) * value_dsigmaxy_dy
+        memory_dsigmaxz_dz(i,j,k) = b_z(k) * &
+                  memory_dsigmaxz_dz(i,j,k) + a_z(k) * value_dsigmaxz_dz
 
         value_dsigmaxx_dx = value_dsigmaxx_dx / K_x(i) + memory_dsigmaxx_dx(i,j,k)
         value_dsigmaxy_dy = value_dsigmaxy_dy / K_y(j) + memory_dsigmaxy_dy(i,j,k)
         value_dsigmaxz_dz = value_dsigmaxz_dz / K_z(k) + memory_dsigmaxz_dz(i,j,k) 
 
-        vx(i,j,k) = vx(i,j,k) + (value_dsigmaxx_dx + value_dsigmaxy_dy + value_dsigmaxz_dz) * dt / rho(i,k)
+        vx(i,j,k) = vx(i,j,k) + &
+            (value_dsigmaxx_dx + value_dsigmaxy_dy + value_dsigmaxz_dz) * &
+            dt / deltarho !rho(i,k)
 
       enddo
     enddo
@@ -673,6 +703,8 @@ do it = 1,NSTEP
     do j = 1,ny-1
       do i = 1,nx-1
         ! ds6/dx, ds2/dy, ds4/dz
+        deltarho = (4*rho(i,k) + rho(i+1,k) + rho(i,k-1) )/6
+
         value_dsigmaxy_dx = ( sigmaxy(i+1,j,k) - sigmaxy(i,j,k) ) / dx
         value_dsigmayy_dy = ( sigmayy(i,j+1,k) - sigmayy(i,j,k) ) / dy
         value_dsigmayz_dz = ( sigmayz(i,j,k) - sigmayz(i,j,k-1) ) / dz
@@ -685,7 +717,9 @@ do it = 1,NSTEP
         value_dsigmayy_dy = value_dsigmayy_dy / K_y_half(j) + memory_dsigmayy_dy(i,j,k)
         value_dsigmayz_dz = value_dsigmayz_dz / K_z(k) + memory_dsigmayz_dz(i,j,k)
 
-        vy(i,j,k) = vy(i,j,k) + (value_dsigmaxy_dx + value_dsigmayy_dy + value_dsigmayz_dz) * dt / rho(i,k)
+        vy(i,j,k) = vy(i,j,k) + &
+            (value_dsigmaxy_dx + value_dsigmayy_dy + value_dsigmayz_dz) * &
+            dt / deltarho !rho(i,k)
 
       enddo
     enddo
@@ -694,12 +728,13 @@ do it = 1,NSTEP
   do k = 1,nz-1
     do j = 2,ny
       do i = 1,nx-1
-
         ! ds5/dx, ds4/dy, ds3/dz
+        deltarho = ( rho(i+1,k) + rho(i,k+1) + 4*rho(i,k) )/6
+
         value_dsigmaxz_dx = ( sigmaxz(i+1,j,k) - sigmaxz(i,j,k) ) / dx
         value_dsigmayz_dy = ( sigmayz(i,j,k) - sigmayz(i,j-1,k) ) / dy
         value_dsigmazz_dz = ( sigmazz(i,j,k+1) - sigmazz(i,j,k) ) / dz
-
+        
         memory_dsigmaxz_dx(i,j,k) = b_x_half(i) * memory_dsigmaxz_dx(i,j,k) + a_x_half(i) * value_dsigmaxz_dx
         memory_dsigmayz_dy(i,j,k) = b_y(j) * memory_dsigmayz_dy(i,j,k) + a_y(j) * value_dsigmayz_dy
         memory_dsigmazz_dz(i,j,k) = b_z_half(k) * memory_dsigmazz_dz(i,j,k) + a_z_half(k) * value_dsigmazz_dz
@@ -708,7 +743,9 @@ do it = 1,NSTEP
         value_dsigmayz_dy = value_dsigmayz_dy / K_y(j) + memory_dsigmayz_dy(i,j,k)
         value_dsigmazz_dz = value_dsigmazz_dz / K_z_half(k) + memory_dsigmazz_dz(i,j,k)
 
-        vz(i,j,k) = vz(i,j,k) + (value_dsigmaxz_dx + value_dsigmayz_dy + value_dsigmazz_dz) * dt / rho(i,k)
+        vz(i,j,k) = vz(i,j,k) + &
+            (value_dsigmaxz_dx + value_dsigmayz_dy + value_dsigmazz_dz) * &
+            dt / deltarho !rho(i,k)
 
       enddo
     enddo

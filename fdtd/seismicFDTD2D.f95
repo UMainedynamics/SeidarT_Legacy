@@ -73,7 +73,7 @@ contains
 ! end subroutine doall
 
   !==============================================================================
-subroutine stiffness_write(im, mlist, npoints_pml, nx, nz) 
+subroutine stiffness_write(im, mlist, npoints_pml, nx, nz, gradient) 
   ! STIFFNESS_ARRAYS takes a matrix containing the material integer identifiers 
   ! and creates the same size array for each independent coefficient of the 
   ! stiffness matrix along with a density matrix. Since we ae using PML
@@ -96,8 +96,9 @@ subroutine stiffness_write(im, mlist, npoints_pml, nx, nz)
   real(kind=dp), dimension(:,:) :: mlist
   real(kind=dp), dimension(2*npoints_pml+nx,2*npoints_pml+nz) :: c11, c12, &
                                                               c22, c66, rho
+  real(kind=dp), dimension(:,:) :: gradient
 
-  !f2py3 intent(in):: im, mlist, npoints_pml, nx, nz
+  !f2py3 intent(in):: im, mlist, npoints_pml, nx, nz, gradient
 
   c11(:,:) = 0.d0 
   c12(:,:) = 0.d0 
@@ -115,6 +116,9 @@ subroutine stiffness_write(im, mlist, npoints_pml, nx, nz)
       rho(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 11) 
     enddo
   enddo
+
+  rho(npoints_pml+1:nx+npoints_pml, npoints_pml+1:nz+npoints_pml) = &
+      rho(npoints_pml+1:nx+npoints_pml, npoints_pml+1:nz+npoints_pml)*gradient
 
   ! Extend the boundary values of the stiffnesses into the PML region
   do i = 1,npoints_pml+1
