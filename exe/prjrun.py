@@ -129,12 +129,20 @@ if model_type == 's':
         
         print('Modeling the seismic wavefield.\n')
         seismic, domain = prepme(seismic, domain)
+        
+        # We need to set a density gradient at air interfaces because high
+        # density gradients lead to numerical instability
+        rhograd, zerostress = airsurf(material, domain, 2)
+        
         # Write the coefficient image to a fortran file
         seis25d.seismicfdtd25d.stiffness_write(
             domain.geometry+1,
             seismic.tensor_coefficients,
             domain.cpml,
-            domain.nx, domain.nz
+            rhograd,
+            zerostress,
+            domain.nx, 
+            domain.nz
         )
         if domain.dim == 2.5:
             print('Running 2.5D model')

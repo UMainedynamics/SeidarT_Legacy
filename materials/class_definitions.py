@@ -434,10 +434,6 @@ def loadproject(project_file, domain, material, seismic, electromag):
 	return domain, material, seismic, electromag
 
 
-
-
-
-
 # -----------------------------------------------------------------------------
 # Make sure variables are in the correct type for Fortran
 def prepme(modobj, domain):
@@ -477,4 +473,69 @@ def prepme(modobj, domain):
 # Append coefficients
 def coefs2prj(modobj, matobj, domobj, modtype):
     pass
+
+
+def airsurf(material, domain, N = 2):
+    # This can be generalized a little better, but for now...
+    airnum = int(
+        material.material_list[material.material_list[:,1] == 'air', 0][0]
+    )
+    
+    gradmatrix = (domain.geometry != airnum).astype(int)
+    # Take the gradient in both directions
+    gradz = np.diff(gradmatrix, axis = 0)
+    gradx = np.diff(gradmatrix, axis = 1)
+    
+    # For grady we will append a column of zeros at the beginning so that the value
+    # 1 is located at the interface but on the non-air side 
+    gradzpos = np.row_stack([np.zeros([gradz.shape[1] ]),gradz])
+    # For gradx we will append a row of zeros at the beginning 
+    gradxpos = np.column_stack([np.zeros([gradx.shape[0] ]),gradx]) 
+    # -1 also means that there is an air interface. We will need to append to the
+    # end of the array, then we can just flip the sign
+    gradzneg = (np.row_stack( [gradz, np.zeros([gradz.shape[1]]) ] ) )
+    gradxneg = (np.column_stack( [gradx, np.zeros([gradx.shape[0]]) ] ) )
+    
+    # At the surface we want to have 15% of density
+    grad = np.zeros( [gradx.shape[0], gradz.shape[1], N] ) 
+    grad[:,:,0] = gradzpos + gradxpos - gradzneg - gradxneg
+    grad[ grad[:,:,0]>0, 0] = 0.15 
+    
+    # We will make the change gradational by splitting the difference each step 
+    # For instance, 1 - 0.15 = 0.85, so the next percentage will be 
+    # 0.85/2 + 0.15 and so on
+    pct = np.zeros([N])
+    pct[0] = 0.15
+    
+    for ind in range(1, N):
+        pct[ind] = pct[ind-1] + (1-pct[ind-1])/2
+        gradzpos = np.row_stack( [np.zeros([gradz.shape[1] ]),gradzpos] )[:-1,:]
+        gradxpos = np.column_stack( [np.zeros( [ gradx.shape[0] ] ),gradxpos ])[:,:-1]
+        
+        gradzneg = (np.row_stack( [ gradzneg, np.zeros( [gradz.shape[1] ]) ] )[1:,:])
+        gradxneg = (np.column_stack( [ gradxneg, np.zeros( [gradx.shape[0] ]) ] )[:,1:])
+        grad[:,:, ind] = gradzpos + gradxpos - gradzneg - gradxneg
+        grad[ grad[:,:,ind] > 0, ind] = pct[ind]
+    
+    gradcomp = np.zeros( [grad.shape[0], grad.shape[1] ])
+    for ind in range(N-1, -1, -1):
+        gradcomp[ grad[:,:,ind] > 0] = pct[ind]
+    
+    gradcomp[ gradcomp == 0] = 1
+    cpml = int( domain.cpml )
+    # We need to extend the gradmatrix into the cpml. First in the x-direction
+    xext = np.zeros([gradmatrix.shape[0],cpml])
+    zext = np.zeros([cpml,gradmatrix.shape[1] + 2*cpml])
+    
+    gradmatrix = np.concatenate([xext, gradmatrix, xext], axis = 1)
+    for ind in range(0, cpml):
+        gradmatrix[:,-ind+1] = gradmatrix[:,-(cpml + 2)]
+        gradmatrix[:,ind] = gradmatrix[:,cpml]
+    
+    gradmatrix = np.concatenate([zext, gradmatrix, zext], axis = 0)
+    for ind in range(0, cpml ):
+        gradmatrix[-ind+1,:] = gradmatrix[-(cpml+2),:]
+        gradmatrix[ind,:] = gradmatrix[cpml,:]
+    
+    return(gradcomp, gradmatrix)
 
