@@ -384,7 +384,7 @@ integer :: thickness_PML_x,thickness_PML_y, thickness_PML_z
 !f2py3 intent(in) :: noints_pml, src, f0, nstep
 
 
-! ------------------------ Load Stiffness Coefficients ------------------------
+! ------------------------ Load Permittivity Coefficients ------------------------
 
 call material_rw('epsx.dat', epsilonx, .TRUE.)
 call material_rw('epsy.dat', epsilony, .TRUE.)

@@ -15,7 +15,7 @@ implicit none
 contains
 
   !==============================================================================
-  subroutine stiffness_write(im, mlist, npoints_pml, nx, nz, gradient, zerostress) 
+  subroutine stiffness_write(im, mlist, npoints_pml, nx, nz, gradient) 
     ! STIFFNESS_ARRAYS takes a matrix containing the material integer identifiers 
     ! and creates the same size array for each independent coefficient of the 
     ! stiffness matrix along with a density matrix. Since we ae using PML
@@ -40,10 +40,10 @@ contains
     real(kind=dp),dimension(2*npoints_pml+nx,2*npoints_pml+nz) :: c11,c12,c13,&
                                                                 c22,c23,c33, &
                                                                 c44,c55,c66, &
-                                                                rho, zerostress
+                                                                rho
     
 
-    !f2py3 intent(in) :: im, mlist, npoints_pml, nx, nz, gradient, zerostress
+    !f2py3 intent(in) :: im, mlist, npoints_pml, nx, nz, gradient
 
     c11(:,:) = 0.d0 
     c12(:,:) = 0.d0 
@@ -138,7 +138,6 @@ contains
     call material_rw('c55.dat', c55, .FALSE.)
     call material_rw('c66.dat', c66, .FALSE.)
     call material_rw('rho.dat', rho, .FALSE. )
-    call material_rw('sig.dat', zerostress, .FALSE.)
 
   end subroutine stiffness_write
 
@@ -317,7 +316,7 @@ integer :: npoints_pml
 real(kind=dp), dimension(nx,nz) :: c11, c12, c13, &
                                     c22, c23, c33, &
                                     c44, c55, c66, &
-                                    rho, zerostress
+                                    rho
 real(kind=dp) :: f0, deltarho
 
 ! total number of time steps
@@ -417,7 +416,6 @@ call material_rw('c44.dat', c44, .TRUE.)
 call material_rw('c55.dat', c55, .TRUE.)
 call material_rw('c66.dat', c66, .TRUE.)
 call material_rw('rho.dat', rho, .TRUE.)
-call material_rw('sig.dat', zerostress, .TRUE.)
 
 ! ------------------------ Assign some constants -----------------------
 isource = src(1)+npoints_pml

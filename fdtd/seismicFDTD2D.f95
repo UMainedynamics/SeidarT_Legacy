@@ -608,24 +608,6 @@ end subroutine stiffness_write
 
     enddo
 
-
-    ! =============================================================================
-    ! Print the PML values to a file to check the values
-    open(unit = 15, file = "x_values2.txt")
-    do i=1,nx
-      write(15,"(E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3)") &
-            a_x(i), a_x_half(i), b_x(i), b_x_half(i), alpha_x(i), alpha_x_half(i), K_x(i), K_x_half(i)
-    enddo
-    close(15)
-
-    open(unit = 16, file = "z_values2.txt")
-    do i = 1,ny
-      write(16,"(E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3)") &
-            a_y(i), a_y_half(i), b_y(i), b_y_half(i), alpha_y(i), alpha_y_half(i), K_y(i), K_y_half(i)
-    enddo
-    close(16)
-
-    ! stop
     ! =============================================================================
 
 
