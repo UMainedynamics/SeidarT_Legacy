@@ -13,133 +13,142 @@
 module electromagFDTD2d
 
 implicit none
-
+  
 contains
 
-subroutine doall(im, mlist, nx, ny, dx, dy, npoints_pml, & 
-                  src, f0, nstep, angle)
-! DOALL This is kind of a wrapper function for the subsequent subroutines 
-! because this will be implemented via Python or some other dynamic front end 
-! language. Of course I would name this in the fashion of the Computer Programs in
-! Seismology naming. 
-!
-! INPUT
-!   im (INTEGER) - m-by-n array of integer values corresponding to different
-!         materials.
-!   mlist (REAL) - the p-by-13 array containing in each column:
-!
-!   MATERIAL_ID,TEMPERATURE,PRESSURE,epsilonx,sigmax,epsilony,sigmay
-!   
-!   nx,ny (INTEGER) - the shape variables of the input arrays in order to 
-!         allocate space and other static language headaches 
-!   dx,dy (REAL) - the inteval length values in the x and y directions
-!   npoints_pml (INTEGER) - the number of points for the CPML layer. This is 
-!         a constant value for all four sides. 
-!   rcx,src (INTEGER) - the indices of the locations of the receivers 
-!   f0 (REAL) - the center frequency of the source function. The time step is
-!         inversely proportional to the center frequency 
-! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  !==============================================================================
+  subroutine permittivity_write(im, mlist, npoints_pml, nx, nz) 
+  ! STIFFNESS_ARRAYS takes a matrix containing the material integer identifiers 
+  ! and creates the same size array for each independent coefficient of the 
+  ! stiffness matrix along with a density matrix. Since we ae using PML
+  ! boundaries, we will extend the the boundary values through the PML region.
+  ! 
+  ! INPUT 
+  !   im (INTEGER)  
+  !   mlist (REAL)
+  !   epsilonx(i,j), sigmax(i,j), epsilony(i,j), sigmay, (REAL) -
+  !   npoints_pml (INTEGER) - the 
+  !   
+  ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  implicit none 
+  
+  integer :: nx,nz
+  integer,parameter :: dp = kind(0.d0)
+  integer,dimension(nx,nz) :: im
+  integer :: i, j, npoints_pml
+  real(kind=dp), dimension(:,:) :: mlist
+  real(kind=dp), dimension(2*npoints_pml+nx,2*npoints_pml+nz) :: &
+            epsilonx, epsilony, epsilonz, sigmax, sigmay, sigmaz
+  
+  !f2py3 intent(in):: im, mlist, npoints_pml, nx, nz
+  
+  ! Allocate space for permittivity and conductivity values
+  epsilonx(:,:) = 0.d0
+  epsilony(:,:) = 0.d0
+  epsilonz(:,:) = 0.d0
+  sigmax(:,:) = 0.d0
+  sigmay(:,:) = 0.d0
+  sigmaz(:,:) = 0.d0
+  
+  do i=npoints_pml+1,nx + npoints_pml
+    do j=npoints_pml+1,nz + npoints_pml
+      epsilonx(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 2)
+      epsilony(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 3)
+      epsilonz(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 4)
+      
+      sigmax(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 5) 
+      sigmay(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 6)
+      sigmaz(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 7)
+    end do
+  end do
+  
+  ! Extend the boundary values of the stiffnesses into the PML region
+  do i = 1,npoints_pml+1
+    ! top and bottom
+    epsilonx( i, : ) = epsilonx(npoints_pml+1,:)
+    epsilony( i, : ) = epsilony(npoints_pml+1,:)
+    epsilonz( i, : ) = epsilonz(npoints_pml+1,:) 
+    sigmax( i, : ) = sigmax(npoints_pml+1,:)
+    sigmay( i, : ) = sigmay(npoints_pml+1,:)
+    sigmaz( i, : ) = sigmaz(npoints_pml+1,:)
+    
+    epsilonx( nx+npoints_pml-1+i, : ) = epsilonx(nx+npoints_pml-1,:)
+    epsilony( nx+npoints_pml-1+i, : ) = epsilony(nx+npoints_pml-1,:)
+    epsilonz( nx+npoints_pml-1+i, : ) = epsilonz(nx+npoints_pml-1,:)
+    sigmax( nx+npoints_pml-1+i, : ) = sigmax(nx+npoints_pml-1,:)
+    sigmay( nx+npoints_pml-1+i, : ) = sigmay(nx+npoints_pml-1,:)
+    sigmaz( nx+npoints_pml-1+i, : ) = sigmaz(nx+npoints_pml-1,:)
+  
+    ! left and right
+    epsilonx( :, i ) = epsilonx(:, npoints_pml+1)
+    epsilony( :, i ) = epsilony(:, npoints_pml+1)
+    epsilonz( :, i ) = epsilonz(:, npoints_pml+1)
+    sigmax( :, i ) = sigmax(:, npoints_pml+1)
+    sigmay( :, i ) = sigmay(:, npoints_pml+1)
+    sigmaz( :, i ) = sigmaz(:, npoints_pml+1)
+  
+    epsilonx( :, nz+npoints_pml-1+i ) = epsilonx(:,nz+npoints_pml-1)    
+    epsilony( :, nz+npoints_pml-1+i ) = epsilony(:,nz+npoints_pml-1)
+    epsilonz( :, nz+npoints_pml-1+i ) = epsilonz(:,nz+npoints_pml-1)
+    sigmax( :, nz+npoints_pml-1+i ) = sigmax(:,nz+npoints_pml-1)    
+    sigmay( :, nz+npoints_pml-1+i ) = sigmay(:,nz+npoints_pml-1)
+    sigmaz( :, nz+npoints_pml-1+i ) = sigmaz(:,nz+npoints_pml-1)
+  end do 
+  
+  ! Write each of the matrices to file
+  call material_rw('epsx.dat', epsilonx, .FALSE.)
+  call material_rw('epsy.dat', epsilony, .FALSE.)
+  call material_rw('epsz.dat', epsilonz, .FALSE.)
+  call material_rw('sigx.dat', sigmax, .FALSE.)
+  call material_rw('sigy.dat', sigmay, .FALSE.)
+  call material_rw('sigz.dat', sigmaz, .FALSE.)
+  
+end subroutine permittivity_write
 
-implicit none
 
-integer,parameter :: dp = kind(0.d0)
-integer :: nx, ny, nstep, npoints_pml
-integer,dimension(nx,ny) :: im
-! integer,dimension(:,:) :: rcx
-integer,dimension(:) :: src 
-real(kind=dp), dimension(:,:) :: mlist
-real(kind=dp) :: f0, angle
-real(kind=dp) :: dx, dy
-real(kind=dp), dimension(nx+2*npoints_pml,ny+2*npoints_pml) :: epsilonx, epsilony, sigmax, sigmay
-! character(len=6) :: src_type
+! ---------------------------------------------------------------------------
+subroutine material_rw(filename, image_data, readfile)
 
-!f2py3 intent(in) :: im, mlist, nx, ny, dx, dy, npoints_pml, src
-!f2py3 intent(in) :: f0, nstep, angle
-!f2py3 intent(hide), depend(im) :: nx = shape(im, 0), ny = shape(im,1)
-
-! Preallocate arrays
-epsilonx(:,:) = 0.d0
-epsilony(:,:) = 0.d0
-sigmax(:,:) = 0.d0
-sigmay(:,:) = 0.d0
-
-! Setup arrays
-call stiffness_arrays(im, mlist, epsilonx, sigmax, epsilony, sigmay, npoints_pml)
-
-call electromag_cpml_2d(nx+2*npoints_pml, ny+2*npoints_pml, epsilonx, sigmax, epsilony, sigmay, dx, dy, &
-                      npoints_pml, src, f0, nstep, angle)
-
-
-end subroutine doall
+  implicit none
+  
+  integer,parameter :: dp = kind(0.d0)
+  character(len=8) :: filename
+  real(kind=dp),dimension(:,:) :: image_data
+  logical :: readfile
+  
+  
+  open(unit = 13, form="unformatted", file = trim(filename))
+  
+  if ( readfile ) then
+    read(13) image_data
+  else
+    write(13) image_data
+  endif
+  
+  close(unit = 13)
+  
+  end subroutine material_rw
+  
 
 
 !==============================================================================
-subroutine stiffness_arrays(im, mlist, epsilonx, sigmax, epsilony, sigmay, npoints_pml) 
-! STIFFNESS_ARRAYS takes a matrix containing the material integer identifiers 
-! and creates the same size array for each independent coefficient of the 
-! stiffness matrix along with a density matrix. Since we ae using PML
-! boundaries, we will extend the the boundary values through the PML region.
-! 
-! INPUT 
-!   im (INTEGER)  
-!   mlist (REAL)
-!   epsilonx(i,j), sigmax(i,j), epsilony(i,j), sigmay, (REAL) -
-!   npoints_pml (INTEGER) - the 
-!   
-! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-implicit none 
-
-integer,parameter :: dp = kind(0.d0)
-integer,dimension(:,:) :: im
-integer :: m, n, i, j, npoints_pml
-real(kind=dp), dimension(:,:) :: mlist
-real(kind=dp), dimension(:, :) :: epsilonx, sigmax, epsilony, sigmay
-
-m = size(im, 1)
-n = size(im, 2)
-
-do i=npoints_pml+1,m + npoints_pml
-  do j=npoints_pml+1,n + npoints_pml
-    epsilonx(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 2)
-    epsilony(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 3)
-    
-    sigmax(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 5) 
-    sigmay(i,j) = mlist( im(i-npoints_pml,j-npoints_pml), 6)
-  end do
-end do
-
-! Extend the boundary values of the stiffnesses into the PML region
-do i = 1,npoints_pml+1
-  ! top and bottom
-  epsilonx( i, : ) = epsilonx(npoints_pml+1,:)
-  epsilonx( m+npoints_pml-1+i, : ) = epsilonx(m+npoints_pml-1,:)
+subroutine loadsource(filename, N, srcfn)
   
-  sigmax( i, : ) = sigmax(npoints_pml+1,:)
-  sigmax( m+npoints_pml-1+i, : ) = sigmax(m+npoints_pml-1,:)
-  
-  epsilony( i, : ) = epsilony(npoints_pml+1,:)
-  epsilony( m+npoints_pml-1+i, : ) = epsilony(m+npoints_pml-1,:)
-  
-  sigmay( i, : ) = sigmay(npoints_pml+1,:)
-  sigmay( m+npoints_pml-1+i, : ) = sigmay(m+npoints_pml-1,:)
+  implicit none
 
-  ! left and right
-  epsilonx( :, i ) = epsilonx(:, npoints_pml+1)
-  epsilonx( :, n+npoints_pml-1+i ) = epsilonx(:,n+npoints_pml-1)
+  integer,parameter :: dp = kind(0.d0)
+  character(len=26) :: filename
+  integer :: N
+  real(kind=dp),dimension(N) :: srcfn
   
-  sigmax( :, i ) = sigmax(:, npoints_pml+1)
-  sigmax( :, n+npoints_pml-1+i ) = sigmax(:,n+npoints_pml-1)
+  open(unit = 13, form="unformatted", file = trim(filename))
+  read(13) srcfn
   
-  epsilony( :, i ) = epsilony(:, npoints_pml+1)
-  epsilony( :, n+npoints_pml-1+i ) = epsilony(:,n+npoints_pml-1)
-  
-  sigmay( :, i ) = sigmay(:, npoints_pml+1)
-  sigmay( :, n+npoints_pml-1+i ) = sigmay(:,n+npoints_pml-1)
+  close(unit = 13)
 
-end do 
-
-end subroutine stiffness_arrays
+end subroutine loadsource
 
 ! -----------------------------------------------------------------------------
 
@@ -221,8 +230,7 @@ end subroutine cpml_coeffs
 !==============================================================================
 
 
-subroutine electromag_cpml_2d(nx, ny, epsilonx, sigmax, epsilony, sigmay, dx, dy, &
-                      npoints_pml, src, f0, nstep, angle)
+subroutine electromag_cpml_2d(nx, ny, dx, dy, npoints_pml, src, f0, nstep)
 
 ! 2D elastic finite-difference code in velocity and stress formulation
 ! with Convolutional-PML (C-PML) absorbing conditions for an anisotropic medium
@@ -291,6 +299,7 @@ real(kind=dp) :: dx, dy
 
 ! source
 integer,dimension(:) :: src
+real(kind=dp),dimension(nstep) :: srcx, srcy, srcz
 integer :: isource, jsource
 
 ! integer :: nrec, irec
@@ -338,12 +347,10 @@ real(kind=dp), dimension(nx,ny) ::  memory_dHz_dy
 ! parameters for the source
 ! angle of source force clockwise with respect to vertical (Y) axis
 ! this will later be treated as an input
-real(kind=dp) :: f0, angle
-real(kind=dp) :: t0, tw
+real(kind=dp) :: f0, t0, tw
 real(kind=dp), parameter :: factor = 1.d0
 ! character(len=6) :: src_type
-real(kind=dp) :: t,force_x,force_y,source_term
-integer :: i,j,it
+integer :: i,j, it
 
 real(kind=dp) :: velocnorm
 
@@ -365,6 +372,17 @@ real(kind=dp), dimension(ny) :: sige_y_half,K_y_half, alpha_y_half,a_y_half,b_y_
 
 integer :: thickness_PML_x,thickness_PML_y
 
+
+! ------------------- Name the f2py inputs 
+!f2py3 intent(in) :: nx, ny, dx, dy,
+!f2py3 intent(in) :: noints_pml, src, f0, nstep
+
+! ------------------------ Load Permittivity Coefficients ------------------------
+
+call material_rw('epsx.dat', epsilonx, .TRUE.)
+call material_rw('epsz.dat', epsilony, .TRUE.) ! We will change y to z soon
+call material_rw('sigx.dat', sigmax, .TRUE.)
+call material_rw('sigz.dat', sigmay, .TRUE.)
 
 ! ------------------------ Assign some constants -----------------------
 
@@ -415,6 +433,12 @@ daHz = 1.0d0 ! (1-daHz)/(1+daHz) !
 ! check that NP is okays
 if (NP < 1) stop 'NP must be greater than 1'
 
+! ================================ LOAD SOURCE ================================
+
+call loadsource('electromagneticsourcex.dat', nstep, srcx)
+call loadsource('electromagneticsourcey.dat', nstep, srcy)
+call loadsource('electromagneticsourcez.dat', nstep, srcz)
+
 
 ! Initialize CPML damping variables
   sigh_x(:) = 0.d0
@@ -460,25 +484,6 @@ call cpml_coeffs(ny, dy, dt, thickness_PML_y, sig_y_max, k_max, alpha_max, &
 call cpml_coeffs(ny, dy, dt, thickness_PML_y, sig_y_max, k_max, alpha_max, &
             K_y_half, alpha_y_half, a_y_half, b_y_half, .TRUE.)
 
-
-! open(unit = 15, file = "x_values_sub.txt")
-! do i=1,nx
-!   write(15,"(E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3)") &
-!         a_x(i), a_x_half(i), b_x(i), b_x_half(i), alpha_x(i), alpha_x_half(i), K_x(i), K_x_half(i)
-! enddo
-! close(15)
-
-! open(unit = 16, file = "z_values_sub.txt")
-! do i = 1,ny
-!   write(16,"(E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3,E10.3)") &
-!         a_y(i), a_y_half(i), b_y(i), b_y_half(i), alpha_y(i), alpha_y_half(i), K_y(i), K_y_half(i)
-! enddo
-! close(16)
-
-
-! stop
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 ! initialize arrays
@@ -551,18 +556,10 @@ do it = 1,NSTEP
 
 
   !----------------------------------------------------------------------------
-  ! add the source (force vector located at a given grid point)
-  t = dble(it-1)*DT
 
-  source_term = factor*exp(-(1.0d0*pi*f0*(t-t0) )**2.0d0 )*sin(2.0d0*pi*f0*(t-t0) )
-
-
-  force_x = sin(ANGLE * DEGREES_TO_RADIANS) * source_term
-  force_y = cos(ANGLE * DEGREES_TO_RADIANS) * source_term
-
-  Ex(isource,jsource) = Ex(isource,jsource) + force_x !* DT / epsilonx(i,j)
-  Ey(isource,jsource) = Ey(isource,jsource) + force_y !* DT / epsilony(i,j) !* cbEy(ISOURCE,JSOURCE) !* DT / (epsilony(i,j) )
-
+  Ex(isource,jsource) = Ex(isource,jsource) + srcx(it) * DT / epsilonx(isource,jsource)
+  Ey(isource,jsource) = Ey(isource,jsource) + srcy(it) * DT / epsilony(isource,jsource) 
+  
   ! Dirichlet conditions (rigid boundaries) on the edges or at the bottom of the PML layers
   Ex(1,:) = 0.d0
   Ex(nx,:) = 0.d0

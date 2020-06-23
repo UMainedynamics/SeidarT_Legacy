@@ -47,6 +47,8 @@ project_file = ''.join(args.project_file)
 model_type = ''.join(args.model)
 pwd = os.path.dirname(project_file)
 
+# ------------- Globals ----------------
+clight = 2.99792458e8 # In general
 
 # ============================ Create the objects =============================
 # Let's initiate the domain
@@ -132,7 +134,7 @@ if model_type == 's':
         
         # We need to set a density gradient at air interfaces because high
         # density gradients lead to numerical instability
-        rhograd, zerostress = airsurf(material, domain, 2)
+        rhograd = airsurf(material, domain, 2)
         
         # Write the coefficient image to a fortran file
         seis25d.seismicfdtd25d.stiffness_write(
@@ -140,8 +142,7 @@ if model_type == 's':
             seismic.tensor_coefficients,
             domain.cpml,
             rhograd,
-            zerostress,
-            domain.nx, 
+            domain.nx,
             domain.nz
         )
         if domain.dim == 2.5:
@@ -169,7 +170,6 @@ if model_type == 's':
             )
 
 # ------------------------------ ELECTROMAGNETIC ------------------------------
-clight = 2.99792458e8 # In general
 
 # Now let's see if we can do some em modeling
 if model_type == 'e':
@@ -198,13 +198,12 @@ if model_type == 'e':
             )
         else:
             print('Running 2 D model')
-            em2d.electromagfdtd2d.doall(
-                domain.geometry+1,
-                electromag.tensor_coefficients,
+            em2d.electromagfdtd2d.electromag_cpml_2d(
+                domain.nx + 2*domain.cpml,
+                domain.nz + 2*domain.cpml,
                 domain.dx, domain.dz,
                 domain.cpml,
                 electromag.src,
                 electromag.f0,
-                electromag.time_steps,
-                electromag.theta
+                electromag.time_steps
             )
