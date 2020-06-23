@@ -231,34 +231,37 @@ def getrcx(channel, rcx, domain):
 
 
 def read_dat(fn, channel, domain):
-	if domain.dim == '2.5':
-		if channel == 'Ex':
-			NX = domain.nz
-			NY = domain.ny
-			NZ = domain.nx-1
-		elif channel == 'Ey':
-			NX = domain.nz
-			NY = domain.ny-1
-			NZ = domain.nx
-		elif channel == 'Ez':
-			NX = domain.nz-1
-			NY = domain.ny
-			NZ = domain.nx
-		else:
-			NX = domain.nz
-			NY = domain.ny 
-			NZ = domain.nx
-		
-	f = FortranFile(fn, 'r')
-	dat = f.read_reals(dtype = 'float32')
-	
-	if domain.ny:
-		dat = dat.reshape(NX, NY, NZ)
-	else:
-		dat = dat.reshape(NX, NZ)
-	
-	f.close()
-	return(dat)
+    if domain.dim == '2.5':
+        if channel == 'Ex':
+            NX = domain.nz
+            NY = domain.ny
+            NZ = domain.nx-1
+        elif channel == 'Ey':
+            NX = domain.nz
+            NY = domain.ny-1
+            NZ = domain.nx
+        elif channel == 'Ez':
+            NX = domain.nz-1
+            NY = domain.ny
+            NZ = domain.nx
+        else:
+            NX = domain.nz
+            NY = domain.ny 
+            NZ = domain.nx
+    else:
+        NX = domain.nz
+        NZ = domain.nx
+    
+    f = FortranFile(fn, 'r')
+    dat = f.read_reals(dtype = 'float32')
+    
+    if domain.ny:
+        dat = dat.reshape(NX, NY, NZ)
+    else:
+        dat = dat.reshape(NX, NZ)
+    
+    f.close()
+    return(dat)
 
 # =============================================================================
 # ============================== Useful Functions =============================
