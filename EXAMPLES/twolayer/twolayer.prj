@@ -68,7 +68,7 @@ M,1,ice1h,90/194/171,0,2,910,0,0,False,
 
 # The source parameters for the seismic model
 S,dt,0.00012564267392549153
-S,time_steps,100
+S,time_steps,3000
 S,x,10
 S,y,0
 S,z,0
@@ -82,7 +82,7 @@ C,1.0,10677240192.01,5338620096.01,5338620096.01,10677240192.01,5338620096.01,10
 
 # The source parameters for the elecromagnetic model
 E,dt,1.6678204759907602e-09
-E,time_steps,100
+E,time_steps,1000
 E,x,99
 E,y,0
 E,z,0
