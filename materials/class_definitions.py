@@ -249,13 +249,21 @@ def read_dat(fn, channel, domain):
             NY = domain.ny 
             NZ = domain.nx
     else:
-        NX = domain.nz
-        NZ = domain.nx
+        if channel == 'Ex':
+        	NX = domain.nz
+        	NZ = domain.nx-1
+        elif channel == 'Ez':
+            NX = domain.nz-1
+            NZ = domain.nx
+        else:
+            NX = domain.nz 
+            NZ = domain.nx
+    
     
     f = FortranFile(fn, 'r')
     dat = f.read_reals(dtype = 'float32')
     
-    if domain.ny:
+    if domain.dim == '2.5':
         dat = dat.reshape(NX, NY, NZ)
     else:
         dat = dat.reshape(NX, NZ)

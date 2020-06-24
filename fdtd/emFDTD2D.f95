@@ -152,7 +152,7 @@ end subroutine loadsource
 
 ! -----------------------------------------------------------------------------
 
-subroutine cpml_coeffs(nx, dx, dt, npml, sig_max, k_max, alpha_max, &
+subroutine cpml_coeffs(nx, dx, dt, npml, k_max, alpha_max, &
             kappa, alpha, acoeff, bcoeff, HALF)
 
 implicit none
@@ -171,12 +171,14 @@ real(kind=dp),dimension(nx) :: kappa, alpha, acoeff, bcoeff
 ! Define all other variables needed in the program
 real(kind=dp) :: xoriginleft, xoriginright
 real(kind=dp),dimension(nx) :: xval, sigma
-real(kind=dp),parameter :: eps0 = 8.85418782d-12
+real(kind=dp), parameter :: PI = 3.141592653589793238462643d0
+real(kind=dp),parameter :: eps0 = 8.85418782d-12, mu0 = 4.0d0*pi*1.0d-7
 integer,parameter :: NP = 2, NPA = 2
 
 real(kind=dp) :: abscissa_in_pml, abscissa_normalized
 
 ! ===========================================================
+sig_max = ( 0.8d0 * ( dble(NP+1) ) / ( dx * ( mu0 / eps0 )**0.5d0 ) )
 
 sigma(:) = 0.d0
 
@@ -299,12 +301,8 @@ real(kind=dp) :: dx, dy
 
 ! source
 integer,dimension(:) :: src
-real(kind=dp),dimension(nstep) :: srcx, srcy, srcz
+real(kind=dp),dimension(nstep) :: srcx, srcy
 integer :: isource, jsource
-
-! integer :: nrec, irec
-! real(kind=dp), allocatable :: sisEx(:,:),sisEy(:,:)
-
 
 ! value of PI
 real(kind=dp), parameter :: PI = 3.141592653589793238462643d0
@@ -327,13 +325,13 @@ real(kind=dp), parameter :: DEGREES_TO_RADIANS = PI / 180.d0
 real(kind=dp), parameter :: STABILITY_THRESHOLD = 1.d+25
 
 ! main arrays
-real(kind=dp), dimension(nx,ny+1) :: Ex
-real(kind=dp), dimension(nx+1,ny) :: Ey
-real(kind=dp), dimension(nx,ny) :: Hz
+real(kind=dp), dimension(nx-1,ny) :: Ex
+real(kind=dp), dimension(nx,ny-1) :: Ey
+real(kind=dp), dimension(nx-1,ny-1) :: Hz
 
 ! we will compute the coefficients for the finite difference scheme 
-real(kind=dp), dimension(nx+1, ny+1) :: caEx, cbEx
-real(kind=dp), dimension(nx+1, ny+1) :: caEy, cbEy
+real(kind=dp), dimension(nx, ny) :: caEx, cbEx
+real(kind=dp), dimension(nx, ny) :: caEy, cbEy
 real(kind=dp) :: daHz, dbHz
 
 real(kind=dp) :: value_dEx_dy, value_dEy_dx, value_dHz_dy, value_dHz_dx
@@ -347,7 +345,7 @@ real(kind=dp), dimension(nx,ny) ::  memory_dHz_dy
 ! parameters for the source
 ! angle of source force clockwise with respect to vertical (Y) axis
 ! this will later be treated as an input
-real(kind=dp) :: f0, t0, tw
+real(kind=dp) :: f0
 real(kind=dp), parameter :: factor = 1.d0
 ! character(len=6) :: src_type
 integer :: i,j, it
@@ -361,7 +359,6 @@ real(kind=dp), parameter :: NP = 2.d0, NPA = 1.d0
 ! from Stephen Gedney's unpublished class notes for class EE699, lecture 8, slide 8-11
 real(kind=dp) :: k_max!, parameter :: k_max = 1.2d5
 real(kind=dp) :: alpha_max !, parameter :: alpha_max = pi*f0 !7.0d-1 ! From Taflove ! PI*f0 ! from Festa and Vilotte 
-real(kind=dp) :: sig_x_max, sig_y_max
 
 
 ! 1D arrays for the damping profiles
@@ -377,7 +374,8 @@ integer :: thickness_PML_x,thickness_PML_y
 !f2py3 intent(in) :: nx, ny, dx, dy,
 !f2py3 intent(in) :: noints_pml, src, f0, nstep
 
-! ------------------------ Load Permittivity Coefficients ------------------------
+! =============================================================================
+! ----------------------- Load Permittivity Coefficients ----------------------
 
 call material_rw('epsx.dat', epsilonx, .TRUE.)
 call material_rw('epsz.dat', epsilony, .TRUE.) ! We will change y to z soon
@@ -395,15 +393,10 @@ jsource = int(src(2)) + npoints_pml
 !   sisEy(nstep, nrec ) )
 
 ! Define the 
-DT = minval( (/dx, dy/) )/ ( Clight/sqrt( minval( (/ epsilonx, epsilony /) ) ) )  ! 0.9/( 2 * Clight/sqrt( minval( (/ epsilonx, epsilony /) ) ) ) ! 0.99/(Clight*dx) ! dx/(2*Clight) ! min(dx,dy)/(2*Clight)  ! 
-t0 = 1.0d0/f0
-tw = 4.0d0*t0
+DT = minval( (/dx, dy/) )/ ( 2.d0 * Clight/sqrt( minval( (/ epsilonx, epsilony /) ) ) ) 
 
 alpha_max = 2*pi*eps0*f0/10
 k_max = 1.5d1
-! Kappa and alpha max were assigned in the definitions
-sig_x_max = ( 0.8d0 * ( dble(NP+1) ) / ( dx * ( mu0 / eps0 )**0.5d0 ) )
-sig_y_max = ( 0.8d0 * ( dble(NP+1) ) / ( dy * ( mu0 / eps0 )**0.5d0 ) )
 
 ! Compute the coefficients of the FD scheme. First scale the relative 
 ! permittivity and permeabilities to get the absolute values 
@@ -428,16 +421,10 @@ daHz = 1.0d0 ! (1-daHz)/(1+daHz) !
 !--- program starts here
 !---
 
-!--- define profile of absorption in PML region
-
-! check that NP is okays
-if (NP < 1) stop 'NP must be greater than 1'
-
 ! ================================ LOAD SOURCE ================================
 
 call loadsource('electromagneticsourcex.dat', nstep, srcx)
-call loadsource('electromagneticsourcey.dat', nstep, srcy)
-call loadsource('electromagneticsourcez.dat', nstep, srcz)
+call loadsource('electromagneticsourcez.dat', nstep, srcy)
 
 
 ! Initialize CPML damping variables
@@ -472,16 +459,16 @@ src(2) = src(2) + thickness_PML_y
 
 
 
-call cpml_coeffs(nx, dx, dt, thickness_PML_x, sig_x_max, k_max, alpha_max, &
+call cpml_coeffs(nx, dx, dt, thickness_PML_x, k_max, alpha_max, &
             K_x, alpha_x, a_x, b_x, .FALSE.)
 
-call cpml_coeffs(nx, dx, dt, thickness_PML_x, sig_x_max, k_max, alpha_max, &
+call cpml_coeffs(nx, dx, dt, thickness_PML_x, k_max, alpha_max, &
             K_x_half, alpha_x_half, a_x_half, b_x_half, .TRUE.)
 
-call cpml_coeffs(ny, dy, dt, thickness_PML_y, sig_y_max, k_max, alpha_max, &
+call cpml_coeffs(ny, dy, dt, thickness_PML_y, k_max, alpha_max, &
             K_y, alpha_y, a_y, b_y, .FALSE.)
 
-call cpml_coeffs(ny, dy, dt, thickness_PML_y, sig_y_max, k_max, alpha_max, &
+call cpml_coeffs(ny, dy, dt, thickness_PML_y, k_max, alpha_max, &
             K_y_half, alpha_y_half, a_y_half, b_y_half, .TRUE.)
 
 
@@ -507,8 +494,8 @@ do it = 1,NSTEP
   !--------------------------------------------------------
   ! compute magnetic field and update memory variables for C-PML
   !--------------------------------------------------------
-  do i = 1,nx      
-    do j = 1,ny
+  do i = 1,nx-1  
+    do j = 1,ny-1
       
       ! Values needed for the magnetic field updates
       value_dEx_dy = ( Ex(i,j+1) - Ex(i,j) )/dy
@@ -531,8 +518,8 @@ do it = 1,NSTEP
   !--------------------------------------------------------
   
   ! Compute the differences in the y-direction
-  do i = 1,nx 
-    do j = 2,ny 
+  do j = 2,ny-1
+    do i = 1,nx-1
       ! Update the Ex field
       value_dHz_dy = ( Hz(i,j) - Hz(i,j-1) )/dy ! this is ny-1 length vector
       memory_dHz_dy(i,j) = b_y_half(j) * memory_dHz_dy(i,j) + a_y_half(j) * value_dHz_dy
@@ -540,11 +527,10 @@ do it = 1,NSTEP
 
       Ex(i,j) = caEx(i,j)*Ex(i,j) + cbEx(i,j)*value_dHz_dy
     enddo
-  enddo 
+  enddo
 
-  ! Compute the differences in the x-direction
-  do j = 1,ny
-    do i = 2,nx  
+  do j = 1,ny-1
+    do i = 2,nx-1
       ! Update the Ey field
       value_dHz_dx = ( Hz(i,j) - Hz(i-1,j) )/dx
       memory_dHz_dx(i,j) = b_x_half(i) * memory_dHz_dx(i,j) + a_x_half(i) * value_dHz_dx
@@ -562,26 +548,26 @@ do it = 1,NSTEP
   
   ! Dirichlet conditions (rigid boundaries) on the edges or at the bottom of the PML layers
   Ex(1,:) = 0.d0
-  Ex(nx,:) = 0.d0
+  Ex(nx-1,:) = 0.d0
   Ex(:,1) = 0.d0
-  Ex(:,ny+1) = 0.d0
+  Ex(:,ny) = 0.d0
 
   Ey(1,:) = 0.d0
-  Ey(nx+1,:) = 0.d0
+  Ey(nx,:) = 0.d0
   Ey(:,1) = 0.d0
-  Ey(:,ny) = 0.d0
+  Ey(:,ny-1) = 0.d0
 
   Hz(1,:) = 0.d0
-  Hz(nx,:) = 0.d0
+  Hz(nx-1,:) = 0.d0
   Hz(:,1) = 0.d0
-  Hz(:,ny) = 0.d0
+  Hz(:,ny-1) = 0.d0
 
   ! print maximum of norm of velocity
   velocnorm = maxval(sqrt(Ex**2 + Ey**2))
   if (velocnorm > STABILITY_THRESHOLD) stop 'code became unstable and blew up'
 
-  call write_image(Ex, nx, ny, it, 'Ex')
-  call write_image(Ey, nx, ny, it, 'Ez')
+  call write_image(Ex, nx-1, ny, it, 'Ex')
+  call write_image(Ey, nx, ny-1, it, 'Ez')
 
 enddo   ! end of time loop
 

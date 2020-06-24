@@ -100,23 +100,7 @@ rcxlocs = np.arange(0, n, int(n/5) ) # 5 tick marks along x-axis
 if seismic:
     timevals = np.round(timelocs*float(seismic.dt[0]) * mult, 2)
 else:
-    timevals = np.round(timelocs*float(electromag.dt[0]), mulst, 2)
-
-# if surveytype == 'cmp':
-#     midpointorigin = np.array(
-#         [
-            
-#         ]
-#     )
-# if survey_type == 'cmp':
-#     dist_locations = np.round( np.linspace(1, n, 7) )
-#     dist_labels = 2*dist_locations*ds + offset*2
-#     dist_labels = dist_labels.astype(int)
-# else:
-#     dist_locations = np.round(np.linspace(0, n-1, 7) )
-#     dist_labels = dist_locations*ds
-#     dist_labels = dist_labels.astype(int)
-
+    timevals = np.round(timelocs*float(electromag.dt[0]) * mult, 2)
 
 if gain == 0:
     gain = 1
@@ -145,7 +129,7 @@ ax1.set_aspect(aspect = exaggeration)
 if seismic:
 	ax1.text(0, m + 0.03*m, 'x $10^{-2}$')	
 else:
-	ax1.text(0, 0, 'x $10^{-6}$')
+	ax1.text(0, m + 0.03*m, 'x $10^{-6}$')
 
 
 plt.show()
