@@ -29,7 +29,7 @@ parser.add_argument(
 
 parser.add_argument(
     '-g', '--gain',
-    nargs = 1, type = float, required = False, default = None,
+    nargs = 1, type = float, required = False, default = 1e20,
     help = "The exponential value for 2^m of the gain function (default=None)"
 )
 
@@ -104,10 +104,12 @@ else:
 
 if gain == 0:
     gain = 1
-
-if gain < m:
+elif gain < m:
     for j in range(0, n):
         dat[:,j] = agc(dat[:,j], gain, "mean")
+else:
+    gain = m
+
 
 fig = plt.figure(figsize =(n/2,m/2) )
 ax1 = plt.gca()
@@ -122,7 +124,6 @@ ax1.set_ylabel(r'Two-way Travel Time (s)')
 ax1.set_yticks(timelocs)
 ax1.set_yticklabels(timevals)
 
-
 # Other figure handle operations
 ax1.set_aspect(aspect = exaggeration)
 
@@ -131,6 +132,6 @@ if seismic:
 else:
 	ax1.text(0, m + 0.03*m, 'x $10^{-6}$')
 
-
+ax1.update_datalim( ((0,0),(m, n)))
 plt.show()
 
