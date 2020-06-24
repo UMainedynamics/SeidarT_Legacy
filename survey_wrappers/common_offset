@@ -147,6 +147,11 @@ else
 	echo 
 fi
 
+# We want to use a default value if number of cores isn't specified 
+if [[ -z $ncores ]]; then
+	ncores=1
+fi
+
 
 # ================================ Get to work ================================
 
