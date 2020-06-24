@@ -162,7 +162,7 @@ if model_type == 's':
             seis2d.seismicfdtd2d.seismic_cpml_2d(
                 domain.nx + 2*domain.cpml, 
                 domain.nz + 2*domain.cpml,
-                domain.dx,domain.dz,
+                domain.dx, domain.dz,
                 domain.cpml,
                 seismic.src,
                 seismic.f0,
@@ -177,13 +177,17 @@ if model_type == 'e':
         # The coefficients are provided. We don't need the material values
         
         print('Modeling the electromagnetic wavefield.\n')
+        # electromag, domain = prepme(electromag, domain)
+
         electromag, domain = prepme(electromag, domain)
         em25d.electromagfdtd25d.permittivity_write(
             domain.geometry+1,
             electromag.tensor_coefficients,
             domain.cpml,
-            domain.nx, domain.nz
+            domain.nx, 
+            domain.nz
         )
+        
         if domain.dim == 2.5:
             print('Running 2.5D model')
             em25d.electromagfdtd25d.electromag_cpml_25d(
