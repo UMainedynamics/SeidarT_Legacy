@@ -50,7 +50,7 @@
 
 I,dipping_bed.png
 
-D,dim,2.5
+D,dim,2
 D,nx,300
 D,ny,3
 D,nz,200
@@ -91,7 +91,7 @@ C,6.0,142400.0,142400.0,142400.0,142400.0,142400.0,142400.0,0.0,0.0,0.0,4.225
 
 # The source parameters for the elecromagnetic model
 E,dt,1.6678204759907602e-09
-E,time_steps,1000
+E,time_steps,2000
 E,x,2
 E,y,0
 E,z,12.5
