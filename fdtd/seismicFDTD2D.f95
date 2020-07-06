@@ -333,7 +333,7 @@ end subroutine stiffness_write
     integer :: npoints_pml
     ! integer, dimension(nx,ny)
     real(kind=dp), dimension(nx,ny) :: c11, c12, c22, c66, rho
-    real(kind=dp) :: f0
+    real(kind=dp) :: f0, deltarho
 
     ! total number of time steps
     integer :: nstep
@@ -648,8 +648,12 @@ end subroutine stiffness_write
           value_dvx_dx = value_dvx_dx / K_x_half(i) + memory_dvx_dx(i,j)
           value_dvy_dy = value_dvy_dy / K_y(j) + memory_dvy_dy(i,j)
 
-          sigmaxx(i,j) = sigmaxx(i,j) + ( c11(i,j) * value_dvx_dx + c12(i,j) * value_dvy_dy) * DT
-          sigmayy(i,j) = sigmayy(i,j) + ( c12(i,j) * value_dvx_dx + c22(i,j) * value_dvy_dy) * DT
+          sigmaxx(i,j) = sigmaxx(i,j) + &
+            ( ( ( c11(i+1,j) + 2*c11(i,j) + c11(i,j-1) )/4) * value_dvx_dx + &
+              ( ( c12(i+1,j) + 2*c12(i,j) + c12(i,j-1) )/4) * value_dvy_dy) * DT
+          sigmayy(i,j) = sigmayy(i,j) + &
+            ( ( ( c12(i+1,j) + 2*c12(i,j) + c12(i,j-1) )/4) * value_dvx_dx + &
+              ( ( c22(i+1,j) + 2*c22(i,j) + c22(i,j-1) )/4) * value_dvy_dy) * DT
 
 
         enddo
@@ -667,7 +671,8 @@ end subroutine stiffness_write
           value_dvy_dx = value_dvy_dx / K_x(i) + memory_dvy_dx(i,j)
           value_dvx_dy = value_dvx_dy / K_y_half(j) + memory_dvx_dy(i,j)
 
-          sigmaxy(i,j) = sigmaxy(i,j) + c66(i,j) * (value_dvy_dx + value_dvx_dy) * DT
+          sigmaxy(i,j) = sigmaxy(i,j) + &
+            ( (c66(i,j+1) + 2*c66(i,j) + c66(i-1,j) )/4) * (value_dvy_dx + value_dvx_dy) * DT
 
         enddo
       enddo
@@ -679,6 +684,7 @@ end subroutine stiffness_write
       do j = 2,NY
         do i = 2,NX
 
+          deltarho = ( 2*rho(i,j) + rho(i-1,j) + rho(i,j-1) )/4
           value_dsigmaxx_dx = (sigmaxx(i,j) - sigmaxx(i-1,j)) / DX
           value_dsigmaxy_dy = (sigmaxy(i,j) - sigmaxy(i,j-1)) / DY
 
@@ -696,6 +702,7 @@ end subroutine stiffness_write
       do j = 1,NY-1
         do i = 1,NX-1
 
+          deltarho = ( 2*rho(i,j) + rho(i+1,j) + rho(i,j+1) )/4
           value_dsigmaxy_dx = (sigmaxy(i+1,j) - sigmaxy(i,j)) / DX
           value_dsigmayy_dy = (sigmayy(i,j+1) - sigmayy(i,j)) / DY
 
@@ -705,7 +712,7 @@ end subroutine stiffness_write
           value_dsigmaxy_dx = value_dsigmaxy_dx / K_x_half(i) + memory_dsigmaxy_dx(i,j)
           value_dsigmayy_dy = value_dsigmayy_dy / K_y_half(j) + memory_dsigmayy_dy(i,j)
 
-          vy(i,j) = vy(i,j) + (value_dsigmaxy_dx + value_dsigmayy_dy) * DT / rho(i,j)
+          vy(i,j) = vy(i,j) + (value_dsigmaxy_dx + value_dsigmayy_dy) * DT / deltarho
 
         enddo
       enddo

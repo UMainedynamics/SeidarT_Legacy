@@ -11,6 +11,7 @@ INPUT
 	-s, --seismic 	(OPTIONAL) Specifier to run seismic common offset 
 	-r, --receivers	The coordinate locations of every survey point (meters).
 '
+start=`date +%s`
 
 wild='.*'
 
@@ -170,7 +171,7 @@ fi
 
 
 # Clone the directories for each receiver location
-sed 1d $rcx | while IFS=, read X Y Z;
+sed 1d $rcx | while IFS=, read -r X Y Z;
 do
 	mkdir $X.$Y.$Z 
 	cp $prjfile $X.$Y.$Z/
@@ -181,8 +182,6 @@ done
 
 # Run the model
 sed 1d receivers.xyz | parallel -j$ncores --colsep ',' dosurvey {1} {2} {3}
-
-
 
 # ======================== Concatenate All Timeseries =========================
 
@@ -225,3 +224,6 @@ if (( $(echo "$dim==2.5" | bc -l) )); then
 	sed 's/\([^,]*\),\(.*\)/\2/' $cofilex > $tmp
 	mv $tmp $cofiley
 fi
+
+end=`date +%s`
+echo $((end-start))

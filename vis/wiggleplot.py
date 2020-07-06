@@ -3,14 +3,11 @@
 """
 Created on Sat Jan 11 13:23:36 2020
 
-@author: Ann
+@author: Ann Hill 
+University of Maine
 """
 
 import numpy as np
-#!!!!! For ion import pyplot from matplotlib 
-#!!!!! If you want to import matplotlib then call
-#!!!!!      import matplotlib as mpl
-#!!!!! It will be easier to understand what everyone else is saying
 import matplotlib.pyplot as plt
 import argparse
 
@@ -21,39 +18,58 @@ import argparse
 parser = argparse.ArgumentParser(description='run wiggle plots from the \
 	 command line')
 
-parser.add_argument( '-r', '--reciever_array_file', nargs=1, type=str, 
-	dest='input', help='the file path for the receiver array data', 
-	required=True)
+parser.add_argument(
+    '-r', '--receiver_data', 
+    nargs=1, type=str,
+    help="""The file path for the receiver array data""",
+    required=True
+)
 
-parser.add_argument( '-p', '--project_file', nargs=1, type=str, dest='prj',
- 	help='the file path for the project file', required=True)
+parser.add_argument(
+    '-p', '--prjfile',
+    nargs=1, type=str,
+    help='Project file path',
+    required=True
+)
 
-parser.add_argument( '-g', '--gain', nargs = 1, type = int, 
-	required = True, dest='gain', help = "The horizontal exaggeration of the \
-		 amplitude values from the receiver array file", 
-		    default = None)
+parser.add_argument(
+    '-g', '--gain', nargs = 1, type = int, 
+    required = True, help = """The horizontal exaggeration of the
+    amplitude values from the receiver array file""", 
+    default = None
+)
 
-parser.add_argument( '-d', '--columns', nargs = 1, type = int, 
- 	required = True, dest='cols', help = "The frequency at which columns are \
-		pulled for plotting from the csv file", 
-		    default = None)
+parser.add_argument(
+    '-d', '--columns', nargs = 1, type = int, 
+    required = True, 
+    help = """The frequency at which columns are pulled for 
+    plotting from the csv file""", 
+    default = None
+)
 
-parser.add_argument( '-n', '--column_number', nargs = 1, type = int, 
-					dest='n', help='the distance along the imagesurface \
-	 where the amplitude values will be plotted', required=True)
+parser.add_argument(
+    '-n', '--column_number',
+    nargs = 1, type = int,
+    help="""the distance along the imagesurface where the amplitude values will
+    be plotted""",
+    required=True
+)
 
-parser.add_argument( '-c', '--channel', nargs = 1, type = str, required = True,
- 	dest='channel', help = """The channel to query. """)
+parser.add_argument(
+    '-c', '--channel',
+    nargs = 1, type = str, required = True,
+    help = """The channel to query. """
+)
 
 
 
 #____________________ASSIGN ARGUMENTS__________________________________________
 args = parser.parse_args()    
 gain=args.gain[0]
-prjfile = args.prj[0] 
-rcxfile=args.input[0]
-d = args.cols[0]
-n = args.n[0]
+prjfile = args.prjfile[0] 
+rcxfile=args.receiver_data[0]
+d = args.columns[0]
+n = args.column_number[0]
 channel=args.channel[0]
 
 #____________________PULL NECESSARY INFO FROM THE PRJ FILE_____________________
@@ -70,7 +86,7 @@ class Array:
 		self.channel= None
         
 array = Array()
-channel=array.channel
+array.channel = channel
 
 #Get the values
 f=open(prjfile)

@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 
 # Plot the common offset survey
-# ['GTK3Agg', 'GTK3Cairo', 'MacOSX', 'nbAgg', 'Qt4Agg', 'Qt4Cairo', 'Qt5Agg', 'Qt5Cairo', 'TkAgg', 'TkCairo', 'WebAgg', 'WX', 'WXAgg', 'WXCairo', 'agg', 'cairo', 'pdf', 'pgf', 'ps', 'svg', 'template']
+#
+# Available backends are:
+# ['GTK3Agg', 'GTK3Cairo', 'MacOSX', 'nbAgg', 'Qt4Agg', 'Qt4Cairo', 'Qt5Agg', 
+# 'Qt5Cairo', 'TkAgg', 'TkCairo', 'WebAgg', 'WX', 'WXAgg', 'WXCairo', 'agg', 
+# 'cairo', 'pdf', 'pgf', 'ps', 'svg', 'template']
 
 # Set matplotlib backend 
 import matplotlib 
-matplotlib.use('Qt5Agg')
-
+matplotlib.use('Qt4Agg')
 
 import numpy as np
 import argparse
@@ -112,6 +115,8 @@ if gain == 0:
     gain = 1
 elif gain < m:
     for j in range(0, n):
+        # Subtract the mean value
+        dat[:,j] = dat[:,j] - np.mean(dat[:,j])
         dat[:,j] = agc(dat[:,j], gain, "mean")
 else:
     gain = m
