@@ -112,6 +112,14 @@ header_comment = """
 #	source_file	- STR; the pointer to the text file that contains the source
 #			  timeseries as a steps-by-1 vector.
 #
+# 	**phi and theta are the rotation angles for spherical coordinates so 
+#		x = r sin(theta)cos(phi)
+#		y = r sin(theta)sin(phi)
+#		z = r cos(theta)
+#	
+#	Theta is the angle from the z-axis (+ down relative to image), phi is the 
+#	angle from x-axis in the x-y plane. 
+#
 # Written by Steven Bernsen
 # University of Maine
 # -----------------------------------------------------------------------------
