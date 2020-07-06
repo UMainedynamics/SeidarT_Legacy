@@ -632,13 +632,12 @@ do it = 1,NSTEP
         memory_dHy_dz(i,j,k) = b_z(k) * memory_dHy_dz(i,j,k) + a_z(k) * value_dHy_dz
         value_dHy_dz = value_dHy_dz/K_z(k) + memory_dHy_dz(i,j,k)
         
-        Ex(i,j,k) = caEx(i,k)*Ex(i,j,k) + cbEx(i,k)*(value_dHz_dy + value_dHy_dz) 
+        Ex(i,j,k) = caEx(i,k)*Ex(i,j,k) + & 
+          cbEx(i,k)*(value_dHz_dy + value_dHy_dz) 
       enddo
     enddo
-  ! enddo
 
   ! ! Compute the differences in the y-direction
-  ! do k = 2,nz-1
     do i = 2,nx-1 
       do j = 1,ny-1 
         ! Update the Ey field
@@ -650,7 +649,8 @@ do it = 1,NSTEP
         memory_dHx_dz(i,j,k) = b_z_half(k) * memory_dHx_dz(i,j,k) + a_z_half(k) * value_dHx_dz
         value_dHx_dz = value_dHx_dz/K_z_half(k) + memory_dHx_dz(i,j,k)
 
-        Ey(i,j,k) = caEy(i,k)*Ey(i,j,k) + cbEy(i,k)*(value_dHz_dx + value_dHx_dz)
+        Ey(i,j,k) = ( ( 4*caEy(i,k) + caEy(i-1,k) + caEy(i,k-1) )/6) * Ey(i,j,k) + & 
+          ( ( 4*cbEy(i,k) + cbEy(i-1,k) + cbEy(i,k-1) )/6 ) * (value_dHz_dx + value_dHx_dz)
       enddo
     enddo
   enddo 
@@ -661,14 +661,17 @@ do it = 1,NSTEP
       do j = 2,ny-1
         ! Update the Ez field
         value_dHx_dy = ( Hx(i,j-1,k) - Hx(i,j,k) )/dy
-        memory_dHx_dy(i,j,k) = b_y_half(j) * memory_dHx_dy(i,j,k) + a_y_half(j) * value_dHx_dy
+        memory_dHx_dy(i,j,k) = b_y_half(j) * memory_dHx_dy(i,j,k) + &
+          a_y_half(j) * value_dHx_dy
         value_dHx_dy = value_dHx_dy/K_y_half(j) + memory_dHx_dy(i,j,k)
 
         value_dHy_dx = ( Hy(i,j,k) - Hy(i-1,j,k) )/dx
-        memory_dHy_dx(i,j,k) = b_x_half(i) * memory_dHy_dx(i,j,k) + a_x_half(i) * value_dHy_dx
+        memory_dHy_dx(i,j,k) = b_x_half(i) * memory_dHy_dx(i,j,k) + &
+          a_x_half(i) * value_dHy_dx
         value_dHy_dx = value_dHy_dx/K_x_half(i) + memory_dHy_dx(i,j,k)
         
-        Ez(i,j,k) = caEz(i,k)*Ez(i,j,k) + cbEz(i,k)*(value_dHx_dy + value_dHy_dx)
+        Ez(i,j,k) = ( ( 4*caEz(i,k) + caEz(i-1,k) + caEz(i,k+1) )/6 ) * Ez(i,j,k) + & 
+          ( ( 4*cbEz(i,k) + cbEz(i-1,k) + cbEz(i,k+1) )/6 )* (value_dHx_dy + value_dHy_dx)
       enddo
     enddo
   enddo

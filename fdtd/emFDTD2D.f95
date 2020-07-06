@@ -403,6 +403,9 @@ k_max = 1.5d1
 epsilonx(:,:) = epsilonx*eps0
 epsilony(:,:) = epsilony*eps0
 
+
+! We need to change sigma to dsigma, same for epsilon
+
 caEx(:,:) = ( 1.0d0 - sigmax * dt / ( 2.0d0 * epsilonx ) ) / &
             ( 1.0d0 + sigmax * dt / (2.0d0 * epsilonx ) )
 cbEx(:,:) = (dt / epsilonx ) / ( 1.0d0 + sigmax * dt / ( 2.0d0 * epsilonx ) )
@@ -525,7 +528,8 @@ do it = 1,NSTEP
       memory_dHz_dy(i,j) = b_y_half(j) * memory_dHz_dy(i,j) + a_y_half(j) * value_dHz_dy
       value_dHz_dy = value_dHz_dy/K_y_half(j) + memory_dHz_dy(i,j)
 
-      Ex(i,j) = caEx(i,j)*Ex(i,j) + cbEx(i,j)*value_dHz_dy
+      Ex(i,j) = (( caEx(i,j) + caEx(i,j-1) )/2) * Ex(i,j) + &
+        (( cbEx(i,j) + cbEx(i,j-1) )/2 ) * value_dHz_dy
     enddo
   enddo
 
@@ -536,7 +540,8 @@ do it = 1,NSTEP
       memory_dHz_dx(i,j) = b_x_half(i) * memory_dHz_dx(i,j) + a_x_half(i) * value_dHz_dx
       value_dHz_dx = value_dHz_dx/K_x_half(i) + memory_dHz_dx(i,j)
       
-      Ey(i,j) = caEy(i,j)*Ey(i,j) + cbEy(i,j)*value_dHz_dx 
+      Ey(i,j) = (( caEy(i,j) + caEy(i-1,j) )/2) * Ey(i,j) + &
+        (( cbEy(i,j) + cbEy(i-1,j) )/2) * value_dHz_dx 
     enddo
   enddo
 
