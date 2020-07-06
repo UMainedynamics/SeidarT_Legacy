@@ -22,10 +22,6 @@ parser.add_argument( '-c', '--channel', nargs = 1, type = str, required = True,
 	available channels are Ex, Ez, Vx, and Vz for the electric field and
 	seismic velocities, respectively.""")
 
-parser.add_argument( '-f', '--frames_per_second', nargs = 1, type = int,
-	required = False, default = 1, help = """The number of frames per second
-	to build the GIF.""")
-
 parser.add_argument( '-n', '--num_steps', nargs = 1, type = int,
 	required = True, help = """The time step interval between the images that
 	are going to be used. Every time step is written to file which means that
@@ -38,12 +34,10 @@ parser.add_argument( '-n', '--num_steps', nargs = 1, type = int,
 args = parser.parse_args()
 project_file = ''.join(args.project_file)
 channel = ''.join(args.channel)
-frame_rate = args.frames_per_second[0]
 num_steps = args.num_steps[0]
 
 # project_file = "dipping_bed.prj"
 # channel = 'Ez'
-# frame_rate = 20
 # num_steps = 10
 
 # ------------------------------ Run the program ------------------------------
