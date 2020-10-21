@@ -25,11 +25,11 @@ The dynamical programming language of **Python3** is used as a front end to run 
 
 **Python3, Fortran95, GCC, pip, git, ghostscript, imageMagick**
 
-and additionally, the **Python** dependencies: *numpy*, *scipy*, *glob3*, *matplotlib*, *mplstereonet* (optional for viewing fabric distributions). This can be done via **apt** with 
+and additionally, the **Python** dependencies: *numpy*, *scipy*, *matplotlib*, *mplstereonet* (optional for viewing fabric distributions). This can be done via **apt** with 
 ~~~
 sudo apt update
 sudo apt upgrade
-pip3 install numpy matplotlib scipy glob mplstereonet pyevtk
+pip3 install numpy matplotlib scipy mplstereonet pyevtk
 ~~~
 
 and with homebrew using the command 
@@ -37,11 +37,19 @@ and with homebrew using the command
 ~~~
 brew update
 brew upgrade
-pip3 install numpy matplotlib scipy glob3 mplstereonet 
+pip3 install numpy matplotlib scipy mplstereonet 
 brew install vtk 
 ~~~
 
 Installation of these packages is different between MacOSx and Linux distributions. [*Anaconda*](https://docs.continuum.io/anaconda/) provides a convenient **Python** environment for installing and developing programs, however, Anaconda doesn't provide *GCC-7* or later so compilation of the **Fortran** code will return an error. This can be remedied by uninstalling **GCC** from *Anaconda* and upgrading via *apt* to *GCC-7* or greater. For *Anaconda* users, it might be necessary to install via **conda** and **pip**.
+
+Anaconda installation:
+
+~~~
+conda create -n seidart python=3 pip git ghostscript imagemagick numpy matplotlib scipy pyevtk vtk
+conda activate seidart
+pip install mplstereonet
+~~~
 
 To download the software, open a terminal (*Ctrl-Alt-t* for Ubuntu and *Ctrl-Opt-Shift-t* for Mac) and change directories
 
