@@ -11,7 +11,7 @@ echo "--------------------------------------------"
 echo "This installer will check for Anaconda/Miniconda and install a SeidarT environment prior to compiling."
 echo "You will have the option to install Miniconda if no existing conda is found."
 echo ""
-bash dep_install.sh ||
+bash conda_deps.sh ||
 echo "Conda installation failed. Try installing dependencies the run the noconda_install script." ||
 exit 1
 
