@@ -2,6 +2,29 @@
 
 # Install script for SEIDART toolbox
 
+# ----------------------------- Anaconda install ------------------------------
+ver="v0.2"
+echo "--------------------------------------------"
+echo "SeidarT Anaconda-based installer $ver"
+echo "Univ. of Maine / Univ. of Washington, 2020"
+echo "--------------------------------------------"
+echo "This installer will check for Anaconda/Miniconda and install a SeidarT environment prior to compiling."
+echo "You will have the option to install Miniconda if no existing conda is found."
+echo ""
+bash unix-install.sh ||
+echo "Conda installation failed. Try installing dependencies the run the noconda_install script." ||
+exit 1
+
+`grep etc/profile.d/conda.sh ~/.bashrc`
+conda activate SeidarT &&
+echo "Successfully activated SeidarT environment for compiling" ||
+echo "Could not find SeidarT conda environment. Exiting." ||
+exit 1
+
+echo ""
+echo "Starting compiling/installation process..."
+
+# -----------------------------------------------------------------------------
 # Make sure we have a folder to put everything in
 if [ ! -d "bin" ]; then
 	mkdir bin
@@ -90,3 +113,7 @@ chmod +x bin/common_offset bin/common_midpoint bin/array2sac
 cp materials/material_functions.py bin/material_functions.py
 cp materials/class_definitions.py bin/class_definitions.py
 cp vis/imdefinitions.py bin/imdefinitions.py 
+
+echo ""
+echo "Done."
+echo 'Type "conda activate SeidarT" to access the SeidarT environment.'
