@@ -120,16 +120,13 @@ class AnimatedGif:
 f = open(project_file)
 
 for line in f:
-
 	# Get the image file
 	if line[0] == 'I':
 		# There's a trailing new line value
 		imfile = line[2:-1]
-
 	# All domain inputs must be input except for nz and dy
 	if line[0] == 'D':
 		temp = line.split(',')
-
 		if temp[1] == 'nx':
 			nx = int( temp[2].rsplit()[0] )
 		if temp[1] == 'nz':
@@ -140,7 +137,6 @@ for line in f:
 			dz = float(temp[2].rsplit()[0] )
 		if temp[1] == 'cpml':
 			cpml = int( temp[2].rsplit()[0])
-
 	if channel == 'Ex' or channel == 'Ez':
 		if line[0] == 'E':
 			temp = line.split(',')
@@ -165,6 +161,13 @@ f.close()
 # Define some plotting inputs
 nx = nx + 2*cpml
 nz = nz + 2*cpml
+
+if channel == 'Ex':
+    nx = nx-1
+
+if channel == 'Ez':
+	nz = nz-1
+
 x = np.linspace(1, nx, num = nx)*dx
 z = np.linspace(nz, 1, num = nz)*dz
 extent = (cpml, (nx-cpml), (nz-cpml), cpml)
