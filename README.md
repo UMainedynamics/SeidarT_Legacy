@@ -25,23 +25,25 @@ There are a number of ways to install this software depending on your desired le
 
 First, some background for the uninitiated:
 
-This method will install SeidarT on most Unix-based systems using a combination of Anaconda and Fortran compilation. It's not necessary to know or do much more than execute a couple of command line entries. However, it will help to know that the installer will create what's called a "virtual environment" or more specifically an "Anaconda environment". Without getting into details, this conda environment is basically a way to create a virtual Python configuration that will let this software run but not affect your system's Python configuration, which could have cascading bad effects on your computer. In short: conda is nice because it plays nicely with various systems. Note well that **you will have to activate this conda environment whenever you wish to run SeidarT.** This is not hard but it is critical. Read on for instructions on how to both install and activate your SeidarT conda environment.
+This method will install SeidarT on most Unix-based systems using a combination of Anaconda and Fortran compilation. It's not necessary to know or do much more than execute a few command line entries. However, it will help to know that the installer will create what's called a "virtual environment" or more specifically an "Anaconda environment". Without getting into details, this conda environment is basically a way to create a virtual Python configuration that will let this software run but not affect your system's Python configuration, which is a fancy way of saying that conda will avoid causing cascading bad effects on your computer. In short: conda is nice because it plays nicely with various systems. Note well that **you will have to activate this conda environment whenever you wish to run SeidarT.** This is not hard but it is critical. Read on for instructions on how to both install and activate your SeidarT conda environment.
 
-1. First, make sure you have the proper prerequisites. On Debian/Ubuntu systems, open a Terminal and do
+1. First, make sure you have the proper prerequisites. On Debian/Ubuntu systems, open a Terminal window and do
 
     ~~~
     sudo apt update
     sudo apt install gcc-10 git
     ~~~
 
-    and with [homebrew](https://brew.sh) on Mac OS X using the command 
+    **or** in a Mac OS X Terminal window with [Homebrew](https://brew.sh), copy/paste/enter the following
 
     ~~~
     brew update
     brew install gcc git
     ~~~
 
-2. Now, change to the directory you'd like SeidarT to go, and clone it from GitHub.
+    *Note to OS X users: you may have to install [Homebrew](https://brew.sh) if you do not have it*
+
+2. Now, change to the directory where you'd like SeidarT to go, clone it from GitHub, and change into the SeidarT directory created by Git
 
     ~~~
     cd /path/to/parent/directory
@@ -49,7 +51,7 @@ This method will install SeidarT on most Unix-based systems using a combination 
     cd SeidarT
     ~~~
 
-3. Run the auto-installer script and follow the prompts.
+3. Run the auto-installer script and follow the prompts
 
     ~~~
     bash install.sh
