@@ -41,7 +41,7 @@ This method will install SeidarT on most Unix-based systems using a combination 
     brew install gcc git
     ~~~
 
-    *Note to OS X users: you may have to install [Homebrew](https://brew.sh) if you do not have it*
+    *Note to OS X users: you may have to install [Homebrew](https://brew.sh) if you do not have it.*
 
 2. Now, change to the directory where you'd like SeidarT to go, clone it from GitHub, and change into the SeidarT directory created by Git
 
@@ -57,15 +57,15 @@ This method will install SeidarT on most Unix-based systems using a combination 
     bash install.sh
     ~~~
 
-    The script will use Anaconda to download the rest of the requirements for SeidarT and install them in a conda environment called **SeidarT**.
+    This script will first check if Anaconda or Miniconda already exists on your system. It will download and install Miniconda if necessary. It will also add conda to your `$PATH`, which is to say that it will tell your computer where to look to use the conda software. Then, it will use conda to create a SeidarT environment and install the rest of the requirements into that environment. Finally, it will compile the Fortran code in this repository.
 
-4. Activate the SeidarT environment:
+4. Activate the SeidarT environment (you will have to do this whenever you want to use SeidarT)
 
     ~~~
     conda activate SeidarT
     ~~~
 
-    *Note: you may have to open a new Terminal window for your system to recognize `conda` as a valid command*
+    *Note: you may have to open a new Terminal window for your system to recognize `conda` as a valid command.*
 
 5. You should now be ready to run SeidarT scripts!
 
