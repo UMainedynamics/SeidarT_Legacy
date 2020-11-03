@@ -19,7 +19,7 @@ Much of this code has been adopted from the *SEISMIC_CPML* software provided by 
 
 ## Installation <a name="install"></a>
 
-There are a number of ways to install this software depending on your desired level of control over the process. Most users should be fine with the "automatic installation" in the [section below](#auto-install).
+The dynamical programming language of **Python3** is used as a front end to run the more computationally extensive modeling schemes in **Fortran**. There are a number of ways to install this software depending on your desired level of control over the process. Most users should be fine with the "automatic installation" in the [section below](#auto-install).
 
 ### "Auto" Installation <a name="auto-install"></a>
 
@@ -74,7 +74,7 @@ This method will install SeidarT on most Unix-based systems using a combination 
 [comment]: ======================================================================
 ### Manual Installation Instructions <a name="manual-install"></a>
 
-The dynamical programming language of **Python3** is used as a front end to run the more computationally extensive modeling schemes in **Fortran**. The following system dependencies are required:
+This is the more involved and less sure-fire installation method, probably best left for intermediate level Unix users and up. The following system dependencies are required:
 
 **Python3, Fortran95, GCC, pip, git, ghostscript, imageMagick**
 
@@ -120,7 +120,7 @@ cd SeidarT
 and run the install file
 
 ~~~
-bash install.sh
+bash noconda_install.sh
 ~~~
 
 When the compilation is finished, we can add the folder to the path directory and the python path directory. Currently, this software is supported with **bash** so append the following lines to the *.bashrc* if using Ubuntu 
