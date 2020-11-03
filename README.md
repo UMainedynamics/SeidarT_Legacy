@@ -76,21 +76,21 @@ This method will install SeidarT on most Unix-based systems using a combination 
 
 This is the more involved and less sure-fire installation method, probably best left for intermediate level Unix users and up. The following system dependencies are required:
 
-**Python3, Fortran95, GCC, pip, git, ghostscript, imageMagick**
+**Python3, Fortran95, GCC, pip, git, dos2unix, ghostscript, imageMagick**
 
 and additionally, the **Python** dependencies: *numpy*, *scipy*, *matplotlib*, *mplstereonet* (optional for viewing fabric distributions).
 
 First, install what you will need to compile the Fortran code. This can be done via **apt** with 
 ~~~
 sudo apt update
-sudo apt install gcc-10 git ghostscript imagemagick python3.8 python3-numpy python3-vtk python3-pip
+sudo apt install gcc-10 git dos2unix ghostscript imagemagick python3.8 python3-numpy python3-vtk python3-pip
 ~~~
 
 and with homebrew using the commands
 
 ~~~
 brew update
-brew install gcc git ghostscript imagemagick numpy vtk python pip
+brew install gcc git dos2unix ghostscript imagemagick numpy vtk python pip
 ~~~
 
 Then, install the rest of the dependencies using pip
