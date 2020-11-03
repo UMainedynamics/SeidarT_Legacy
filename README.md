@@ -17,38 +17,84 @@ The Seismic and Radar Toolbox (SeidarT) is a collaboration between researchers a
 
 Much of this code has been adopted from the *SEISMIC_CPML* software provided by [Computational Infrastucture for Geophysics (CIG)](https://geodynamics.org/cig/software/). Further details to the backend numerical code can be found in the [References](#references) section below.
 
+## Installation <a name="install"></a>
+
+There are a number of ways to install this software depending on your desired level of control over the process. Most users should be fine with the "automatic installation" in the [section below](#auto-install).
+
+### "Auto" Installation <a name="auto-install"></a>
+
+First, some background for the uninitiated:
+
+This method will install SeidarT on most Unix-based systems using a combination of Anaconda and Fortran compilation. It's not necessary to know or do much more than execute a couple of command line entries. However, it will help to know that the installer will create what's called a "virtual environment" or more specifically an "Anaconda environment". Without getting into details, this conda environment is basically a way to create a virtual Python configuration that will let this software run but not affect your system's Python configuration, which could have cascading bad effects on your computer. In short: conda is nice because it plays nicely with various systems. Note well that **you will have to activate this conda environment whenever you wish to run SeidarT.** This is not hard but it is critical. Read on for instructions on how to both install and activate your SeidarT conda environment.
+
+1. First, make sure you have the proper prerequisites. On Debian/Ubuntu systems, open a Terminal and do
+
+    ~~~
+    sudo apt update
+    sudo apt install gcc-10 git
+    ~~~
+
+    and with [homebrew](https://brew.sh) on Mac OS X using the command 
+
+    ~~~
+    brew update
+    brew install gcc git
+    ~~~
+
+2. Now, change to the directory you'd like SeidarT to go, and clone it from GitHub.
+
+    ~~~
+    cd /path/to/parent/directory
+    git clone https://github.com/sbernsen/SeidarT
+    cd SeidarT
+    ~~~
+
+3. Run the auto-installer script and follow the prompts.
+
+    ~~~
+    bash install.sh
+    ~~~
+
+    The script will use Anaconda to download the rest of the requirements for SeidarT and install them in a conda environment called **SeidarT**.
+
+4. Activate the SeidarT environment:
+
+    ~~~
+    conda activate SeidarT
+    ~~~
+
+    *Note: you may have to open a new Terminal window for your system to recognize `conda` as a valid command*
+
+5. You should now be ready to run SeidarT scripts!
+
+    Remember that whenever you would like to use SeidarT in the future, you will have to activate the SeidarT conda environment first by using the command in step 4.
 
 [comment]: ======================================================================
-## Installation <a name="install"></a>
+### Manual Installation Instructions <a name="manual-install"></a>
 
 The dynamical programming language of **Python3** is used as a front end to run the more computationally extensive modeling schemes in **Fortran**. The following system dependencies are required:
 
 **Python3, Fortran95, GCC, pip, git, ghostscript, imageMagick**
 
-and additionally, the **Python** dependencies: *numpy*, *scipy*, *matplotlib*, *mplstereonet* (optional for viewing fabric distributions). This can be done via **apt** with 
+and additionally, the **Python** dependencies: *numpy*, *scipy*, *matplotlib*, *mplstereonet* (optional for viewing fabric distributions).
+
+First, install what you will need to compile the Fortran code. This can be done via **apt** with 
 ~~~
 sudo apt update
-sudo apt upgrade
-pip3 install numpy matplotlib scipy mplstereonet pyevtk
+sudo apt install gcc-10 git ghostscript imagemagick python3.8 python3-numpy python3-vtk python3-pip
 ~~~
 
-and with homebrew using the command 
+and with homebrew using the commands
 
 ~~~
 brew update
-brew upgrade
-pip3 install numpy matplotlib scipy mplstereonet 
-brew install vtk 
+brew install gcc git ghostscript imagemagick numpy vtk python pip
 ~~~
 
-Installation of these packages is different between MacOSx and Linux distributions. [*Anaconda*](https://docs.continuum.io/anaconda/) provides a convenient **Python** environment for installing and developing programs, however, Anaconda doesn't provide *GCC-7* or later so compilation of the **Fortran** code will return an error. This can be remedied by uninstalling **GCC** from *Anaconda* and upgrading via *apt* to *GCC-7* or greater. For *Anaconda* users, it might be necessary to install via **conda** and **pip**.
-
-Anaconda installation:
+Then, install the rest of the dependencies using pip
 
 ~~~
-conda create -n seidart python=3 pip git ghostscript imagemagick numpy matplotlib scipy pyevtk vtk
-conda activate seidart
-pip install mplstereonet
+pip3 install -U matplotlib scipy pyevtk vtk mplstereonet
 ~~~
 
 To download the software, open a terminal (*Ctrl-Alt-t* for Ubuntu and *Ctrl-Opt-Shift-t* for Mac) and change directories
