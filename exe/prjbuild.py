@@ -112,13 +112,13 @@ header_comment = """
 #	source_file	- STR; the pointer to the text file that contains the source
 #			  timeseries as a steps-by-1 vector.
 #
-# 	**phi and theta are the rotation angles for spherical coordinates so 
+# 	**phi and theta are the rotation angles for spherical coordinates so
 #		x = r sin(theta)cos(phi)
 #		y = r sin(theta)sin(phi)
 #		z = r cos(theta)
-#	
-#	Theta is the angle from the z-axis (+ down relative to image), phi is the 
-#	angle from x-axis in the x-y plane. 
+#
+#	Theta is the angle from the z-axis (+ down relative to image), phi is the
+#	angle from x-axis in the x-y plane.
 #
 # Written by Steven Bernsen
 # University of Maine
@@ -224,7 +224,7 @@ with open(project_file, 'a') as prj:
 
 # -------------------------- Write Radar Parameters ---------------------------
 
-comm = '# The source parameters for the elecromagnetic model'
+comm = '# The source parameters for the electromagnetic model'
 header = '# id, e11, e22, e33, s11, s22, s33'
 
 with open(project_file, 'a') as prj:
@@ -291,9 +291,3 @@ with open(project_file, 'a') as prj:
 # 		meta.write('final_position: ' + str(np.shape(im)[0]) + '0 ' + str(np.shape(im)[0]) + new_line )
 # 		meta.write('reciever_file: None' + new_line)
 # 		meta.write('source_file: None' )
-
-
-
-
-
-
