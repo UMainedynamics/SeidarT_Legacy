@@ -6,16 +6,16 @@
 #######################################
 
 #ENTER RUN INFO
-projectfolder='/Users/chris/SD/testflat'
-prjfile='flat2.prj'
-img='testflat.png'
-mod='e'
-rx='receivers.xyz'
-chan='Ex'
+projectfolder='/Users/chris/SD/fill'
+prjfile='fill.prj'
+img='fill2.png'
+mod='s'
+rx='receivers10.xyz'
+chan='Vx'
 proj='shot' #co or shot
 stamp="$(date +%Y%m%d_%H%M%S)"
-clean=1 #1 means remove .dat files (i.e., from a single shot)
-anim=0 #1 means create animation
+clean=0 #1 means remove .dat files (i.e., from a single shot)
+anim=1 #1 means create animation
 
 offset='1 0 0'
 gain=100
@@ -28,6 +28,7 @@ exag=0.01
 cd $projectfolder
 mkdir $stamp
 cp $rx $stamp'/'$rx
+mv $stamp'/'$rx $stamp'/'receivers.xyz
 cp $prjfile $stamp'/'$prjfile
 cp $img $stamp'/'$img
 cd $stamp
@@ -39,13 +40,13 @@ if [ $proj == 'co' ]
 then
   if [ $mod == 's' ]
   then
-  common_offset -p $prjfile -o $offset -r $rx -s
+  common_offset -p $prjfile -o $offset -r receivers.xyz -s
   else
-  common_offset -p $prjfile -o $offset -r $rx
+  common_offset -p $prjfile -o $offset -r receivers.xyz
   fi
 else
 prjrun $prjfile -M $mod
-arraybuild -p $prjfile -r $rx -c $chan
+arraybuild -p $prjfile -r receivers.xyz -c $chan
 fi
 
 # ANIMATIONS
@@ -63,9 +64,9 @@ fi
 #PLOT PROFILE
 if [ $proj == 'co' ]
 then
-  codisplay -p $prjfile -f $chan'.co.csv' -g $gain -e $exag -r $rx -t $proj
+  codisplay -p $prjfile -f $chan'.co.csv' -g $gain -e $exag # -r receivers.xyz -t $proj
 else
-  codisplay -p $prjfile -f 'receiver_array.csv' -g $gain -e $exag -r $rx -t $proj
+  codisplay -p $prjfile -f 'receiver_array.csv' -g $gain -e $exag # -r receivers.xyz -t $proj
 fi
 
 #REMOVE FILES
