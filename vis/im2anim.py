@@ -109,9 +109,9 @@ class AnimatedGif:
                                          blit = True
                                         )
         if output_format == 1:
-            animation.save(filename, dpi = 200)
+            animation.save(filename, dpi = 300)
         else:
-            animation.save(filename, dpi = 200, writer = 'imagemagick')
+            animation.save(filename, dpi = 300, writer = 'imagemagick')
 
 
 # ------------------------------ Run the program ------------------------------
@@ -216,7 +216,7 @@ for fn in files:
 
 		# Normalize the values
 		max_amplitude = np.abs(dat).max()
-		dat_normalize = dat#/max_amplitude
+		dat_normalize = dat#/np.max([max_amplitude,1])
 		# dat_normalize[ dat_normalize < -1.0 ] = -1.0
 		# dat_normalize[ dat_normalize > 1.0 ] = 1.0
 
