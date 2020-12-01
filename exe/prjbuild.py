@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.image as mpimg
 
 # -------------------------- Command Line Arguments ---------------------------
-parser = argparse.ArgumentParser(description="""The seisarT software requires a
+parser = argparse.ArgumentParser(description="""The SeidarT software requires a
 	.PNG image that is used to construct the model domain for seismic and
 	electromagnetic wave propagation. Given the image file, a project file
 	will be constructed which contains all the necessary parameters to be
@@ -67,11 +67,11 @@ def image2int(imfilename):
 
 # -------------------------------- Add a header -------------------------------
 header_comment = """
-# This is a project file template for the SEIDART software. In order to run the
+# This is a project file template for the SeidarT software. In order to run the
 # model for seismic, electromagnetic or both, the required inputs must be
 #
 # Domain Input Values:
-#	dim 		- STR; either '2' or '2.5' but default is '2'
+#	dim 		- STR; either '2' or '2.5'; default is '2'
 #	nx,ny,nz 	- INT; the dimensions of the image. If dim = 2.5, and ny is
 #			  empty then default ny=1
 #	dx,dy,dz	- REAL; the spatial step size for each dimension in meters. If
@@ -104,7 +104,7 @@ header_comment = """
 # Source Input Values:
 #	dt 		- REAL; dx/(2*maxvelcity)
 #	steps 		- INT; the total number of time steps
-#	x,y,z 		- REAL; locations in meters, +z is down, +y is into the screen
+#	x,y,z 		- REAL; locations in meters, +x is to the right, +z is down, +y is into the screen
 #	f0 		- REAL; center frequency for the guassian pulse function if
 #			  'source_file' isn't supplied
 #	theta 		- REAL; source orientation in the x-z plane,
@@ -224,7 +224,7 @@ with open(project_file, 'a') as prj:
 
 # -------------------------- Write Radar Parameters ---------------------------
 
-comm = '# The source parameters for the elecromagnetic model'
+comm = '# The source parameters for the electromagnetic model'
 header = '# id, e11, e22, e33, s11, s22, s33'
 
 with open(project_file, 'a') as prj:
