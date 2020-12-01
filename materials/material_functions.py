@@ -73,8 +73,7 @@ isotropic_materials = {
 def pressure_array(im, temp, rho, dz, pore = 0, wc = 0):
     # im is an m-by-n array of integer values corresponding to the material
     # temp and rho are k-by-1 indices
-
-
+    
     # First match the size of 
     k = np.unique(im)
 

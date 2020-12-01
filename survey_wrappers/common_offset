@@ -181,6 +181,8 @@ done
 
 
 # Run the model
+# if (( $(echo "$ncores==1" | bc -l) )); then
+# 	sed 1d receivers.xyz | dosurvey
 sed 1d receivers.xyz | parallel -j$ncores --colsep ',' dosurvey {1} {2} {3}
 
 # ======================== Concatenate All Timeseries =========================

@@ -9,10 +9,14 @@
 
 # Set matplotlib backend
 import matplotlib
+# Set matplotlib backend 
+import matplotlib 
 try:
     matplotlib.use('Qt4Agg')
 except Exception as e:
     matplotlib.use('TkAgg')
+    print('Qt4 import error. Now using Tk instead of Qt. Details:')
+    print(e)
 
 import numpy as np
 import argparse
