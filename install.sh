@@ -56,7 +56,7 @@ cp materials/orientation_tensor.py bin/orientation_tensor
 
 # Move the visualization tools
 cp vis/arraybuild.py bin/arraybuild
-cp vis/codisplay.py bin/codisplay
+cp vis/rcxdisplay.py bin/rcxdisplay
 cp vis/im2anim.py bin/im2anim
 cp vis/vtkbuild.py bin/vtkbuild 
 cp vis/wiggleplot.py bin/wiggleplot 
@@ -69,7 +69,7 @@ chmod +x bin/prjbuild \
         bin/prjrun \
         bin/sourcefunction \
         bin/arraybuild \
-        bin/codisplay \
+        bin/rcxdisplay \
         bin/wiggleplot \
         bin/im2anim \
         bin/orientation_tensor \

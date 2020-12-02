@@ -163,8 +163,8 @@ Create a gif from the model outputs. Currently, this takes some time to run whic
 *arrayplot.py*  
 Plot the seismograms or radargrams for the wide angle survey. You can suppress plotting which will return a .csv file. An auto-controlled gain function can be called for better visualization. The receiver locations are given by a text file with the header X,Y,Z. These locations can be given in meters relative to (0,0,0) or in indices. (0,0,0) is top left when viewing the image.  
 
-*codisplay.py*  
-Display the outputs of the common offset survey. This is also called to display the common midpoint survey. Similar to arrayplot.py, the gain function can be called.  
+*rcxdisplay.py*  
+(originally codisplay in legacy code) Display the outputs of the common offset survey. This is also called to display the common midpoint survey. Similar to arrayplot.py, the gain function can be called.  
 
 *orientation_tensor.py*  
 Compute the Euler angles and orientation tensor for a fabric defined by it's trend and plunge angles. The orientation tensor isn't required by the program but it provides useful quantitative information describing the orientation of the fabric.   

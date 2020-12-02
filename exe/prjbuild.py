@@ -16,10 +16,10 @@ parser = argparse.ArgumentParser(description="""The seisarT software requires a
 	will be constructed which contains all the necessary parameters to be
 	read in to the finite differences time domain modeling schemes.""" )
 
-parser.add_argument( '-i', '--image_file', nargs=1, type=str, required = True,
+parser.add_argument( '-i', '--imagefile', nargs=1, type=str, required = True,
 						help='the full file path for the image', default=None)
 
-parser.add_argument( '-o', '--project_file', nargs=1, type=str, required = False,
+parser.add_argument( '-p', '--prjfile', nargs=1, type=str, required = False,
 	default = 'jordan_downs.prj',
 	help = """name of output file path with extension .prj and excluding
 				the full path directory""")

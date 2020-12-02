@@ -29,12 +29,12 @@ parser = argparse.ArgumentParser(
 )
 
 parser.add_argument(
-    'project_file', nargs=1, type=str,
+    '-p', '--prjfile', nargs=1, type=str, required = True,
     help='the full file path for the project file', default=None
 )
 
 parser.add_argument(
-    '-M', '--model', nargs = 1, type = str, required = False,
+    '-m', '--model', nargs = 1, type = str, required = False,
     help = """Specify whether to run the seismic (s), or electromagnetic (e), 
     or none (default = n)""",
     default = 'n'
