@@ -166,6 +166,7 @@ Plot the seismograms or radargrams for the wide angle survey. You can suppress p
 *rcxdisplay.py*  
 (originally codisplay in legacy code) Display the outputs of the common offset survey. This is also called to display the common midpoint survey. Similar to arrayplot.py, the gain function can be called.  
 
+
 *orientation_tensor.py*  
 Compute the Euler angles and orientation tensor for a fabric defined by it's trend and plunge angles. The orientation tensor isn't required by the program but it provides useful quantitative information describing the orientation of the fabric.   
 

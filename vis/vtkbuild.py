@@ -15,8 +15,8 @@ parser = argparse.ArgumentParser(description="""This program builds .VTI
     modeling. These files can be displayed using Paraview.""" )
 
 parser.add_argument(
-    '-p', '--project_file', 
-    nargs=1, type=str, required = True, 
+    '-p', '--prjfile', 
+    nargs=1, type=str, required = True,
     help='the full file path for the project file'
 )
 
@@ -41,7 +41,7 @@ parser.add_argument(
 
 #-- Get the arguments
 args = parser.parse_args()
-project_file = ''.join(args.project_file)
+project_file = ''.join(args.prjfile)
 channel = ''.join(args.channel)
 num_steps = args.num_steps[0]
 

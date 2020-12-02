@@ -10,24 +10,30 @@ import numpy as np
 import matplotlib.image as mpimg
 
 # -------------------------- Command Line Arguments ---------------------------
-parser = argparse.ArgumentParser(description="""The seisarT software requires a
+parser = argparse.ArgumentParser(description="""The SeidarT software requires a
 	.PNG image that is used to construct the model domain for seismic and
 	electromagnetic wave propagation. Given the image file, a project file
 	will be constructed which contains all the necessary parameters to be
 	read in to the finite differences time domain modeling schemes.""" )
 
-parser.add_argument( '-i', '--imagefile', nargs=1, type=str, required = True,
-						help='the full file path for the image', default=None)
 
-parser.add_argument( '-p', '--prjfile', nargs=1, type=str, required = False,
-	default = 'jordan_downs.prj',
-	help = """name of output file path with extension .prj and excluding
-				the full path directory""")
+parser.add_argument(
+    '-i','--imagefile', 
+    nargs=1, type=str, required = True,
+    help='the full file path for the image', default=None
+)
+
+parser.add_argument(
+    '-p', '--prjfile',
+    nargs=1, type=str, required = False, default = 'jordan_downs.prj',
+    help = """name of output file path with extension .prj and excluding
+    the full path directory"""
+)
 
 # Get the arguments
 args = parser.parse_args()
 image_file = ''.join(args.image_file)
-project_file = ''.join(args.project_file)
+project_file = ''.join(args.prjfile)
 
 new_line = '\n'
 # ------------------------ Some Necessary Definitions -------------------------
@@ -67,11 +73,11 @@ def image2int(imfilename):
 
 # -------------------------------- Add a header -------------------------------
 header_comment = """
-# This is a project file template for the SEIDART software. In order to run the
+# This is a project file template for the SeidarT software. In order to run the
 # model for seismic, electromagnetic or both, the required inputs must be
 #
 # Domain Input Values:
-#	dim 		- STR; either '2' or '2.5' but default is '2'
+#	dim 		- STR; either '2' or '2.5'; default is '2'
 #	nx,ny,nz 	- INT; the dimensions of the image. If dim = 2.5, and ny is
 #			  empty then default ny=1
 #	dx,dy,dz	- REAL; the spatial step size for each dimension in meters. If
@@ -104,7 +110,7 @@ header_comment = """
 # Source Input Values:
 #	dt 		- REAL; dx/(2*maxvelcity)
 #	steps 		- INT; the total number of time steps
-#	x,y,z 		- REAL; locations in meters, +z is down, +y is into the screen
+#	x,y,z 		- REAL; locations in meters, +x is to the right, +z is down, +y is into the screen
 #	f0 		- REAL; center frequency for the guassian pulse function if
 #			  'source_file' isn't supplied
 #	theta 		- REAL; source orientation in the x-z plane,
@@ -112,13 +118,13 @@ header_comment = """
 #	source_file	- STR; the pointer to the text file that contains the source
 #			  timeseries as a steps-by-1 vector.
 #
-# 	**phi and theta are the rotation angles for spherical coordinates so 
+# 	**phi and theta are the rotation angles for spherical coordinates so
 #		x = r sin(theta)cos(phi)
 #		y = r sin(theta)sin(phi)
 #		z = r cos(theta)
-#	
-#	Theta is the angle from the z-axis (+ down relative to image), phi is the 
-#	angle from x-axis in the x-y plane. 
+#
+#	Theta is the angle from the z-axis (+ down relative to image), phi is the
+#	angle from x-axis in the x-y plane (+ counterclockwise when viewed from above)
 #
 # Written by Steven Bernsen
 # University of Maine
@@ -224,7 +230,7 @@ with open(project_file, 'a') as prj:
 
 # -------------------------- Write Radar Parameters ---------------------------
 
-comm = '# The source parameters for the elecromagnetic model'
+comm = '# The source parameters for the electromagnetic model'
 header = '# id, e11, e22, e33, s11, s22, s33'
 
 with open(project_file, 'a') as prj:
@@ -291,9 +297,3 @@ with open(project_file, 'a') as prj:
 # 		meta.write('final_position: ' + str(np.shape(im)[0]) + '0 ' + str(np.shape(im)[0]) + new_line )
 # 		meta.write('reciever_file: None' + new_line)
 # 		meta.write('source_file: None' )
-
-
-
-
-
-

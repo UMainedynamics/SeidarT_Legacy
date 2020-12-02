@@ -18,36 +18,54 @@ parser = argparse.ArgumentParser(description="""This program builds a gif from
 	unformatted Fortran binary, however, the program runs faster to use the
 	latter. """ )
 
-parser.add_argument( 'project_file', nargs=1, type=str,
-						help='the full file path for the project file')
+parser.add_argument(
+    '-p','--prjfile', 
+    nargs=1, type=str, required = True,
+    help='the full file path for the project file'
+)
 
-parser.add_argument( '-c', '--channel', nargs = 1, type = str, required = True,
-	help = """Specify whether a particular channel is going to be used. The
+parser.add_argument(
+    '-c', '--channel', 
+    nargs = 1, type = str, required = True,
+    help = """Specify whether a particular channel is going to be used. The
 	available channels are Ex, Ez, Vx, and Vz for the electric field and
-	seismic velocities, respectively.""")
+	seismic velocities, respectively."""
+)
 
-parser.add_argument( '-f', '--frames_per_second', nargs = 1, type = int,
-	required = False, default = 1, help = """The number of frames per second
-	to build the GIF.""")
+parser.add_argument(
+    '-f', '--frames_per_second', 
+    nargs = 1, type = int, required = False, default = 1, 
+    help = """The number of frames per second
+	to build the GIF."""
+)
 
-parser.add_argument( '-n', '--num_steps', nargs = 1, type = int,
-	required = True, help = """The time step interval between the images that
+parser.add_argument(
+    '-n', '--num_steps', 
+    nargs = 1, type = int, required = True, 
+    help = """The time step interval between the images that
 	are going to be used. Every time step is written to file which means that
 	we can take any equally spaced images to create the gif with an
 	appropriate resolution, time to compute, and file size. For example,
 	n=20 means that every 20 images will be used thus significantly reducing
-	how long it takes to compile the gif.""")
+	how long it takes to compile the gif."""
+)
 
-parser.add_argument( '-t', '--threshold', nargs = 1, type = float,
-	required = False, default=[0.0001], help = """Set values to zero when they
-	below a specific threshold. Default = 0.0001""")
+parser.add_argument(
+    '-t', '--threshold', 
+    nargs = 1, type = float, required = False, default=[0.0001], 
+    help = """Set values to zero when they
+	below a specific threshold. Default = 0.0001"""
+)
 
-parser.add_argument( '-o', '--output', nargs = 1, type = int, required = False,
-	default = [0], help = """Specify the output format. 0 - GIF (default), 1 - MP4 """)
+parser.add_argument(
+    '-o', '--output', 
+    nargs = 1, type = int, required = False, default = [0], 
+    help = """Specify the output format. 0 - GIF (default), 1 - MP4 """
+)
 
 # Get the arguments
 args = parser.parse_args()
-project_file = ''.join(args.project_file)
+project_file = ''.join(args.prjfile)
 channel = ''.join(args.channel)
 frame_rate = args.frames_per_second[0]
 num_steps = args.num_steps[0]
