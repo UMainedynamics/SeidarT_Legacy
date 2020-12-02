@@ -3,6 +3,7 @@
 # Plot the common offset survey
 #
 # Available backends are:
+
 # ['GTK3Agg', 'GTK3Cairo', 'MacOSX', 'nbAgg', 'Qt4Agg', 'Qt4Cairo', 'Qt5Agg',
 # 'Qt5Cairo', 'TkAgg', 'TkCairo', 'WebAgg', 'WX', 'WXAgg', 'WXCairo', 'agg',
 # 'cairo', 'pdf', 'pgf', 'ps', 'svg', 'template']
@@ -50,9 +51,9 @@ parser.add_argument(
 parser.add_argument(
     '-e', '--exaggeration',
     nargs=1, type = float, required = False, default = [0.5],
-	help = """Set the aspect ratio between the x and y axes for
-	plotting. Default is 0.5"""
- )
+	  help = """Set the aspect ratio between the x and y axes for
+    plotting. Default is 0.5"""
+)
 
 #parser.add_argument(
 #    '-r', '--receiver',
@@ -80,7 +81,7 @@ cofile = ''.join(args.file)
 gain = args.gain[0]
 exaggeration = args.exaggeration[0]
 seismic = args.seismic[0] == 1
-#survey_type = ''.join(args.surveytype)
+survey_type = ''.join(args.surveytype)
 
 
 # project_file = 'easy_greenland.prj'
@@ -108,7 +109,8 @@ else:
     mult = 1e6
 
 timelocs = np.arange(0, m, int(m/10) ) # 10 tick marks along y-axis
-rcxlocs = np.arange(0, n, int(n/5) ) # 5 tick marks along x-axis
+rcxlocs = np.arange(0, n, int(n/5) ) # 5 tick marks along x-axis 
+
 
 if seismic:
     timevals = np.round(timelocs*float(seismic.dt[0]) * mult, 2)
@@ -128,7 +130,8 @@ else:
 
 fig = plt.figure(figsize =(n/2,m/2) )
 ax1 = plt.gca()
-# ax2 = ax1.twinx()
+# ax2 = ax1.twinx() 
+
 ax1.imshow(dat, cmap = 'Greys', aspect = 'auto')
 ax1.set_xlabel(r'Receiver #')
 ax1.xaxis.tick_top()
@@ -143,9 +146,10 @@ ax1.set_yticklabels(timevals)
 ax1.set_aspect(aspect = exaggeration)
 
 if seismic:
-	ax1.text(0, m + 0.03*m, 'x $10^{-2}$')
+	ax1.text(0, m + 0.03*m, 'x $10^{-2}$')	
 else:
 	ax1.text(0, m + 0.03*m, 'x $10^{-6}$')
 
 ax1.update_datalim( ((0,0),(m, n)))
 plt.show()
+

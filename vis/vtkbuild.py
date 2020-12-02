@@ -29,7 +29,8 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    '-n', '--num_steps', nargs = 1, type = int, required = True, 
+    '-n', '--num_steps', 
+    nargs = 1, type = int, required = True, 
     help = """The time step interval between the images that
 	are going to be used. Every time step is written to file which means that
 	we can take any equally spaced images to create the gif with an
@@ -43,10 +44,6 @@ args = parser.parse_args()
 project_file = ''.join(args.prjfile)
 channel = ''.join(args.channel)
 num_steps = args.num_steps[0]
-
-# project_file = "dipping_bed.prj"
-# channel = 'Ez'
-# num_steps = 10
 
 # ------------------------------ Run the program ------------------------------
 

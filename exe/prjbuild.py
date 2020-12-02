@@ -16,6 +16,7 @@ parser = argparse.ArgumentParser(description="""The SeidarT software requires a
 	will be constructed which contains all the necessary parameters to be
 	read in to the finite differences time domain modeling schemes.""" )
 
+
 parser.add_argument(
     '-i','--imagefile', 
     nargs=1, type=str, required = True,

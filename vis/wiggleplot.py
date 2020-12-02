@@ -82,10 +82,11 @@ channel=args.channel[0]
 
 #____________________PULL NECESSARY INFO FROM THE PRJ FILE_____________________
 class Array:
-	def __init__(self):
-		super().__init__()
-		self.build()
-	def build(self):
+    def __init__(self):
+        super().__init__()
+        self.build()
+    
+    def build(self):
 		# Initialize variables
 		self.dt = None
 		self.dr = None
