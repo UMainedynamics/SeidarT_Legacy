@@ -43,7 +43,7 @@ def agc(ts, k, agctype):
 # =============================================================================
 # =============================================================================
 
-# See codisplay 
+# See rcxdisplay 
 # def tsplot(self):
 #         m, n = self.timeseries.shape
 #         # if the gain is 0, then the window is 1

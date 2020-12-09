@@ -42,7 +42,7 @@ cp materials/orientation_tensor.py bin/orientation_tensor
 
 # Move the visualization tools
 cp vis/arrayplot.py bin/arrayplot
-cp vis/codisplay.py bin/codisplay
+cp vis/rcxdisplay.py bin/rcxdisplay
 cp vis/im2anim.py bin/im2anim
 cp vis/vtkbuild.py bin/vtkbuild 
 
@@ -54,7 +54,7 @@ chmod +x bin/prjbuild \
         bin/prjrun \
         bin/sourcefunction \
         bin/arrayplot \
-        bin/codisplay \
+        bin/rcxdisplay \
         bin/im2anim \
         bin/orientation_tensor \
         bin/array2segy \

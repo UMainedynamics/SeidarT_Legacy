@@ -14,31 +14,36 @@ parser = argparse.ArgumentParser(description="""This program builds .VTI
     (Visualization Toolkit Image) files from the 3d array outputs of the FDTD 
     modeling. These files can be displayed using Paraview.""" )
 
-parser.add_argument( 'project_file', nargs=1, type=str,
-						help='the full file path for the project file')
+parser.add_argument(
+    '-p', '--prjfile', 
+    nargs=1, type=str, required = True,
+    help='the full file path for the project file'
+)
 
-parser.add_argument( '-c', '--channel', nargs = 1, type = str, required = True,
+parser.add_argument(
+    '-c', '--channel', 
+    nargs = 1, type = str, required = True,
 	help = """Specify whether a particular channel is going to be used. The
 	available channels are Ex, Ez, Vx, and Vz for the electric field and
-	seismic velocities, respectively.""")
+	seismic velocities, respectively."""
+)
 
-parser.add_argument( '-n', '--num_steps', nargs = 1, type = int,
-	required = True, help = """The time step interval between the images that
+parser.add_argument(
+    '-n', '--num_steps', 
+    nargs = 1, type = int, required = True, 
+    help = """The time step interval between the images that
 	are going to be used. Every time step is written to file which means that
 	we can take any equally spaced images to create the gif with an
 	appropriate resolution, time to compute, and file size. For example,
 	n=20 means that every 20 images will be used thus significantly reducing
-	how long it takes to compile.""")
+	how long it takes to compile."""
+)
 
 #-- Get the arguments
 args = parser.parse_args()
-project_file = ''.join(args.project_file)
+project_file = ''.join(args.prjfile)
 channel = ''.join(args.channel)
 num_steps = args.num_steps[0]
-
-# project_file = "dipping_bed.prj"
-# channel = 'Ez'
-# num_steps = 10
 
 # ------------------------------ Run the program ------------------------------
 

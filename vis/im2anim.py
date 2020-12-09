@@ -18,36 +18,54 @@ parser = argparse.ArgumentParser(description="""This program builds a gif from
 	unformatted Fortran binary, however, the program runs faster to use the
 	latter. """ )
 
-parser.add_argument( 'project_file', nargs=1, type=str,
-						help='the full file path for the project file')
+parser.add_argument(
+    '-p','--prjfile', 
+    nargs=1, type=str, required = True,
+    help='the full file path for the project file'
+)
 
-parser.add_argument( '-c', '--channel', nargs = 1, type = str, required = True,
-	help = """Specify whether a particular channel is going to be used. The
+parser.add_argument(
+    '-c', '--channel', 
+    nargs = 1, type = str, required = True,
+    help = """Specify whether a particular channel is going to be used. The
 	available channels are Ex, Ez, Vx, and Vz for the electric field and
-	seismic velocities, respectively.""")
+	seismic velocities, respectively."""
+)
 
-parser.add_argument( '-f', '--frames_per_second', nargs = 1, type = int,
-	required = False, default = 1, help = """The number of frames per second
-	to build the GIF.""")
+parser.add_argument(
+    '-f', '--frames_per_second', 
+    nargs = 1, type = int, required = False, default = 1, 
+    help = """The number of frames per second
+	to build the GIF."""
+)
 
-parser.add_argument( '-n', '--num_steps', nargs = 1, type = int,
-	required = True, help = """The time step interval between the images that
+parser.add_argument(
+    '-n', '--num_steps', 
+    nargs = 1, type = int, required = True, 
+    help = """The time step interval between the images that
 	are going to be used. Every time step is written to file which means that
 	we can take any equally spaced images to create the gif with an
 	appropriate resolution, time to compute, and file size. For example,
 	n=20 means that every 20 images will be used thus significantly reducing
-	how long it takes to compile the gif.""")
+	how long it takes to compile the gif."""
+)
 
-parser.add_argument( '-t', '--threshold', nargs = 1, type = float,
-	required = False, default=[0.0001], help = """Set values to zero when they
-	below a specific threshold. Default = 0.0001""")
+parser.add_argument(
+    '-t', '--threshold', 
+    nargs = 1, type = float, required = False, default=[0.0001], 
+    help = """Set values to zero when they
+	below a specific threshold. Default = 0.0001"""
+)
 
-parser.add_argument( '-o', '--output', nargs = 1, type = int, required = False,
-	default = [0], help = """Specify the output format. 0 - GIF (default), 1 - MP4 """)
+parser.add_argument(
+    '-o', '--output', 
+    nargs = 1, type = int, required = False, default = [0], 
+    help = """Specify the output format. 0 - GIF (default), 1 - MP4 """
+)
 
 # Get the arguments
 args = parser.parse_args()
-project_file = ''.join(args.project_file)
+project_file = ''.join(args.prjfile)
 channel = ''.join(args.channel)
 frame_rate = args.frames_per_second[0]
 num_steps = args.num_steps[0]
@@ -109,9 +127,9 @@ class AnimatedGif:
                                          blit = True
                                         )
         if output_format == 1:
-            animation.save(filename, dpi = 200)
+            animation.save(filename, dpi = 300)
         else:
-            animation.save(filename, dpi = 200, writer = 'imagemagick')
+            animation.save(filename, dpi = 300, writer = 'imagemagick')
 
 
 # ------------------------------ Run the program ------------------------------
@@ -120,16 +138,13 @@ class AnimatedGif:
 f = open(project_file)
 
 for line in f:
-
 	# Get the image file
 	if line[0] == 'I':
 		# There's a trailing new line value
 		imfile = line[2:-1]
-
 	# All domain inputs must be input except for nz and dy
 	if line[0] == 'D':
 		temp = line.split(',')
-
 		if temp[1] == 'nx':
 			nx = int( temp[2].rsplit()[0] )
 		if temp[1] == 'nz':
@@ -140,7 +155,6 @@ for line in f:
 			dz = float(temp[2].rsplit()[0] )
 		if temp[1] == 'cpml':
 			cpml = int( temp[2].rsplit()[0])
-
 	if channel == 'Ex' or channel == 'Ez':
 		if line[0] == 'E':
 			temp = line.split(',')
@@ -165,6 +179,13 @@ f.close()
 # Define some plotting inputs
 nx = nx + 2*cpml
 nz = nz + 2*cpml
+
+if channel == 'Ex':
+    nx = nx-1
+
+if channel == 'Ez':
+	nz = nz-1
+
 x = np.linspace(1, nx, num = nx)*dx
 z = np.linspace(nz, 1, num = nz)*dz
 extent = (cpml, (nx-cpml), (nz-cpml), cpml)
@@ -213,7 +234,7 @@ for fn in files:
 
 		# Normalize the values
 		max_amplitude = np.abs(dat).max()
-		dat_normalize = dat#/max_amplitude
+		dat_normalize = dat#/np.max([max_amplitude,1])
 		# dat_normalize[ dat_normalize < -1.0 ] = -1.0
 		# dat_normalize[ dat_normalize > 1.0 ] = 1.0
 

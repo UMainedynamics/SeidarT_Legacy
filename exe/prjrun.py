@@ -29,12 +29,12 @@ parser = argparse.ArgumentParser(
 )
 
 parser.add_argument(
-    'project_file', nargs=1, type=str,
+    '-p', '--prjfile', nargs=1, type=str, required = True,
     help='the full file path for the project file', default=None
 )
 
 parser.add_argument(
-    '-M', '--model', nargs = 1, type = str, required = False,
+    '-m', '--model', nargs = 1, type = str, required = False,
     help = """Specify whether to run the seismic (s), or electromagnetic (e), 
     or none (default = n)""",
     default = 'n'
@@ -82,8 +82,9 @@ material.para_check()
 # Correct the domain to account for the absorbing boundary
 
 # ---------------------------------------------------------------------
-# Make sure the coefficients are in the project file 
-if seismic.exit_status == 0 and seismic.compute_coefficients and material.material_flag:
+# We will always compute the coefficients but we need to make sure that we have
+# everything needed to compute them
+if seismic.exit_status == 0 and material.material_flag:
     # The coefficients aren't provided but the materials are so we can compute them
     # assign the materials to their respective corners
     
@@ -105,7 +106,7 @@ if seismic.exit_status == 0 and seismic.compute_coefficients and material.materi
     append_coefficients(project_file, tensor, CP = 'C', dt = dt)
     print("Finished. Appending to project file.\n")
 
-if electromag.exit_status == 0 and electromag.compute_coefficients and material.material_flag:
+if electromag.exit_status == 0 and material.material_flag:
     # The coefficients aren't provided but the materials are so we can compute them
     print('Computing the permittivity and conductivity coefficients.')
     material.sort_material_list()
