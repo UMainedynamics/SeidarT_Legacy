@@ -52,14 +52,15 @@ dos2unix vis/*
 dos2unix survey_wrappers/*
 dos2unix exe/* 
 dos2unix materials/*
+dos2unix fdtd/*
 
 # Compile the fortran code
 #2D
 cd fdtd
-f2py3 -c --fcompiler=gnu95 -m emfdtd2d emFDTD2D.f95
-f2py3 -c --fcompiler=gnu95 -m seismicfdtd2d seismicFDTD2D.f95
-f2py3 -c --fcompiler=gnu95 -m emfdtd25d emFDTD25D.f95
-f2py3 -c --fcompiler=gnu95 -m seismicfdtd25d seismicFDTD25D.f95
+f2py3 -c --fcompiler=gnu95 -DNPY_NO_DEPRECATED_API -m emfdtd2d emFDTD2D.f95
+f2py3 -c --fcompiler=gnu95 -DNPY_NO_DEPRECATED_API -m seismicfdtd2d seismicFDTD2D.f95
+f2py3 -c --fcompiler=gnu95 -DNPY_NO_DEPRECATED_API -m emfdtd25d emFDTD25D.f95
+f2py3 -c --fcompiler=gnu95 -DNPY_NO_DEPRECATED_API -m seismicfdtd25d seismicFDTD25D.f95
 mv *.so ../bin
 cd ..
 
