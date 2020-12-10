@@ -43,7 +43,7 @@ parser.add_argument(
 
 # Get the arguments
 args = parser.parse_args()
-project_file = ''.join(args.project_file)
+project_file = ''.join(args.prjfile)
 model_type = ''.join(args.model)
 pwd = os.path.dirname(project_file)
 
