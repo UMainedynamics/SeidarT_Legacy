@@ -109,125 +109,125 @@ end subroutine permittivity_write
 
 
 ! ---------------------------------------------------------------------------
-subroutine material_rw(filename, image_data, readfile)
+  subroutine material_rw(filename, image_data, readfile)
 
-  implicit none
-  
-  integer,parameter :: dp = kind(0.d0)
-  character(len=8) :: filename
-  real(kind=dp),dimension(:,:) :: image_data
-  logical :: readfile
-  
-  
-  open(unit = 13, form="unformatted", file = trim(filename))
-  
-  if ( readfile ) then
-    read(13) image_data
-  else
-    write(13) image_data
-  endif
-  
-  close(unit = 13)
+    implicit none
+    
+    integer,parameter :: dp = kind(0.d0)
+    character(len=8) :: filename
+    real(kind=dp),dimension(:,:) :: image_data
+    logical :: readfile
+    
+    
+    open(unit = 13, form="unformatted", file = trim(filename))
+    
+    if ( readfile ) then
+      read(13) image_data
+    else
+      write(13) image_data
+    endif
+    
+    close(unit = 13)
   
   end subroutine material_rw
   
 
 
 !==============================================================================
-subroutine loadsource(filename, N, srcfn)
-  
-  implicit none
+  subroutine loadsource(filename, N, srcfn)
+    
+    implicit none
 
-  integer,parameter :: dp = kind(0.d0)
-  character(len=26) :: filename
-  integer :: N
-  real(kind=dp),dimension(N) :: srcfn
-  
-  open(unit = 13, form="unformatted", file = trim(filename))
-  read(13) srcfn
-  
-  close(unit = 13)
+    integer,parameter :: dp = kind(0.d0)
+    character(len=26) :: filename
+    integer :: N
+    real(kind=dp),dimension(N) :: srcfn
+    
+    open(unit = 13, form="unformatted", file = trim(filename))
+    read(13) srcfn
+    
+    close(unit = 13)
 
-end subroutine loadsource
+  end subroutine loadsource
 
 ! -----------------------------------------------------------------------------
 
-subroutine cpml_coeffs(nx, dx, dt, npml, k_max, alpha_max, &
-            kappa, alpha, acoeff, bcoeff, HALF)
+  subroutine cpml_coeffs(nx, dx, dt, npml, k_max, alpha_max, &
+              kappa, alpha, acoeff, bcoeff, HALF)
 
-implicit none
+    implicit none
 
-integer,parameter :: dp=kind(0.d0)
-integer :: i
+    integer,parameter :: dp=kind(0.d0)
+    integer :: i
 
-! Define real inputs 
-real(kind=dp) :: dx, dt, sig_max, k_max, alpha_max 
-integer :: nx, npml
-logical :: HALF
+    ! Define real inputs 
+    real(kind=dp) :: dx, dt, sig_max, k_max, alpha_max 
+    integer :: nx, npml
+    logical :: HALF
 
-! define the output arrays
-real(kind=dp),dimension(nx) :: kappa, alpha, acoeff, bcoeff
+    ! define the output arrays
+    real(kind=dp),dimension(nx) :: kappa, alpha, acoeff, bcoeff
 
-! Define all other variables needed in the program
-real(kind=dp) :: xoriginleft, xoriginright
-real(kind=dp),dimension(nx) :: xval, sigma
-real(kind=dp), parameter :: PI = 3.141592653589793238462643d0
-real(kind=dp),parameter :: eps0 = 8.85418782d-12, mu0 = 4.0d0*pi*1.0d-7
-integer,parameter :: NP = 2, NPA = 2
+    ! Define all other variables needed in the program
+    real(kind=dp) :: xoriginleft, xoriginright
+    real(kind=dp),dimension(nx) :: xval, sigma
+    real(kind=dp),parameter :: PI = 3.141592653589793238462643d0
+    real(kind=dp),parameter :: eps0 = 8.85418782d-12, mu0 = 4.0d0*pi*1.0d-7
+    integer,parameter :: NP = 2, NPA = 2
 
-real(kind=dp) :: abscissa_in_pml, abscissa_normalized
+    real(kind=dp) :: abscissa_in_pml, abscissa_normalized
 
-! ===========================================================
-sig_max = ( 0.8d0 * ( dble(NP+1) ) / ( dx * ( mu0 / eps0 )**0.5d0 ) )
+    ! ===========================================================
+    sig_max = ( 0.8d0 * ( dble(NP+1) ) / ( dx * ( mu0 / eps0 )**0.5d0 ) )
 
-sigma(:) = 0.d0
+    sigma(:) = 0.d0
 
-do i=1,nx 
-  xval(i) = dx * dble(i - 1)
-enddo
+    do i=1,nx 
+      xval(i) = dx * dble(i - 1)
+    enddo
 
-if (HALF) then 
-    xval = xval + dx/2.0
-endif
-
-xoriginleft = dx * dble( npml )
-xoriginright = dx * dble( (NX-1) - npml )
-
-do i=1,nx
-    !---------- left edge
-    abscissa_in_PML = xoriginleft - xval(i)
-    if (abscissa_in_PML >= 0.d0) then
-        abscissa_normalized = abscissa_in_PML / dble(dx * npml)
-        sigma(i) = sig_max * abscissa_normalized**NP
-        ! from Stephen Gedney's unpublished class notes for class EE699, lecture 8, slide 8-2
-        kappa(i) = 1.d0 + (K_MAX - 1.d0) * abscissa_normalized**NP
-        alpha(i) = ALPHA_MAX * (1.d0 - abscissa_normalized)**NPA
+    if (HALF) then 
+        xval = xval + dx/2.0
     endif
 
-    !---------- right edge
-    ! define damping profile at the grid points
-    abscissa_in_PML = xval(i) - xoriginright
-    if (abscissa_in_PML >= 0.d0) then
-      abscissa_normalized = abscissa_in_PML / dble(dx * npml)
-      sigma(i) = sig_max * abscissa_normalized**NP
-      kappa(i) = 1.d0 + (k_max - 1.d0) * abscissa_normalized**NP
-      alpha(i) = alpha_max * (1.d0 - abscissa_normalized)**NPA
-    endif
+    xoriginleft = dx * dble( npml )
+    xoriginright = dx * dble( (NX-1) - npml )
 
-    ! just in case, for -5 at the end
-    if (alpha(i) < 0.d0) alpha(i) = 0.d0
-    ! Compute the b_i coefficents
-    bcoeff(i) = exp( - (sigma(i) / kappa(i) + alpha(i)) * DT/eps0 )
-    
-    ! Compute the a_i coefficients
-    ! this to avoid division by zero outside the PML
-    if (abs(sigma(i)) > 1.d-6) then 
-      acoeff(i) = sigma(i) * (bcoeff(i) - 1.d0) / ( (sigma(i) + kappa(i) * alpha(i)) ) / kappa(i)
-    endif
+    do i=1,nx
+        !---------- left edge
+        abscissa_in_PML = xoriginleft - xval(i)
+        if (abscissa_in_PML >= 0.d0) then
+            abscissa_normalized = abscissa_in_PML / dble(dx * npml)
+            sigma(i) = sig_max * abscissa_normalized**NP
+            ! from Stephen Gedney's unpublished class notes for class EE699, lecture 8, slide 8-2
+            kappa(i) = 1.d0 + (K_MAX - 1.d0) * abscissa_normalized**NP
+            alpha(i) = ALPHA_MAX * (1.d0 - abscissa_normalized)**NPA
+        endif
 
-enddo 
+        !---------- right edge
+        ! define damping profile at the grid points
+        abscissa_in_PML = xval(i) - xoriginright
+        if (abscissa_in_PML >= 0.d0) then
+          abscissa_normalized = abscissa_in_PML / dble(dx * npml)
+          sigma(i) = sig_max * abscissa_normalized**NP
+          kappa(i) = 1.d0 + (k_max - 1.d0) * abscissa_normalized**NP
+          alpha(i) = alpha_max * (1.d0 - abscissa_normalized)**NPA
+        endif
 
-end subroutine cpml_coeffs
+        ! just in case, for -5 at the end
+        if (alpha(i) < 0.d0) alpha(i) = 0.d0
+        ! Compute the b_i coefficents
+        bcoeff(i) = exp( - (sigma(i) / kappa(i) + alpha(i)) * DT/eps0 )
+        
+        ! Compute the a_i coefficients
+        ! this to avoid division by zero outside the PML
+        if (abs(sigma(i)) > 1.d-6) then 
+          acoeff(i) = sigma(i) * (bcoeff(i) - 1.d0) / ( (sigma(i) + kappa(i) * alpha(i)) ) / kappa(i)
+        endif
+
+    enddo 
+
+  end subroutine cpml_coeffs
 
 !==============================================================================
 
