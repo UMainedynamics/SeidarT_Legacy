@@ -2,6 +2,29 @@
 
 # Install script for SEIDART toolbox
 
+# ----------------------------- Anaconda install ------------------------------
+ver="v0.2"
+echo "--------------------------------------------"
+echo "SeidarT Anaconda-based installer $ver"
+echo "Univ. of Maine / Univ. of Washington, 2020"
+echo "--------------------------------------------"
+echo "This installer will check for Anaconda/Miniconda and install a SeidarT environment prior to compiling."
+echo "You will have the option to install Miniconda if no existing conda is found."
+echo ""
+bash conda_deps.sh ||
+echo "Conda installation failed. Try installing dependencies the run the noconda_install script." ||
+exit 1
+
+`grep etc/profile.d/conda.sh ~/.bashrc`
+conda activate SeidarT &&
+echo "Successfully activated SeidarT environment for compiling" ||
+echo "Could not find SeidarT conda environment. Exiting." ||
+exit 1
+
+echo ""
+echo "Starting compiling/installation process..."
+
+# -----------------------------------------------------------------------------
 # Make sure we have a folder to put everything in
 if [ ! -d "bin" ]; then
 	mkdir bin
@@ -29,14 +52,15 @@ dos2unix vis/*
 dos2unix survey_wrappers/*
 dos2unix exe/* 
 dos2unix materials/*
+dos2unix fdtd/*
 
 # Compile the fortran code
 #2D
 cd fdtd
-f2py3 -c --fcompiler=gnu95 -m emfdtd2d emFDTD2D.f95
-f2py3 -c --fcompiler=gnu95 -m seismicfdtd2d seismicFDTD2D.f95
-f2py3 -c --fcompiler=gnu95 -m emfdtd25d emFDTD25D.f95
-f2py3 -c --fcompiler=gnu95 -m seismicfdtd25d seismicFDTD25D.f95
+f2py3 -c --fcompiler=gnu95 -DNPY_NO_DEPRECATED_API -m emfdtd2d emFDTD2D.f95
+f2py3 -c --fcompiler=gnu95 -DNPY_NO_DEPRECATED_API -m seismicfdtd2d seismicFDTD2D.f95
+f2py3 -c --fcompiler=gnu95 -DNPY_NO_DEPRECATED_API -m emfdtd25d emFDTD25D.f95
+f2py3 -c --fcompiler=gnu95 -DNPY_NO_DEPRECATED_API -m seismicfdtd25d seismicFDTD25D.f95
 mv *.so ../bin
 cd ..
 
@@ -90,3 +114,7 @@ chmod +x bin/common_offset bin/common_midpoint bin/array2sac
 cp materials/material_functions.py bin/material_functions.py
 cp materials/class_definitions.py bin/class_definitions.py
 cp vis/imdefinitions.py bin/imdefinitions.py 
+
+echo ""
+echo "Done."
+echo 'Type "conda activate SeidarT" to access the SeidarT environment.'
