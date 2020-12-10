@@ -31,7 +31,7 @@ This method will install SeidarT on most Unix-based systems using a combination 
 
     ~~~
     sudo apt update
-    sudo apt install gcc-10 git
+    sudo apt install gcc-9 gfortran git
     ~~~
 
     **or** in a Mac OS X Terminal window with [Homebrew](https://brew.sh), copy/paste/enter the following
