@@ -4,13 +4,13 @@
 
 # ----------------------------- Anaconda install ------------------------------
 ver="v0.2"
-echo "--------------------------------------------"
-echo "SeidarT Anaconda-based installer $ver"
-echo "Univ. of Maine / Univ. of Washington, 2020"
-echo "--------------------------------------------"
-echo "This installer will check for Anaconda/Miniconda and install a SeidarT environment prior to compiling."
-echo "You will have the option to install Miniconda if no existing conda is found."
-echo ""
+echo "--------------------------------------------
+SeidarT Anaconda-based installer $ver
+Univ. of Maine / Univ. of Washington, 2020
+--------------------------------------------
+This installer will check for Anaconda/Miniconda and install a SeidarT environment prior to compiling.
+You will have the option to install Miniconda if no existing conda is found.
+"
 bash conda_deps.sh ||
 echo "Conda installation failed. Try installing dependencies the run the noconda_install script." ||
 exit 1
