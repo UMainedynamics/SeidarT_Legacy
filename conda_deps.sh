@@ -213,6 +213,15 @@ fi
 if [ ! -z ${SUCCESS+x} ]; then
   echo "SeidarT has installed successfully!"
 
+  # from https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
+  echo "Appending $SEIDART_DIR/bin to PATH in SeidarT environment..."
+  mkdir -p $CONDA_PREFIX/etc/conda/activate.d
+  mkdir -p $CONDA_PREFIX/etc/conda/deactivate.d
+  touch $CONDA_PREFIX/etc/conda/activate.d/env_vars.sh
+  touch $CONDA_PREFIX/etc/conda/deactivate.d/env_vars.sh
+  echo 'export PATH="$PATH:'"$SEIDART_DIR/bin"'"' >> "$CONDA_PREFIX/etc/conda/activate.d/env_vars.sh"
+  echo "unset PATH" >> "$CONDA_PREFIX/etc/conda/deactivate.d/env_vars.sh"
+
   if [ -z ${PREVIOUS_CONDA+x} ]; then
     if [ -z ${SOURCED+x} ]; then
       echo 'You will need to tell your shell where to find conda by entering ". ~/'"$RELEASE"'/etc/profile.d/conda.sh"'
