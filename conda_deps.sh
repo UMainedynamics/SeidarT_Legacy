@@ -201,7 +201,6 @@ else
 fi
 
 if [ -d $PREFIX/envs/SeidarT ]; then
-  conda env config vars set PATH="$PATH:$SEIDART_DIR/bin" -n SeidarT
   echo "Activating SeidarT environment..." &&
   conda activate SeidarT && echo "Success: SeidarT environment activated." &&
   echo "Installing SeidarT..." &&
@@ -216,11 +215,8 @@ if [ ! -z ${SUCCESS+x} ]; then
   # from https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
   echo "Appending $SEIDART_DIR/bin to PATH in SeidarT environment..."
   mkdir -p $CONDA_PREFIX/etc/conda/activate.d
-  mkdir -p $CONDA_PREFIX/etc/conda/deactivate.d
   touch $CONDA_PREFIX/etc/conda/activate.d/env_vars.sh
-  touch $CONDA_PREFIX/etc/conda/deactivate.d/env_vars.sh
-  echo 'export PATH="$PATH:'"$SEIDART_DIR/bin"'"' >> "$CONDA_PREFIX/etc/conda/activate.d/env_vars.sh"
-  echo "unset PATH" >> "$CONDA_PREFIX/etc/conda/deactivate.d/env_vars.sh"
+  echo 'echo "$PATH" | grep "'"$SEIDART_DIR/bin"'" || export PATH="$PATH:'"$SEIDART_DIR/bin"'"' >> "$CONDA_PREFIX/etc/conda/activate.d/env_vars.sh"
 
   if [ -z ${PREVIOUS_CONDA+x} ]; then
     if [ -z ${SOURCED+x} ]; then
