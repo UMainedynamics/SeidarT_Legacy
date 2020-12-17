@@ -206,7 +206,8 @@ if [ -d $PREFIX/envs/SeidarT ]; then
   echo "Installing SeidarT..." &&
   pip install mplstereonet && SUCCESS=1
 else
-  echo "ERROR: SeidarT failed to install."
+  echo "ERROR: SeidarT environment failed to install."
+  exit 2
 fi
 
 if [ ! -z ${SUCCESS+x} ]; then
