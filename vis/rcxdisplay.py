@@ -10,8 +10,8 @@
 
 # Set matplotlib backend
 import matplotlib
-# Set matplotlib backend 
-import matplotlib 
+# Set matplotlib backend
+import matplotlib
 try:
     matplotlib.use('Qt4Agg')
 except Exception as e:
@@ -81,7 +81,7 @@ cofile = ''.join(args.file)
 gain = args.gain[0]
 exaggeration = args.exaggeration[0]
 seismic = args.seismic[0] == 1
-survey_type = ''.join(args.surveytype)
+#survey_type = ''.join(args.surveytype)
 
 
 # project_file = 'easy_greenland.prj'
@@ -109,7 +109,7 @@ else:
     mult = 1e6
 
 timelocs = np.arange(0, m, int(m/10) ) # 10 tick marks along y-axis
-rcxlocs = np.arange(0, n, int(n/5) ) # 5 tick marks along x-axis 
+rcxlocs = np.arange(0, n, int(n/5) ) # 5 tick marks along x-axis
 
 
 if seismic:
@@ -130,7 +130,7 @@ else:
 
 fig = plt.figure(figsize =(n/2,m/2) )
 ax1 = plt.gca()
-# ax2 = ax1.twinx() 
+# ax2 = ax1.twinx()
 
 ax1.imshow(dat, cmap = 'Greys', aspect = 'auto')
 ax1.set_xlabel(r'Receiver #')
@@ -146,10 +146,9 @@ ax1.set_yticklabels(timevals)
 ax1.set_aspect(aspect = exaggeration)
 
 if seismic:
-	ax1.text(0, m + 0.03*m, 'x $10^{-2}$')	
+	ax1.text(0, m + 0.03*m, 'x $10^{-2}$')
 else:
 	ax1.text(0, m + 0.03*m, 'x $10^{-6}$')
 
 ax1.update_datalim( ((0,0),(m, n)))
 plt.show()
-
