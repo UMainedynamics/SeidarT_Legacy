@@ -1,0 +1,116 @@
+#!/bin/bash
+
+: '
+ARRAY2SAC - Write individual reciever timeseries as SAC timeseries. One could
+do such things in obspy but I have chosen the unapparently simpler route. If
+you would like to use SAC (seismic analysis code) 
+
+INPUT
+	-m,--meta_file	The file path which contains the array information
+	-r,--rcx_file	The file path to the desired time series to convert. This will
+					be the .csv output from arrayplot. 
+
+*Certain header values are assigned to each SAC file. These are:
+	STLO, STLA, STDP  	reciever x,y,z respectively 
+	EVLO, EVLA, EVDP  	source x,y,z respectively
+	DELTA 				the time step 
+	AZ 					the reciever indice is stored here so that the user can 
+						order the array
+
+Created by Steven Bernsen
+University of Maine 
+
+'
+
+while [[ $# -gt 0 ]]; do
+	key="$1"
+
+	case $key in
+		-m|--meta_file)
+		metafile="$2"
+		shift;shift
+		;;
+		-r|--rcx_file)
+		rcxfile="$2"
+		shift;shift
+	esac
+done
+
+
+# Define some useful variables 
+tempfile=temp.txt
+
+# Get information from the meta file
+prjfile=`grep -F 'project_file:' $metafile`
+prjfile=`echo ${prjfile} | cut -d ":" -f2`
+
+ri=`grep -F 'initial_position:' $metafile`
+ri=`echo ${ri} | cut -d ":" -f2`
+xi=`echo ${ri} | cut -d " " -f1`
+zi=`echo ${ri} | cut -d " " -f3`
+
+rf=`grep -F 'final_position:' $metafile`
+rf=`echo ${rf} | cut -d ":" -f2`
+xf=`echo ${rf} | cut -d " " -f1`
+zf=`echo ${rf} | cut -d " " -f3`
+
+dr=`grep -F 'delta:' $metafile`
+dr=`echo ${dr} | cut -d ":" -f2`
+
+# Get information from the project file 
+dt=`grep -F 'E,dt' $prjfile`
+dt=`echo ${dt} | cut -d "," -f3`
+
+srcx=`grep -F 'E,x' $prjfile`
+srcx=`echo ${srcx} | cut -d "," -f3`
+
+srcy=`grep -F 'E,y' $prjfile`
+srcy=`echo ${srcy} | cut -d "," -f3`
+
+srcz=`grep -F 'E,z' $prjfile`
+srcz=`echo ${srcz} | cut -d "," -f3`
+
+echo $srcx $srcz
+
+# Tally up the number of the recievers
+num_cols=`head -1 $rcxfile | sed 's/[^,]//g' | wc -c`
+
+locx=$xi
+locz=$zi
+
+for ((col=1;col<=$num_cols;col++)); do
+	
+	# Get the reciever and save it to the temp file
+	cat $rcxfile | cut -d ',' -f$col > $tempfile
+	
+	# Define the new file
+	newfile=reciever$col.sac
+	
+	# Write to Seismic Analysis Code format
+	sac <<- EOF
+	
+	readtable $tempfile
+	write over sac $newfile
+	
+	r $newfile
+	chnhdr delta $dt
+	chnhdr stlo $locx stla 0 stdp $locz
+	chnhdr evlo $srcx evla $srcy evdp $srcz
+	chnhdr mag $col
+	wh 
+	
+	quit
+	
+	EOF
+	
+	
+	# Update the location for the next reciever
+	locx=`echo "$locx+$dr" | bc -l`
+	
+	
+	
+done
+
+
+
+
