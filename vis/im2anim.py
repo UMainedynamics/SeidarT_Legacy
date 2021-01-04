@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import matplotlib.animation as anim
 from scipy.io import FortranFile
+from definitions import *
 
 # -------------------------- Command Line Arguments ---------------------------
 parser = argparse.ArgumentParser(description="""This program builds a gif from
@@ -77,108 +78,22 @@ output_format = args.output[0]
 # GIF so we're  trying some things 
 plt.rcParams['animation.ffmpeg_path'] = '/usr/bin/ffmpeg'
 
-# ----------------------- Definitions -----------------------
-
-class AnimatedGif:
-    def __init__(self, size=(640,480) ):
-        self.fig = plt.figure()
-        self.fig.set_size_inches(size[0]/100, size[1]/100)
-        ax = self.fig.add_axes([0, 0, 1, 1], frameon=False, aspect=1)
-        ax.set_xticks([])
-        ax.set_yticks([])
-        self.images = []
-        self.background = []
-        self.source_location = []
-        
-    def add(self, image, label='', extent=None ):
-        bound = np.max([abs(np.min(image)),abs(np.max(image))])
-        plt_im = plt.imshow(
-            image,cmap='seismic', 
-            animated=True, 
-            extent=(0, (nx), (nz), 0),
-            vmin=-bound,vmax=bound
-        )
-        plt_bg = plt.imshow(
-            self.background,
-            alpha = 0.3, 
-            extent=extent, 
-            animated = True
-        )
-        plt.scatter(
-            self.source_location[0], 
-            self.source_location[1],
-            marker = '*', 
-            s = 30, 
-            linewidths = 1,
-            edgecolor = (0.2, 0.2, 0.2, 1 ) 
-        )
-        plt_txt = plt.text(
-            extent[0] + 20, 
-            extent[2] + 20, 
-            label, 
-            color='red'
-        ) # Lower left corner 
-        self.images.append([plt_im, plt_bg, plt_txt])
-                
-    def save(self, filename, frame_rate = 50):
-        animation = anim.ArtistAnimation(self.fig, 
-                                         self.images, 
-                                         interval = frame_rate, 
-                                         blit = True
-                                        )
-        if output_format == 1:
-            animation.save(filename, dpi = 300)
-        else:
-            animation.save(filename, dpi = 300, writer = 'imagemagick')
-
-
 # ------------------------------ Run the program ------------------------------
+domain, material, seismic, electromag = loadproject(
+    project_file,
+    Domain(), 
+    Material(),
+    Model(),
+    Model()
+)
 
-# Get the values we need
-f = open(project_file)
-
-for line in f:
-	# Get the image file
-	if line[0] == 'I':
-		# There's a trailing new line value
-		imfile = line[2:-1]
-	# All domain inputs must be input except for nz and dy
-	if line[0] == 'D':
-		temp = line.split(',')
-		if temp[1] == 'nx':
-			nx = int( temp[2].rsplit()[0] )
-		if temp[1] == 'nz':
-			nz = int( temp[2].rsplit()[0] )
-		if temp[1] == 'dx':
-			dx = float(temp[2].rsplit()[0] )
-		if temp[1] == 'dz':
-			dz = float(temp[2].rsplit()[0] )
-		if temp[1] == 'cpml':
-			cpml = int( temp[2].rsplit()[0])
-	if channel == 'Ex' or channel == 'Ez':
-		if line[0] == 'E':
-			temp = line.split(',')
-			if temp[1] == 'dt':
-				edt = float(temp[2].rsplit()[0])
-			if temp[1] == 'x':
-				ex = float(temp[2].rsplit()[0])
-			if temp[1] == 'z':
-				ez = float(temp[2].rsplit()[0])
-	else:
-		if line[0] == 'S':
-			temp = line.split(',')
-			if temp[1] == 'dt':
-				sdt = float(temp[2].rsplit()[0])
-			if temp[1] == 'x':
-				sx = float(temp[2].rsplit()[0])
-			if temp[1] == 'z':
-				sz = float(temp[2].rsplit()[0])
-
-f.close()
 
 # Define some plotting inputs
-nx = nx + 2*cpml
-nz = nz + 2*cpml
+domain.cpml = int(domain.cpml[0])
+nx = domain.nx + 2*domain.cpml
+nz = domain.nz + 2*domain.cpml
+domain.dx = float(domain.dx[0])
+domain.dz = float(domain.dz[0])
 
 if channel == 'Ex':
     nx = nx-1
@@ -186,9 +101,14 @@ if channel == 'Ex':
 if channel == 'Ez':
 	nz = nz-1
 
-x = np.linspace(1, nx, num = nx)*dx
-z = np.linspace(nz, 1, num = nz)*dz
-extent = (cpml, (nx-cpml), (nz-cpml), cpml)
+x = np.linspace(1, nx, num = nx)*domain.dx
+z = np.linspace(nz, 1, num = nz)*domain.dz
+extent = (
+    domain.cpml, 
+    (nx-domain.cpml), 
+    (nz-domain.cpml), 
+    domain.cpml
+)
 
 # Create the gif object
 animated_gif = AnimatedGif( size=(nx, nz) )
@@ -200,15 +120,15 @@ animated_gif.background = mpimg.imread(imfile)
 
 # Add the source location to plot
 if channel == 'Ex' or channel == 'Ez':
-	ex = (ex/dx + cpml+1)
-	ez = (ez/dz + cpml+1)
+	ex = (ex/domain.dx + domain.cpml+1)
+	ez = (ez/domain.dz + domain.cpml+1)
 	animated_gif.source_location = np.array([ex, ez])
-	dt = edt
+	dt = float(electromag.dt[0])
 else:
 	sx = (sx/dx + cpml+1)
 	sz = (sz/dz + cpml+1)
 	animated_gif.source_location = np.array([sx, sz])
-	dt = sdt
+	dt = float(seismic.dt[0])
 
 print('Creating GIF.')
 
@@ -224,35 +144,26 @@ files.sort()
 n=num_steps
 
 for fn in files:
-
 	if n == num_steps:
-
 		f = FortranFile(fn, 'r')
 		dat = f.read_reals(dtype = 'float32')
 		dat = dat.reshape(nz, nx)
-
-
 		# Normalize the values
 		max_amplitude = np.abs(dat).max()
 		dat_normalize = dat#/np.max([max_amplitude,1])
 		# dat_normalize[ dat_normalize < -1.0 ] = -1.0
 		# dat_normalize[ dat_normalize > 1.0 ] = 1.0
-
 		# Zero out any values below our given threshold
 		dat_normalize[np.abs(dat_normalize) < (max_amplitude*threshold) ] = 0.0
-
 		duration = dt*ind
-
 		if channel == 'Vx' or channel == 'Vz':
 			time_label = 'Time (s): ' + str(np.round(duration, 5) )
 		else:
 			time_label = 'Time (s): ' + str(np.round(duration, 8) )
 		animated_gif.add( dat_normalize, time_label, extent)
-
 		# Reset the counter
 		n = 1
 		ind = ind + 1
-
 	else:
 		ind = ind + 1
 		n = n + 1

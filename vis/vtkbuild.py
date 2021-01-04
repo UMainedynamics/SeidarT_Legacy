@@ -6,7 +6,7 @@ import numpy as np
 import glob
 import argparse
 from scipy.io import FortranFile
-
+from definitions import *
 from pyevtk.hl import imageToVTK
 
 # -------------------------- Command Line Arguments ---------------------------
@@ -47,72 +47,30 @@ num_steps = args.num_steps[0]
 
 # ------------------------------ Run the program ------------------------------
 
-# Get the values we need
-f = open(project_file)
-
-for line in f:
-
-	# Get the image file
-	if line[0] == 'I':
-		# There's a trailing new line value
-		imfile = line[2:-1]
-
-	# All domain inputs must be input except for nz and dy
-	if line[0] == 'D':
-		temp = line.split(',')
-
-		if temp[1] == 'nx':
-			nx = int( temp[2].rsplit()[0] )
-		if temp[1] == 'ny':
-			ny = int( temp[2].rsplit()[0] )
-		if temp[1] == 'nz':
-			nz = int( temp[2].rsplit()[0] )
-		if temp[1] == 'dx':
-			dx = float(temp[2].rsplit()[0] )
-		if temp[1] == 'dy':
-			dy = float(temp[2].rsplit()[0] )
-		if temp[1] == 'dz':
-			dz = float(temp[2].rsplit()[0] )
-		if temp[1] == 'cpml':
-			cpml = int( temp[2].rsplit()[0])
-
-	if channel == 'Ex' or channel == 'Ey' or channel == 'Ez':
-		if line[0] == 'E':
-			temp = line.split(',')
-			if temp[1] == 'dt':
-				edt = float(temp[2].rsplit()[0])
-			if temp[1] == 'x':
-				ex = float(temp[2].rsplit()[0])
-			if temp[1] == 'y':
-				ey = float(temp[2].rsplit()[0])
-			if temp[1] == 'z':
-				ez = float(temp[2].rsplit()[0])
-	else:
-		if line[0] == 'S':
-			temp = line.split(',')
-			if temp[1] == 'dt':
-				sdt = float(temp[2].rsplit()[0])
-			if temp[1] == 'x':
-				sx = float(temp[2].rsplit()[0])
-			if temp[1] == 'y':
-				sy = float(temp[2].rsplit()[0])
-			if temp[1] == 'z':
-				sz = float(temp[2].rsplit()[0])
-
-f.close()
+domain, material, seismic, electromag = loadproject(
+    project_file,
+    Domain(), 
+    Material(),
+    Model(),
+    Model()
+)
 
 # Define some plotting inputs
-nx = nx + 2*cpml
-ny = ny + 2*cpml
-nz = nz + 2*cpml
+domain.cpml = int(domain.cpml[0])
+nx = int(domain.nx[0]) + 2*domain.cpml
+ny = int(domain.ny[0]) + 2*domain.cpml
+nz = int(domain.nz[0]) + 2*domain.cpml
 ncells = nx*ny*nz
 
 
 
 # Create the coordinate system
-X = np.linspace(1, nx, num = nx)*dx
-Y = np.linspace(1, nx, num = ny)*dy
-Z = np.linspace(nz, 1, num = nz)*dz
+domain.dx = float(domain.dx[0])
+domain.dy = float(domain.dy[0])
+domain.dz = float(domain.dz[0])
+X = np.linspace(1, nx, num = nx)*domain.dx
+Y = np.linspace(1, nx, num = ny)*domain.dy
+Z = np.linspace(nz, 1, num = nz)*domain.dz
 x = np.zeros([nx, ny, nz])
 y = np.zeros([nx, ny, nz])
 z = np.zeros([nx, ny, nz])
@@ -127,17 +85,17 @@ for i in range(0, nx):
 
 # Add the source location to plot
 if channel == 'Ex' or channel == 'Ey' or channel == 'Ez':
-    ex = (ex/dx + cpml+1)
-    ey = (ey/dy + cpml+1)
-    ez = (ez/dz + cpml+1)
+    ex = (ex/domain.dx + domain.cpml+1)
+    ey = (ey/domain.dy + domain.cpml+1)
+    ez = (ez/domain.dz + domain.cpml+1)
     source_location = np.array([ex, ey, ez])
-    dt = edt
+    dt = float(electromag.dt[0])
 else:
-    sx = (sx/dx + cpml+1)
-    sy = (sy/dy + cpml+1)
-    sz = (sz/dz + cpml+1)
+    sx = (sx/domain.dx + domain.cpml+1)
+    sy = (sy/domain.dy + domain.cpml+1)
+    sz = (sz/domain.dz + domain.cpml+1)
     source_location = np.array([sx, sy, sz])
-    dt = sdt
+    dt = float(seismic.dt[0])
 
 # Proceed accordingly to the channel flag
 
