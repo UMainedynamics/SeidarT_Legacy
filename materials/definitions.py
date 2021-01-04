@@ -6,8 +6,6 @@ from subprocess import call
 from scipy.io import FortranFile
 import glob
 
-from imdefinitions import * 
-
 # =============================================================================
 # =========================== Define Class Variables ==========================
 # =============================================================================
@@ -193,6 +191,58 @@ class Model:
 		if self.y and not self.phi:
 			self.phi = 0
 
+# -----------------------------------------------------------------------------
+class AnimatedGif:
+    def __init__(self, size=(640,480) ):
+        self.fig = plt.figure()
+        self.fig.set_size_inches(size[0]/100, size[1]/100)
+        ax = self.fig.add_axes([0, 0, 1, 1], frameon=False, aspect=1)
+        ax.set_xticks([])
+        ax.set_yticks([])
+        self.images = []
+        self.background = []
+        self.source_location = []
+        
+    def add(self, image, label='', extent=None ):
+        bound = np.max([abs(np.min(image)),abs(np.max(image))])
+        plt_im = plt.imshow(
+            image,cmap='seismic', 
+            animated=True, 
+            extent=(0, (nx), (nz), 0),
+            vmin=-bound,vmax=bound
+        )
+        plt_bg = plt.imshow(
+            self.background,
+            alpha = 0.3, 
+            extent=extent, 
+            animated = True
+        )
+        plt.scatter(
+            self.source_location[0], 
+            self.source_location[1],
+            marker = '*', 
+            s = 30, 
+            linewidths = 1,
+            edgecolor = (0.2, 0.2, 0.2, 1 ) 
+        )
+        plt_txt = plt.text(
+            extent[0] + 20, 
+            extent[2] + 20, 
+            label, 
+            color='red'
+        ) # Lower left corner 
+        self.images.append([plt_im, plt_bg, plt_txt])
+                
+    def save(self, filename, frame_rate = 50):
+        animation = anim.ArtistAnimation(self.fig, 
+                                         self.images, 
+                                         interval = frame_rate, 
+                                         blit = True
+                                        )
+        if output_format == 1:
+            animation.save(filename, dpi = 300)
+        else:
+            animation.save(filename, dpi = 300, writer = 'imagemagick')
 
     # -------------------------- Function Definitions -------------------------
 def getrcx(channel, rcx, domain):
@@ -538,3 +588,62 @@ def airsurf(material, domain, N = 2):
     
     return(gradcomp)
 
+
+# ----------------------------- Plotting Functions ----------------------------
+def indvar(modobj, domain):
+    nx = int(domain.nx[0])
+    nz = int(domain.nz[0])
+    dx = float(domain.dx[0])
+    dz = float(domain.dz[0])
+    dt = float(modobj.dt[0])
+    nt = int(modobj.time_steps[0])
+    
+    x = np.linspace(0, dx * (nx - 1), nx)
+    z = np.linspace(0, dz * (nz - 1), nz)
+    t = np.linspace(0, dt * (nt - 1), nt)
+    try:
+        y = np.linspace(
+            0, float(domain.dy[0]) * (int(domain.ny) - 1), int(domain.ny)
+        )
+    except:
+        y = None
+        
+    return(x,y,z,t)
+
+
+
+# ---------------------------- Processing functions ---------------------------
+def agc(ts, k, agctype):
+    # Auto-gain normalization using a running window
+    # k is the window length
+    # agctype is either mean, rms, median 
+    n = len(ts)
+
+    k2 = int(k/2) # This will floor the number if k is even; (k-1)/2 
+    if np.mod(k, 2) == 0: # even numbers need will not have a centered window
+        k = int( k + 1) 
+    
+    stat = np.ones([n])
+    # Normalize
+    if agctype == "std":
+        for i in range(0, k2):
+            stat[i] = np.std( abs( ts[0:(i+k2)] ) )
+            stat[ (n-k2+i) ] = np.std( abs(ts[ (n-2*k2+i):n] ) )
+        for i in range(k2,n-k2):
+            stat[i] = np.std( abs( ts[ (i-k2):(i+k2) ] ) )
+    elif agctype == "mean":
+        for i in range(0, k2):
+            stat[i] = np.mean( abs( ts[0:(i+k2)] ) )
+            stat[ (n-k2+i) ] = np.mean( abs(ts[ (n-2*k2+i):n] ) )
+        for i in range(k2,n-k2):
+            stat[i] = np.mean( abs( ts[ (i-k2):(i+k2) ] ) )
+    else:
+        for i in range(0, k2):
+            stat[i] = np.std( ts[i:(i+k2)] )
+            stat[ (n-k2+i) ] = np.std( ts[ (n-2*k2+i):n] )
+        for i in range(k2,n-k2):
+            stat[i] = np.std( ts[ (i-k2):(i+k2) ] )
+    
+    stat[stat == 0] = 1
+    ts = ts/stat 
+    return ts
