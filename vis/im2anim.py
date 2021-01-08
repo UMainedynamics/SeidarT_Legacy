@@ -115,18 +115,22 @@ animated_gif = AnimatedGif( size=(nx, nz) )
 
 # Load the model image
 # animated_gif.background = np.zeros( [nz, nx, 3] )
-animated_gif.background = mpimg.imread(imfile)
+animated_gif.background = mpimg.imread(domain.imfile)
 # animated_gif.background[cpml:(nz-cpml), cpml:(nx-cpml)] = mpimg.imread(imfile)
 
 # Add the source location to plot
 if channel == 'Ex' or channel == 'Ez':
-	ex = (ex/domain.dx + domain.cpml+1)
-	ez = (ez/domain.dz + domain.cpml+1)
+	electromag.x = float(electromag.x[0])
+	electromag.z = float(electromag.z[0])
+    ex = electromag.x/domain.dx + domain.cpml+1
+    ez = electromag.z/domain.dz + domain.cpml+1
 	animated_gif.source_location = np.array([ex, ez])
 	dt = float(electromag.dt[0])
 else:
-	sx = (sx/dx + cpml+1)
-	sz = (sz/dz + cpml+1)
+	seismic.x = float(seismic.x[0])
+	seismic.z = float(seismic.z[0])
+    sx = seismic.x/domain.dx + domain.cpml+1
+    sz = seismic.z/domain.dz + domain.cpml+1
 	animated_gif.source_location = np.array([sx, sz])
 	dt = float(seismic.dt[0])
 

@@ -23,7 +23,12 @@ domain, material, seismic, electromag = loadproject(
     Model()
 )
 
-
+# Get axes values
 x,y,z,t = indvar( electromag, domain)
 
+domain.cpml = int(domain.cpml[0])
+nx = domain.nx + 2*domain.cpml
+nz = domain.nz + 2*domain.cpml
+domain.dx = float(domain.dx[0])
+domain.dz = float(domain.dz[0])
 extent = 

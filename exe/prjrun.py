@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.image as mpimg
 from subprocess import call
 import material_functions as mf
-from class_definitions import *
+from definitions import *
 
 # Modeling modules
 import seismicfdtd2d as seis2d
