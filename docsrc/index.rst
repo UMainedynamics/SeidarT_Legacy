@@ -45,6 +45,7 @@ the :doc:`references` section.
     :maxdepth: 2
     :caption: Tutorial guide
 
+    about
     installation
     getting_started
     routines
