@@ -10,7 +10,7 @@ Getting Started
    <a href="http://wiki.inkscape.org/wiki/index.php/Installing_Inkscape" target="_blank">Inkscape</a>
 
 
-Geometries for the model domain within SeiDarT are initiated with a
+Geometries for the model domain within SeidarT are initiated with a
 PNG image. The program identifies unique RGB values, setting material
 properties for each. For example, if you wanted to define a geometry
 with ice overlying bedrock, you would create a .png image that is one
