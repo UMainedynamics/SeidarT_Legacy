@@ -1,2 +1,3 @@
 *.dat
 bin/
+docsrc/_build
