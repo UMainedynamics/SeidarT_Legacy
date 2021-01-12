@@ -8,7 +8,7 @@ There are two documentation folders in the root directory:
 
 ```
 docs/       # <- this is the folder that github pages pays attention to (production)
-docsrc/     # <- this is the editing and staging directory
+docsrc/     # <- this is the editing and build directory
 ```
 
 All edits to the documentation are made in `docsrc/`. 
