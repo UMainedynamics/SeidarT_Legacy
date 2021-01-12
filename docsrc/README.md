@@ -2,6 +2,7 @@
 
 This document describes how to modify and build SeidarT documentation.
 
+Documentation is currently hosted [here](https://sbernsen.github.io/SeidarT).
 
 ## Overview
 
@@ -71,3 +72,4 @@ Usually, an error running `make html` or `make github` means that you are not in
 Navigational links within the documentation should be fully navigable when viewing on your local machine (regardless of the internet connection status). This is possible because they are **internal links** which use relative hyperlinks rather than absolute ones. If a link should work but does not, then it probably does not follow the reStructuredText guidelines for cross-referencing. See [this section](https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html#internal-links) in the reStructuredText Primer.
 
 Sometimes, running `make clean; make html` will clear up internal link problems.
+
