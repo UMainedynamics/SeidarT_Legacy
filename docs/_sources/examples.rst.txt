@@ -12,7 +12,7 @@ Shapes model
 .. figure:: ../EXAMPLES/shapes.png
     :align:   center
 
-    The model domain for the shapes example.
+    The model PNG domain for the "shapes" example.
 
 After running the install script without errors then adding the
 program file parent directy to the path, open a terminal and change

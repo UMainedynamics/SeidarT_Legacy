@@ -48,8 +48,8 @@ the :doc:`references` section.
     about
     installation
     getting_started
-    routines
     examples
+    routines
 
 .. _extras:
 
@@ -83,6 +83,7 @@ The modules available in SeidarT are organized by type below.
     prjrun
     common_offset
     common_midpoint
+    orientation_tensor
 
 .. toctree::
     :maxdepth: 2

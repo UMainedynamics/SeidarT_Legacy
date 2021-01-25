@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>1. About &mdash; SeidarT  documentation</title>
+  <title>prjrun &mdash; SeidarT  documentation</title>
   
 
   
@@ -36,11 +36,11 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-    <link rel="author" title="About these documents" href="#" />
+    <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="2. Installation" href="installation.html" />
-    <link rel="prev" title="SeidarT 1.0" href="index.html" /> 
+    <link rel="next" title="common_offset" href="common_offset.html" />
+    <link rel="prev" title="sourcefunction" href="sourcefunction.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -93,11 +93,8 @@
             
             
               <p class="caption"><span class="caption-text">Tutorial guide</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">1. About</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#statement-of-purpose">1.1. Statement of Purpose</a></li>
-</ul>
-</li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="about.html">1. About</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">3. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">4. Examples</a></li>
@@ -113,9 +110,9 @@
 <li class="toctree-l1"><a class="reference internal" href="prjbuild.html">prjbuild</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Run</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="sourcefunction.html">sourcefunction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="prjrun.html">prjrun</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">prjrun</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_offset.html">common_offset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_midpoint.html">common_midpoint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="orientation_tensor.html">orientation_tensor</a></li>
@@ -175,13 +172,13 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li><span class="section-number">1. </span>About</li>
+      <li>prjrun</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/about.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/prjrun.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -194,22 +191,40 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="about">
-<h1><span class="section-number">1. </span>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h1>
-<p>SeidarT is a powerful numerical modeling tool to calculate englacial
-mechanical and electromagnetic wave propagation.</p>
-<div class="figure align-center" id="id1">
-<span id="sample-anim"></span><img alt="_images/10Mhz_dx_1m_s2.gif" src="_images/10Mhz_dx_1m_s2.gif" />
-<p class="caption"><span class="caption-text">An example of model output calculated by SeidarT, showing wave
-propagation through multiple material types along the X-Z plane and
-complex geometry between the layers.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
-<div class="legend">
-<p><strong>%%%%%%% This animation should be redone without background noise %%%%%%%</strong></p>
+  <div class="section" id="prjrun">
+<h1>prjrun<a class="headerlink" href="#prjrun" title="Permalink to this headline">¶</a></h1>
+<p><em>Performs single-shot wave propagation with receiver locations specified</em>
+<em>later in postprocessing.</em></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>prjrun <span class="o">[</span>project_file<span class="o">]</span>.prj -M <span class="o">[</span>n e s<span class="o">]</span>
+</pre></div>
 </div>
-</div>
-<div class="section" id="statement-of-purpose">
-<h2><span class="section-number">1.1. </span>Statement of Purpose<a class="headerlink" href="#statement-of-purpose" title="Permalink to this headline">¶</a></h2>
-</div>
+<p><strong>Inputs</strong></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i</span> <span class="pre">IMAGE_FILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--image_file</span> <span class="pre">IMAGE_FILE</span></code></p>
+<blockquote>
+<div><p>The full file path for the .png image</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">PROJECT_FILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--project_file</span> <span class="pre">PROJECT_FILE</span></code></p>
+<blockquote>
+<div><p>Name of the output file path with extension, .prj, and excluding
+the full path directory</p>
+</div></blockquote>
+</li>
+<li><p>.prj file</p>
+<blockquote>
+<div><p>Manually complete all lines, except for permittivity and stiffness
+coefficients, and dt.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-M</span></code>: Which model to run</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n</span></code>: calculates only timesteps and material tensors</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">e</span></code>: electromagnetic propagation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">s</span></code>: seismic wave propagation</p></li>
+</ul>
+<p><strong>Outputs</strong></p>
+<p>.dat files equal in number to the number of time steps specified in the
+.prj file for both the x and z direction</p>
 </div>
 
 
@@ -218,8 +233,8 @@ complex geometry between the layers.</span><a class="headerlink" href="#id1" tit
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="installation.html" class="btn btn-neutral float-right" title="2. Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="index.html" class="btn btn-neutral float-left" title="SeidarT 1.0" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="common_offset.html" class="btn btn-neutral float-right" title="common_offset" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="sourcefunction.html" class="btn btn-neutral float-left" title="sourcefunction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
