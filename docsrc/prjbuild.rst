@@ -3,6 +3,8 @@ prjbuild
 
 *generates project text file template*
 
+**Usage**
+
 .. code-block:: bash
 
     prjbuild -i [input_image].png -o [output_project_file].prj
@@ -19,3 +21,6 @@ prjbuild
 **Outputs**
 
 * ``-o``: .prj filename to be filled in based on site characteristics
+
+
+`Back to top ↑ <#top>`_

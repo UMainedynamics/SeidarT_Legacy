@@ -4,6 +4,7 @@ common_offset
 *A wrapper script to create a common offset survey. The survey is*
 *along the x-direction, but can be extended to other directions.*
 
+**Usage**
 
 .. code-block:: bash
 
@@ -36,3 +37,8 @@ common_offset
 **Outputs**
 
 Three CSV files, containing Ex, Ey, and Ez values
+
+
+
+
+`Back to top ↑ <#top>`_

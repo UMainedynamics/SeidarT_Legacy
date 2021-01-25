@@ -4,12 +4,14 @@ sourcefunction
 *Creates .dat files needed to define the source impulse.*
 *Does not need to be run if files are already present.*
 
+**Usage**
+
 .. code-block:: bash
 
     sourcefunction [-h] -p PROJECTFILE [-S SOURCETYPE] [-m MODELTYPE][-a AMPLITUDE]
 
-**Inputs**
 
+**Inputs**
 
 * ``-p``: Project file
 
@@ -55,3 +57,6 @@ sourcefunction
 **Outputs**
 
 .dat files in x, y, z for each model type
+
+
+`Back to top ↑ <#top>`_

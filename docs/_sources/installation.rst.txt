@@ -19,6 +19,8 @@ control of the installation process, you can use the
     if you do not already have it.
 
 
+`Back to top ↑ <#top>`_
+
 .. _auto-install:
 
 Auto-installation

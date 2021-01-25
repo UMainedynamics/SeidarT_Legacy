@@ -4,6 +4,8 @@ common_midpoint
 *creates receiver setup by defining final and middle locations,*
 *and receiver spacing across surface*
 
+**Usage**
+
 .. code-block:: bash
 
     common_midpoint -f [project_file].prj -t [X] -o [X] -d [distance between each receiver]
@@ -31,3 +33,6 @@ OPTIONAL: If wanting to run seismic instead of radar, add component ``-s`` to en
 **Outputs**
 
 
+
+
+`Back to top ↑ <#top>`_

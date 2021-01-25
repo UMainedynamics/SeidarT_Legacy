@@ -102,3 +102,8 @@ to view seismograms or radargrams but creating the GIF takes some time
 and we don't need that much resolution. If you would like to create
 the seismograms decrease the write parameter between 2-4.
 
+
+
+
+
+`Back to top ↑ <#top>`_

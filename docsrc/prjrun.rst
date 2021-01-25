@@ -4,6 +4,8 @@ prjrun
 *Performs single-shot wave propagation with receiver locations specified*
 *later in postprocessing.*
 
+**Usage**
+
 .. code-block:: bash
 
     prjrun [project_file].prj -M [n e s]
@@ -33,3 +35,6 @@ prjrun
 
 .dat files equal in number to the number of time steps specified in the
 .prj file for both the x and z direction
+
+
+`Back to top ↑ <#top>`_

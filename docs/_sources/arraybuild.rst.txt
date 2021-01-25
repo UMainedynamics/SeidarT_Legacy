@@ -4,9 +4,12 @@ arraybuild
 *generates a csv file (receiver_array.csv) with the timeseries in columns*
 *r each receiver for the given channel*
 
+**Usage**
+
 .. code-block:: bash
 
     arraybuild [-h] -p PRJFILE -r RCXFILE [-i INDEX] -c CHANNEL
+
 
 **Inputs**
 
@@ -47,3 +50,7 @@ arraybuild
 **Outputs**
 
 CSV of amplitude values for all pixels surveyed (*receiver_array.csv*)
+
+
+
+`Back to top ↑ <#top>`_

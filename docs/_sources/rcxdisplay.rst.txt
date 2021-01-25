@@ -3,6 +3,8 @@ rcxdisplay
 
 *Plot the amplitude timeseries based on a csv matrix*
 
+**Usage**
+
 .. code-block:: bash
 
     rcxdisplay -p [projectfile] -f [csv file with plottable output] -r [receiver location text file] -g [gain] -e [vertical exaggeration] -s [use if seismic]
@@ -21,3 +23,6 @@ rcxdisplay
 **Outputs**
 
 Plot of amplitude value across area surveyed
+
+
+`Back to top ↑ <#top>`_

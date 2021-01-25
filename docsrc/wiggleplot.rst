@@ -4,6 +4,8 @@ wiggleplot
 *Plot single, and select handful of amplitudes at specified X*
 *locations and all Z locations*
 
+**Usage**
+
 .. code-block:: bash
 
     wiggleplot -r receiver_array.csv -p [project_file].prj -g [gain] -d [amplitude column plotting frequency] -n [singular amplitude column to plot] -c [Ex Ez Vx Vz]
@@ -43,3 +45,6 @@ wiggleplot
 * Plot of the amplitude value of each pixel in a column
 * Plot of the amplitude value of every pixel in every nth column
   aligned across a graph
+
+
+`Back to top ↑ <#top>`_

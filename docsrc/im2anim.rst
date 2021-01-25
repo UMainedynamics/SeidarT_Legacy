@@ -4,6 +4,8 @@ im2anim
 Create animation of the propagation of waves across a 2-dimensional
 study area
 
+**Usage**
+
 .. code-block:: bash
 
     im2anim [project_file].prj -c [Ex Ez Vx Vz] -n [steps in time series] -f [frames per second]
@@ -37,3 +39,7 @@ study area
 
 Animation (.mp4 file) containing an image of the wave propagation at
 each frame
+
+
+
+`Back to top ↑ <#top>`_

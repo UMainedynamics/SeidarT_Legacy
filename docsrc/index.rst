@@ -96,14 +96,11 @@ The modules available in SeidarT are organized by type below.
     vtkbuild
 
 
-Function index
+Search
 ==================
 
 Need to look something up?
 
-* :ref:`genindex`
 * :ref:`search`
-
-.. * :ref:`modindex`
 
 `Back to top ↑ <#top>`_
