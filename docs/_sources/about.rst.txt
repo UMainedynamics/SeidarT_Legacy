@@ -4,7 +4,7 @@ About
 SeidarT is a powerful numerical modeling tool to calculate englacial
 mechanical and electromagnetic wave propagation.
 
-.. _example1:
+.. _sample_anim:
 .. figure:: _static/10Mhz_dx_1m_s2.gif
     :align:   center
 

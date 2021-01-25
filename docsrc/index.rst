@@ -7,7 +7,7 @@ SeidarT |version|
 
 .. only:: comment
 
-    the following are definitions for raw html to insert in |tags|
+    the following are definitions for raw html to insert in | substitution-tags |
 
 
 .. |github| raw:: html
