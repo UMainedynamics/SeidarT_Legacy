@@ -196,29 +196,47 @@
 <p><em>creates receiver setup by defining final and middle locations,</em>
 <em>and receiver spacing across surface</em></p>
 <p><strong>Usage</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>common_midpoint -f <span class="o">[</span>project_file<span class="o">]</span>.prj -t <span class="o">[</span>X<span class="o">]</span> -o <span class="o">[</span>X<span class="o">]</span> -d <span class="o">[</span>distance between each receiver<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>common_midpoint -p <span class="o">[</span>project_file<span class="o">]</span>.prj -t <span class="o">[</span>X<span class="o">]</span> -o <span class="o">[</span>X<span class="o">]</span> -d <span class="o">[</span>distance between each receiver<span class="o">]</span> <span class="o">[</span>-s<span class="o">]</span> <span class="o">[</span>-p<span class="o">]</span>
 </pre></div>
 </div>
 <p><strong>Inputs</strong></p>
 <ul>
-<li><p>.prj file</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-p</span> <span class="pre">FILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--prjfile</span> <span class="pre">FILE</span></code> .prj file</p>
 <blockquote>
-<div><p>Filled in, except for permittivity and stiffness coefficients, and dt</p>
+<div><p>The file path for the project file, completely filled in for the model
+type used except for permittivity and stiffness coefficients, and dt</p>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-t</span></code>: Location of the last receiver</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--total</span> <span class="pre">VALUE</span></code></p>
 <blockquote>
-<div><p>X pixel location ONLY, on the png file</p>
+<div><p>The terminal distance between the source and reciever</p>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-o</span></code>: Location of half of the distance between the first and last receiver</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--offset</span> <span class="pre">VALUE</span></code></p>
 <blockquote>
-<div><p>X pixel location ONLY, on the png file</p>
+<div><p>The initial source and reciever offset from the midpoint
+given in (+/- meters). A negative value means that the
+source is on the lookers left of the midpoint. The total
+source and reciever distance is 2*offset.</p>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-d</span></code>: Spacing between each receiver</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-d</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--delta</span> <span class="pre">VALUE</span></code></p>
+<blockquote>
+<div><p>Source and reciever step length (meters); total distance
+between the source and reciever is 2*delta*i + 2*offset.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s</span></code>, <code class="docutils literal notranslate"><span class="pre">--seismic</span></code></p>
+<blockquote>
+<div><p>(OPTIONAL) Specifier to run seismic common offset</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-p</span></code>, <code class="docutils literal notranslate"><span class="pre">--plot</span></code></p>
+<blockquote>
+<div><p>(OPTIONAL) Show plot. Default is none</p>
+</div></blockquote>
+</li>
 </ul>
-<p>OPTIONAL: If wanting to run seismic instead of radar, add component <code class="docutils literal notranslate"><span class="pre">-s</span></code> to end of code line</p>
 <p><strong>Outputs</strong></p>
 <p><a class="reference external" href="#top">Back to top ↑</a></p>
 </div>

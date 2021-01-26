@@ -8,9 +8,14 @@ prjrun
 
 .. code-block:: bash
 
-    prjrun [project_file].prj -M [n e s]
+    prjrun -p [project_file].prj -M [n e s]
 
 **Inputs**
+
+* ``-p FILE``, ``--prjfile FILE`` .prj file
+
+    The file path for the project file, completely filled in for the model
+    type used except for permittivity and stiffness coefficients, and dt
 
 * ``-i IMAGE_FILE``, ``--image_file IMAGE_FILE``
 
@@ -21,15 +26,11 @@ prjrun
     Name of the output file path with extension, .prj, and excluding
     the full path directory
 
-* .prj file 
+* ``-M [n e s]`` Which model to run
 
-    Manually complete all lines, except for permittivity and stiffness
-    coefficients, and dt.
-
-* ``-M``: Which model to run
-* ``n``: calculates only timesteps and material tensors
-* ``e``: electromagnetic propagation
-* ``s``: seismic wave propagation
+    * ``n`` calculates only timesteps and material tensors
+    * ``e`` electromagnetic propagation
+    * ``s`` seismic wave propagation
 
 **Outputs**
 

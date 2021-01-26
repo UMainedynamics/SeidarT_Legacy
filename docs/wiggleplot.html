@@ -203,33 +203,41 @@
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">-r</span> <span class="pre">receiver_array.csv</span></code></p>
 <blockquote>
-<div><p>Amplitude values for all pixels</p>
+<div><p>The file path for the receiver array data</p>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-p</span> <span class="pre">FILE</span></code>: .prj file</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-p</span> <span class="pre">FILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--prjfile</span> <span class="pre">FILE</span></code> .prj file</p>
 <blockquote>
-<div><p>Completely filled in for the model being run</p>
+<div><p>The file path for the project file, completely filled in for the model
+type used except for permittivity and stiffness coefficients, and dt</p>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-g</span> <span class="pre">VALUE</span></code>: Gain, horizontal exaggeration</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--gain</span> <span class="pre">VALUE</span></code></p>
 <blockquote>
-<div><p>1000-5000 usually works, but smaller values can too if the amplitude
-values are large</p>
+<div><p>The linear horizontal exaggeration of the
+amplitude values from the receiver array file</p>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-d</span> <span class="pre">VALUE</span></code>: Every nth column to pull to plot the amplitude values of</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-x</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--receiver_spacing</span></code></p>
 <blockquote>
-<div><p>5 or 10 usually works</p>
+<div><p>The horizontal distance between receivers, in meters</p>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">VALUE</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-d</span></code>, <code class="docutils literal notranslate"><span class="pre">--columns</span></code></p>
 <blockquote>
-<div><p>Which singular column to plot the amplitude values of</p>
+<div><p>The frequency at which columns are pulled for
+plotting from the csv file</p>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">[one</span> <span class="pre">of</span> <span class="pre">Ex</span> <span class="pre">Ez</span> <span class="pre">Vx</span> <span class="pre">Vz]</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--single_plot_dist</span></code></p>
 <blockquote>
-<div><p>Whether to plot the seismic or radar model in the X or Z direction
+<div><p>The distance along the image surface where the amplitude values will
+be plotted</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">[Ex</span> <span class="pre">Ez</span> <span class="pre">Vx</span> <span class="pre">Vz]</span></code>, <code class="docutils literal notranslate"><span class="pre">--channel</span> <span class="pre">[Ex</span> <span class="pre">Ez</span> <span class="pre">Vx</span> <span class="pre">Vz]</span></code></p>
+<blockquote>
+<div><p>The channel to query
 (<code class="docutils literal notranslate"><span class="pre">Vx</span></code> for the seismic x direction, for example)</p>
 </div></blockquote>
 </li>

@@ -96,8 +96,8 @@ The modules available in SeidarT are organized by type below.
     vtkbuild
 
 
-Search
-==================
+Search documentation
+======================
 
 Need to look something up?
 

@@ -196,11 +196,17 @@
 <p><em>Performs single-shot wave propagation with receiver locations specified</em>
 <em>later in postprocessing.</em></p>
 <p><strong>Usage</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>prjrun <span class="o">[</span>project_file<span class="o">]</span>.prj -M <span class="o">[</span>n e s<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>prjrun -p <span class="o">[</span>project_file<span class="o">]</span>.prj -M <span class="o">[</span>n e s<span class="o">]</span>
 </pre></div>
 </div>
 <p><strong>Inputs</strong></p>
 <ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">-p</span> <span class="pre">FILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--prjfile</span> <span class="pre">FILE</span></code> .prj file</p>
+<blockquote>
+<div><p>The file path for the project file, completely filled in for the model
+type used except for permittivity and stiffness coefficients, and dt</p>
+</div></blockquote>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-i</span> <span class="pre">IMAGE_FILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--image_file</span> <span class="pre">IMAGE_FILE</span></code></p>
 <blockquote>
 <div><p>The full file path for the .png image</p>
@@ -212,16 +218,15 @@
 the full path directory</p>
 </div></blockquote>
 </li>
-<li><p>.prj file</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-M</span> <span class="pre">[n</span> <span class="pre">e</span> <span class="pre">s]</span></code> Which model to run</p>
 <blockquote>
-<div><p>Manually complete all lines, except for permittivity and stiffness
-coefficients, and dt.</p>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">n</span></code> calculates only timesteps and material tensors</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">e</span></code> electromagnetic propagation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">s</span></code> seismic wave propagation</p></li>
+</ul>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-M</span></code>: Which model to run</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">n</span></code>: calculates only timesteps and material tensors</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">e</span></code>: electromagnetic propagation</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">s</span></code>: seismic wave propagation</p></li>
 </ul>
 <p><strong>Outputs</strong></p>
 <p>.dat files equal in number to the number of time steps specified in the

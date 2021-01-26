@@ -15,28 +15,35 @@ wiggleplot
 
 * ``-r receiver_array.csv``
 
-    Amplitude values for all pixels
+    The file path for the receiver array data
 
-* ``-p FILE``: .prj file
+* ``-p FILE``, ``--prjfile FILE`` .prj file
 
-    Completely filled in for the model being run
+    The file path for the project file, completely filled in for the model
+    type used except for permittivity and stiffness coefficients, and dt
 
-* ``-g VALUE``: Gain, horizontal exaggeration
+* ``-g VALUE``, ``--gain VALUE``
 
-    1000-5000 usually works, but smaller values can too if the amplitude
-    values are large
+    The linear horizontal exaggeration of the
+    amplitude values from the receiver array file
 
-* ``-d VALUE``: Every nth column to pull to plot the amplitude values of
+* ``-x VALUE``, ``--receiver_spacing``
 
-    5 or 10 usually works
+    The horizontal distance between receivers, in meters
 
-* ``-n VALUE``
+* ``-d``, ``--columns``
 
-    Which singular column to plot the amplitude values of
+    The frequency at which columns are pulled for
+    plotting from the csv file
 
-* ``-c [one of Ex Ez Vx Vz]``
+* ``-n VALUE``, ``--single_plot_dist``
 
-    Whether to plot the seismic or radar model in the X or Z direction
+    The distance along the image surface where the amplitude values will
+    be plotted
+
+* ``-c [Ex Ez Vx Vz]``, ``--channel [Ex Ez Vx Vz]``
+
+    The channel to query
     (``Vx`` for the seismic x direction, for example)
 
 

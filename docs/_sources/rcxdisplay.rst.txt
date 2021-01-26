@@ -12,12 +12,32 @@ rcxdisplay
 
 **Inputs**
 
-* ``-p`` project file (with the .prj extension)
-* ``-f`` commonly receiver_array.csv or Ex.co.csv
-* ``-r`` commonly receivers.xyz
-* ``-g`` gain
-* ``-e`` vertical exaggeration, commonly 0.1-0.05
-* ``-s`` use if the model is seismic rather than electromagnetic
+* ``-p FILE``, ``--prjfile FILE`` .prj file
+
+    The file path for the project file, completely filled in for the model
+    type used except for permittivity and stiffness coefficients, and dt
+
+* ``-f FILE``, ``--file FILE``
+
+    Path to the csv file with receiver timeseries data,
+    commonly receiver_array.csv or Ex.co.csv
+
+* ``-g VALUE``, ``--gain VALUE``
+
+    Gain (smoothing length)
+
+* ``-e value``, ``--exaggeration VALUE``
+
+    Vertical exaggeration. Set the aspect ratio between the x and y axes for
+    plotting. Default is 0.5
+
+* ``-s VALUE``, ``--seismic VALUE``
+
+    (OPTIONAL) Whether the model is seismic rather than electromagnetic
+
+    * A nonzero value sets this flag to True (i.e. mark as a seismic model)
+    * A value of 0 sets this (explicitly) to False (i.e. mark as an electromagnetic
+      model, this is the default)
 
 
 **Outputs**

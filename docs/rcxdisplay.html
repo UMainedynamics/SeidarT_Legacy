@@ -199,13 +199,40 @@
 </pre></div>
 </div>
 <p><strong>Inputs</strong></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">-p</span> <span class="pre">FILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--prjfile</span> <span class="pre">FILE</span></code> .prj file</p>
+<blockquote>
+<div><p>The file path for the project file, completely filled in for the model
+type used except for permittivity and stiffness coefficients, and dt</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f</span> <span class="pre">FILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--file</span> <span class="pre">FILE</span></code></p>
+<blockquote>
+<div><p>Path to the csv file with receiver timeseries data,
+commonly receiver_array.csv or Ex.co.csv</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--gain</span> <span class="pre">VALUE</span></code></p>
+<blockquote>
+<div><p>Gain (smoothing length)</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-e</span> <span class="pre">value</span></code>, <code class="docutils literal notranslate"><span class="pre">--exaggeration</span> <span class="pre">VALUE</span></code></p>
+<blockquote>
+<div><p>Vertical exaggeration. Set the aspect ratio between the x and y axes for
+plotting. Default is 0.5</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--seismic</span> <span class="pre">VALUE</span></code></p>
+<blockquote>
+<div><p>(OPTIONAL) Whether the model is seismic rather than electromagnetic</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">-p</span></code> project file (with the .prj extension)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-f</span></code> commonly receiver_array.csv or Ex.co.csv</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-r</span></code> commonly receivers.xyz</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-g</span></code> gain</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-e</span></code> vertical exaggeration, commonly 0.1-0.05</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-s</span></code> use if the model is seismic rather than electromagnetic</p></li>
+<li><p>A nonzero value sets this flag to True (i.e. mark as a seismic model)</p></li>
+<li><p>A value of 0 sets this (explicitly) to False (i.e. mark as an electromagnetic
+model, this is the default)</p></li>
+</ul>
+</div></blockquote>
+</li>
 </ul>
 <p><strong>Outputs</strong></p>
 <p>Plot of amplitude value across area surveyed</p>

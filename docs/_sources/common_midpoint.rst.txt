@@ -8,30 +8,42 @@ common_midpoint
 
 .. code-block:: bash
 
-    common_midpoint -f [project_file].prj -t [X] -o [X] -d [distance between each receiver]
+    common_midpoint -p [project_file].prj -t [X] -o [X] -d [distance between each receiver] [-s] [-p]
 
 
 **Inputs**
 
-* .prj file
+* ``-p FILE``, ``--prjfile FILE`` .prj file
 
-    Filled in, except for permittivity and stiffness coefficients, and dt
+    The file path for the project file, completely filled in for the model
+    type used except for permittivity and stiffness coefficients, and dt
 
-* ``-t``: Location of the last receiver
+* ``-t VALUE``, ``--total VALUE``
 
-    X pixel location ONLY, on the png file
+    The terminal distance between the source and reciever
 
-* ``-o``: Location of half of the distance between the first and last receiver 
+* ``-o VALUE``, ``--offset VALUE``
 
-    X pixel location ONLY, on the png file
+    The initial source and reciever offset from the midpoint
+    given in (+/- meters). A negative value means that the
+    source is on the lookers left of the midpoint. The total
+    source and reciever distance is 2*offset.
 
-* ``-d``: Spacing between each receiver
+* ``-d VALUE``, ``--delta VALUE``
 
-OPTIONAL: If wanting to run seismic instead of radar, add component ``-s`` to end of code line
+    Source and reciever step length (meters); total distance
+    between the source and reciever is 2*delta*i + 2*offset.
+
+* ``-s``, ``--seismic``
+
+    (OPTIONAL) Specifier to run seismic common offset
+
+* ``-p``, ``--plot``
+
+    (OPTIONAL) Show plot. Default is none
 
 
 **Outputs**
-
 
 
 
