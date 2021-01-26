@@ -37,8 +37,12 @@ study area
 
 **Outputs**
 
-Animation (.mp4 file) containing an image of the wave propagation at
-each frame
+``-o OUTPUT``, ``--output OUTPUT``
+
+    Specify the output format. 0 - GIF (default), 1 - MP4
+
+    Outputs an animation containing an image of the wave propagation
+    at each frame
 
 
 
