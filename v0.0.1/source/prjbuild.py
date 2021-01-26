@@ -32,7 +32,7 @@ parser.add_argument(
 
 # Get the arguments
 args = parser.parse_args()
-image_file = ''.join(args.image_file)
+image_file = ''.join(args.imagefile)
 project_file = ''.join(args.prjfile)
 
 new_line = '\n'
