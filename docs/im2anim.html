@@ -1,0 +1,290 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>im2anim &mdash; SeidarT  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="vtkbuild" href="vtkbuild.html" />
+    <link rel="prev" title="wiggleplot" href="wiggleplot.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SeidarT
+          
+
+          
+            
+            <img src="_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorial guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="about.html">1. About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">3. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">4. Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routines.html">5. Routines and wrappers</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extra material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Initialize</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="prjbuild.html">prjbuild</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Run</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="sourcefunction.html">sourcefunction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prjrun.html">prjrun</a></li>
+<li class="toctree-l1"><a class="reference internal" href="common_offset.html">common_offset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="common_midpoint.html">common_midpoint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="orientation_tensor.html">orientation_tensor</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Plot and visualize</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="arraybuild.html">arraybuild</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rcxdisplay.html">rcxdisplay</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wiggleplot.html">wiggleplot</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">im2anim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vtkbuild.html">vtkbuild</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SeidarT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>im2anim</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/im2anim.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="im2anim">
+<h1>im2anim<a class="headerlink" href="#im2anim" title="Permalink to this headline">¶</a></h1>
+<p>Create animation of the propagation of waves across a 2-dimensional
+study area</p>
+<p><strong>Usage</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>im2anim <span class="o">[</span>project_file<span class="o">]</span>.prj -c <span class="o">[</span>Ex Ez Vx Vz<span class="o">]</span> -n <span class="o">[</span>steps in <span class="nb">time</span> series<span class="o">]</span> -f <span class="o">[</span>frames per second<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Inputs</strong></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">-p</span> <span class="pre">FILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--prjfile</span> <span class="pre">FILE</span></code> .prj file</p>
+<blockquote>
+<div><p>The full file path for the project file, completely filled in for
+the model type used</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">[Ex</span> <span class="pre">Ez</span> <span class="pre">Vx</span> <span class="pre">Vz]</span></code>, <code class="docutils literal notranslate"><span class="pre">--channel</span> <span class="pre">[Ex</span> <span class="pre">Ez</span> <span class="pre">Vx</span> <span class="pre">Vz]</span></code></p>
+<blockquote>
+<div><p>Whether to plot the seismic or radar model in the X or Z direction</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--num_steps</span> <span class="pre">VALUE</span></code></p>
+<blockquote>
+<div><p>Number of steps in time series used, 50 works well</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--frames_per_second</span> <span class="pre">VALUE</span></code></p>
+<blockquote>
+<div><p>Number of frames per second, 10 works well</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--threshold</span> <span class="pre">VALUE</span></code></p>
+<blockquote>
+<div><p>(OPTIONAL) Set array values to zero when they go below a specific
+threshold</p>
+</div></blockquote>
+</li>
+</ul>
+<p><strong>Outputs</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">OUTPUT</span></code>, <code class="docutils literal notranslate"><span class="pre">--output</span> <span class="pre">OUTPUT</span></code></p>
+<blockquote>
+<div><p>Specify the output format. 0 - GIF (default), 1 - MP4</p>
+<p>Outputs an animation containing an image of the wave propagation
+at each frame</p>
+</div></blockquote>
+<p><a class="reference external" href="#top">Back to top ↑</a></p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="vtkbuild.html" class="btn btn-neutral float-right" title="vtkbuild" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="wiggleplot.html" class="btn btn-neutral float-left" title="wiggleplot" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Steven Bernsen.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
