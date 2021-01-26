@@ -76,7 +76,6 @@ cp exe/prjbuild.py bin/prjbuild
 cp exe/prjrun.py bin/prjrun
 cp exe/sourcefunction.py bin/sourcefunction
 cp materials/orientation_tensor.py bin/orientation_tensor
-# cp materials/class_definitions.py bin/class_definitions
 
 # Move the visualization tools
 cp vis/arraybuild.py bin/arraybuild
@@ -84,6 +83,9 @@ cp vis/rcxdisplay.py bin/rcxdisplay
 cp vis/im2anim.py bin/im2anim
 cp vis/vtkbuild.py bin/vtkbuild 
 cp vis/wiggleplot.py bin/wiggleplot 
+cp vis/imgen.py bin/imgen.py # The generalized image functions module
+cp vis/imvector.py bin/imvector
+cp vis/vectoranim.py bin/vectoranim
 
 # move the conversion scripts
 cp io/array2segy.py bin/array2segy
@@ -98,7 +100,10 @@ chmod +x bin/prjbuild \
         bin/im2anim \
         bin/orientation_tensor \
         bin/array2segy \
-	bin/vtkbuild 
+	      bin/vtkbuild \
+        bin/imvector \
+        bin/vectoranim
+
 
 
 # Now do the bash scripts
@@ -112,8 +117,7 @@ chmod +x bin/common_offset bin/common_midpoint bin/array2sac
 
 # ---------------- Move all other required files to bin folder ----------------
 cp materials/material_functions.py bin/material_functions.py
-cp materials/class_definitions.py bin/class_definitions.py
-cp vis/imdefinitions.py bin/imdefinitions.py 
+cp materials/definitions.py bin/definitions.py
 
 echo ""
 echo "Done."

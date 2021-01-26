@@ -9,7 +9,6 @@ import glob
 import argparse
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-import matplotlib.animation as anim
 from scipy.io import FortranFile
 from definitions import *
 
@@ -51,12 +50,12 @@ parser.add_argument(
 	how long it takes to compile the gif."""
 )
 
-parser.add_argument(
-    '-t', '--threshold', 
-    nargs = 1, type = float, required = False, default=[0.0001], 
-    help = """Set values to zero when they
-	below a specific threshold. Default = 0.0001"""
-)
+# parser.add_argument(
+#     '-t', '--threshold', 
+#     nargs = 1, type = float, required = False, default=[0.0001], 
+#     help = """Set values to zero when they
+# 	below a specific threshold. Default = 0.0001"""
+# )
 
 parser.add_argument(
     '-o', '--output', 
@@ -90,8 +89,8 @@ domain, material, seismic, electromag = loadproject(
 
 # Define some plotting inputs
 domain.cpml = int(domain.cpml[0])
-nx = domain.nx + 2*domain.cpml
-nz = domain.nz + 2*domain.cpml
+nx = int(domain.nx[0]) + 2*domain.cpml
+nz = int(domain.nz[0]) + 2*domain.cpml
 domain.dx = float(domain.dx[0])
 domain.dz = float(domain.dz[0])
 
@@ -112,7 +111,7 @@ extent = (
 
 # Create the gif object
 animated_gif = AnimatedGif( size=(nx, nz) )
-
+animated_gif.output_format = output_format
 # Load the model image
 # animated_gif.background = np.zeros( [nz, nx, 3] )
 animated_gif.background = mpimg.imread(domain.imfile)
@@ -120,19 +119,19 @@ animated_gif.background = mpimg.imread(domain.imfile)
 
 # Add the source location to plot
 if channel == 'Ex' or channel == 'Ez':
-	electromag.x = float(electromag.x[0])
-	electromag.z = float(electromag.z[0])
+    electromag.x = float(electromag.x[0])
+    electromag.z = float(electromag.z[0])
     ex = electromag.x/domain.dx + domain.cpml+1
     ez = electromag.z/domain.dz + domain.cpml+1
-	animated_gif.source_location = np.array([ex, ez])
-	dt = float(electromag.dt[0])
+    animated_gif.source_location = np.array([ex, ez])
+    dt = float(electromag.dt[0])
 else:
-	seismic.x = float(seismic.x[0])
-	seismic.z = float(seismic.z[0])
+    seismic.x = float(seismic.x[0])
+    seismic.z = float(seismic.z[0])
     sx = seismic.x/domain.dx + domain.cpml+1
     sz = seismic.z/domain.dz + domain.cpml+1
-	animated_gif.source_location = np.array([sx, sz])
-	dt = float(seismic.dt[0])
+    animated_gif.source_location = np.array([sx, sz])
+    dt = float(seismic.dt[0])
 
 print('Creating GIF.')
 
