@@ -12,13 +12,15 @@ import matplotlib.image as mpimg
 
 
 # ============================ Create the objects =============================
-class VectorImage:
+class FDTDImage:
     def __init__(self, prjfile, inputdat):
         self.prjfile = prjfile
         self.x = None
         self.z = None
+        self.velocityfile = inputdat
         self.xvelocityfile = 'Vx' + inputdat[2:]
         self.zvelocityfile = 'Vz' + inputdat[2:]
+        self.channel = inputdat[0:2]
         self.srcx = None
         self.srcz = None
         self.extent = None
@@ -46,6 +48,12 @@ class VectorImage:
         nz = int(domain.nz[0]) + 2*cpml
         dx = float(domain.dx[0])
         dz = float(domain.dz[0])
+        # The EM code uses a slightly different mesh
+        if self.channel == 'Ex':
+            nx = nx - 1
+        if self.channel == 'Ez':
+            nz = nz - 1
+        
         self.extent = (
             -cpml, 
             (nx-cpml), 
@@ -53,10 +61,14 @@ class VectorImage:
             -cpml
         )
 
-        self.srcx = float(seismic.x[0])/dx + cpml + 1
-        self.srcz = float(seismic.z[0])/dz + cpml + 1
+        if self.channel == 'Ex' or self.channel == 'Ez':
+            self.srcx = float(electromag.x[0])/dx + cpml + 1
+            self.srcz = float(electromag.z[0])/dz + cpml + 1
+        else:    
+            self.srcx = float(seismic.x[0])/dx + cpml + 1
+            self.srcz = float(seismic.z[0])/dz + cpml + 1
         
-        # Define tick locations
+        # Define tick locations for plotting
         self.xticklocs = np.array(
             [
                 0, 
@@ -75,6 +87,7 @@ class VectorImage:
                 nz - 2*cpml
             ]
         )
+        # Load the model image and assign variables
         self.background = mpimg.imread(domain.imfile)
         self.cpml = cpml
         self.nx = nx 
@@ -105,12 +118,7 @@ class VectorImage:
         self.ax.imshow(
             self.background,
             alpha = 0.7, 
-            extent=[
-                0,
-                self.nx-2*self.cpml, 
-                self.nz-2*self.cpml, 
-                0
-            ]
+            extent=[0, self.nx-2*self.cpml, self.nz-2*self.cpml, 0]
         )
         
         # add quiver
@@ -122,7 +130,26 @@ class VectorImage:
             scale = 16, 
             minlength = 0.1
         )
+    
+    def magnitudeplot(self, papercolumnwidth = 7.2):
+        dat = datinput(self.velocityfile, self.nx, self.nz)
         
+        self.fig = plt.figure(
+            figsize = [papercolumnwidth, self.nz*papercolumnwidth/self.nx]
+        )
+        self.ax = plt.gca()
+        self.ax.imshow(
+            dat, 
+            cmap = 'seismic',
+            extent = [0, self.nx, self.nz, 0]
+        )
+        self.ax.imshow(
+            self.background,
+            alpha = 0.3,
+            extent = [0, self.nx-2*self.cpml,self.nz-2*self.cpml, 0]
+        )
+        
+    
     # -------------------------------------------------------------------------
     def addlabels(self):
         # Set axes labels

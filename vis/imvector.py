@@ -33,7 +33,7 @@ args = parser.parse_args()
 prjfile = ''.join(args.prjfile)
 velocityfile = ''.join(args.velocity)
 
-vi = VectorImage(prjfile, velocityfile)
+vi = FDTDImage(prjfile, velocityfile)
 vi.getprjvals()
 vi.quiverplot()
 vi.addlabels()

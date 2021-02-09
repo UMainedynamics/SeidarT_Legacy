@@ -44,7 +44,7 @@ print('Creating PNG snapshots')
 n=num_steps
 for fn in files:
     if n == num_steps:
-        vi = VectorImage(prjfile, fn)
+        vi = FDTDImage(prjfile, fn)
         vi.getprjvals()
         vi.quiverplot(papercolumnwidth=10)
         vi.addlabels()
