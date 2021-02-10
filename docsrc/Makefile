@@ -6,6 +6,7 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 SOURCEDIR     = .
 BUILDDIR      = _build
+CPDIR		  = ../docs
 
 # Put it first so that "make" without argument is like "make help".
 help:
@@ -13,9 +14,16 @@ help:
 
 .PHONY: help Makefile
 
+pdf:
+	@mkdir -p "$(BUILDDIR)/pdf"
+	@$(SPHINXBUILD) -b pdf "$(SOURCEDIR)" "$(BUILDDIR)/pdf"
+
 github:
 	@make html
-	@cp -a _build/html/. ../docs
+	@cp -a "$(BUILDDIR)/html/." "$(CPDIR)"
+	@make pdf
+	@cp -a "$(BUILDDIR)/pdf/." "$(CPDIR)"
+
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
