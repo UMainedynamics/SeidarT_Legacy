@@ -5,9 +5,7 @@ SeidarT |version|
 | **Multi-layer Fortran-based geophysical wave modeling**
 | *by Steven Bernsen and Christopher Gerbi*
 
-.. only:: comment
-
-    the following are definitions for raw html to insert in | substitution-tags |
+.. the following are definitions for raw html to insert in | substitution-tags |
 
 
 .. |github| raw:: html
@@ -103,4 +101,8 @@ Need to look something up?
 
 * :ref:`search`
 
-`Back to top ↑ <#top>`_
+.. |top| raw:: html
+
+   <a href="#top">Back to top ↑</a>
+
+|top|

@@ -19,7 +19,11 @@ control of the installation process, you can use the
     if you do not already have it.
 
 
-`Back to top ↑ <#top>`_
+.. |top| raw:: html
+
+   <a href="#top">Back to top ↑</a>
+
+|top|
 
 .. _auto-install:
 
@@ -84,7 +88,7 @@ environment.
 You should now be able to move on to the :doc:`getting_started`
 section.
 
-`Back to top ↑ <#top>`_
+|top|
 
 .. _manual-install:
 
@@ -195,5 +199,5 @@ and additionally, these Python dependencies are also required:
 * :ref:`search`
 
 
-`Back to top ↑ <#top>`_
+|top|
 

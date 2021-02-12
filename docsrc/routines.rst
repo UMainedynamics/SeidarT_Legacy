@@ -75,7 +75,11 @@ orientation of the fabric.
 See :doc:`orientation_tensor`.
 
 
-`Back to top ↑ <#top>`_
+.. |top| raw:: html
+
+   <a href="#top">Back to top ↑</a>
+
+|top|
 
 Wrappers
 *************************
@@ -105,3 +109,7 @@ See :doc:`common_midpoint`.
     to be easier to adjust but to change this value edit the line
     ``ax.set_aspect(aspect=??)`` in ``arrayplot.py`` and ``codisplay.py``
     then run the plotting scripts individually not the wrapper scripts.
+
+
+
+|top|

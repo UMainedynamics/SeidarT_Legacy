@@ -23,4 +23,8 @@ prjbuild
 * ``-o``: .prj filename to be filled in based on site characteristics
 
 
-`Back to top ↑ <#top>`_
+.. |top| raw:: html
+
+   <a href="#top">Back to top ↑</a>
+
+|top|

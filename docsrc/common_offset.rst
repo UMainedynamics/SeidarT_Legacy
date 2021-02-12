@@ -41,4 +41,8 @@ Three CSV files, containing Ex, Ey, and Ez values
 
 
 
-`Back to top ↑ <#top>`_
+.. |top| raw:: html
+
+   <a href="#top">Back to top ↑</a>
+
+|top|

@@ -45,4 +45,8 @@ orientation_tensor
 * ``-o FILE``, ``--outputfile FILE``
 
 
-`Back to top ↑ <#top>`_
+.. |top| raw:: html
+
+   <a href="#top">Back to top ↑</a>
+
+|top|

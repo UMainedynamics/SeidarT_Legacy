@@ -38,4 +38,8 @@ prjrun
 .prj file for both the x and z direction
 
 
-`Back to top ↑ <#top>`_
+.. |top| raw:: html
+
+   <a href="#top">Back to top ↑</a>
+
+|top|

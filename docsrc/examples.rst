@@ -106,4 +106,8 @@ the seismograms decrease the write parameter between 2-4.
 
 
 
-`Back to top ↑ <#top>`_
+.. |top| raw:: html
+
+   <a href="#top">Back to top ↑</a>
+
+|top|

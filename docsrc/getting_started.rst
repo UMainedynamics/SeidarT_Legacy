@@ -27,7 +27,11 @@ Understanding model inputs
     the prjbuild command.
 
 
-`Back to top ↑ <#top>`_
+.. |top| raw:: html
+
+   <a href="#top">Back to top ↑</a>
+
+|top|
 
 Initiating a project
 ************************
@@ -85,7 +89,7 @@ arguments.
 Using the text editor of choice, you can edit the .prj file.
 
 
-`Back to top ↑ <#top>`_
+|top|
 
 TODO: Describe what all is in this file?
 *******************************************
@@ -94,4 +98,4 @@ TODO: Describe what all is in this file?
 
 
 
-`Back to top ↑ <#top>`_
+|top|
