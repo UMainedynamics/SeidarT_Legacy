@@ -67,7 +67,7 @@ parser.add_argument(
 args = parser.parse_args()
 project_file = ''.join(args.prjfile)
 channel = ''.join(args.channel)
-delay = args.delay[0]
+# delay = args.delay[0]
 num_steps = args.num_steps[0]
 
 
