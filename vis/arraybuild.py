@@ -6,9 +6,7 @@ import numpy as np
 import argparse
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-
-from imdefinitions import *
-from class_definitions import *
+from definitions import *
 
 # -------------------------- Command Line Arguments ---------------------------
 parser = argparse.ArgumentParser(description="""This program creates a csv file of time series for each receiver location
@@ -41,7 +39,7 @@ parser.add_argument(
 
 # Get the arguments
 args = parser.parse_args()
-project_file = ''.join(args.prjfile)
+prjfile = ''.join(args.prjfile)
 receiver_file = ''.join(args.rcxfile)
 channel = ''.join(args.channel)
 rind = args.index[0] == 0
@@ -49,7 +47,7 @@ rind = args.index[0] == 0
 # ==================== Create the object and assign inputs ====================
 # We don't need the material values
 domain, material, seismic, electromag = loadproject(
-    project_file,
+    prjfile,
     Domain(),
     Material(),
     Model(),

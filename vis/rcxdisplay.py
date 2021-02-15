@@ -15,8 +15,7 @@ import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-
-from class_definitions import *
+from definitions import *
 
 # -------------------------- Command Line Arguments ---------------------------
 parser = argparse.ArgumentParser(
@@ -68,7 +67,7 @@ parser.add_argument(
 
 
 args = parser.parse_args()
-project_file = ''.join(args.prjfile)
+prjfile = ''.join(args.prjfile)
 cofile = ''.join(args.file)
 gain = args.gain[0]
 exaggeration = args.exaggeration[0]
@@ -76,7 +75,7 @@ seismic = args.seismic[0] == 1
 #survey_type = ''.join(args.surveytype)
 
 
-# project_file = 'easy_greenland.prj'
+# prjfile = 'easy_greenland.prj'
 # cofile = 'receiver_array.csv'
 # gain = 101
 # exaggeration = 0.25
@@ -84,7 +83,7 @@ seismic = args.seismic[0] == 1
 # -----------------------------------------------------------------------------
 # Load the values from the project file
 domain, material, seismic, electromag = loadproject(
-    project_file,
+    prjfile,
     Domain(),
     Material(),
     Model(),

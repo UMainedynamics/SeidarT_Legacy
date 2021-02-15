@@ -6,7 +6,7 @@ frequency f0, but we can also generate other wavelets and chirplets."""
 import argparse
 import numpy as np 
 
-from class_definitions import *
+from definitions import *
 from scipy import signal
 import matplotlib.pyplot as plt 
 

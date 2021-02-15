@@ -43,9 +43,9 @@ parser.add_argument(
 
 # Get the arguments
 args = parser.parse_args()
-project_file = ''.join(args.prjfile)
+prjfile = ''.join(args.prjfile)
 model_type = ''.join(args.model)
-pwd = os.path.dirname(project_file)
+pwd = os.path.dirname(prjfile)
 
 # ------------- Globals ----------------
 clight = 2.99792458e8 # In general
@@ -53,7 +53,7 @@ clight = 2.99792458e8 # In general
 # ============================ Create the objects =============================
 # Let's initiate the domain
 domain, material, seismic, electromag = loadproject(
-    project_file,
+    prjfile,
     Domain(), 
     Material(),
     Model(),
@@ -103,7 +103,7 @@ if seismic.exit_status == 0 and material.material_flag:
     dt = np.min([domain.dx, domain.dz]) / np.sqrt(3.0 * tensor.max()/max_rho )
     
     # We're going to find the lines marked 'C' and input the values there
-    append_coefficients(project_file, tensor, CP = 'C', dt = dt)
+    append_coefficients(prjfile, tensor, CP = 'C', dt = dt)
     print("Finished. Appending to project file.\n")
 
 if electromag.exit_status == 0 and material.material_flag:
@@ -120,7 +120,7 @@ if electromag.exit_status == 0 and material.material_flag:
     )
     dt = np.min([domain.dx, domain.dz])/(2.0*clight)
     
-    append_coefficients(project_file, tensor, CP = 'P', dt = dt)
+    append_coefficients(prjfile, tensor, CP = 'P', dt = dt)
     print("Finished. Appending to project file.\n")
 
 
