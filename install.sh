@@ -86,6 +86,7 @@ cp vis/wiggleplot.py bin/wiggleplot
 cp vis/imgen.py bin/imgen.py # The generalized image functions module
 cp vis/imvector.py bin/imvector
 cp vis/vectoranim.py bin/vectoranim
+cp vis/implot.py bin/implot
 
 # move the conversion scripts
 cp io/array2segy.py bin/array2segy
@@ -102,7 +103,8 @@ chmod +x bin/prjbuild \
         bin/array2segy \
 	      bin/vtkbuild \
         bin/imvector \
-        bin/vectoranim
+        bin/vectoranim \
+        bin/implot
 
 
 
@@ -118,7 +120,6 @@ chmod +x bin/common_offset bin/common_midpoint bin/array2sac
 # ---------------- Move all other required files to bin folder ----------------
 cp materials/material_functions.py bin/material_functions.py
 cp materials/definitions.py bin/definitions.py
-cp vis/implot.py bin/implot.py 
 
 echo ""
 echo "Done."
