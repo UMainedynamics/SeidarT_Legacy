@@ -118,6 +118,7 @@ chmod +x bin/common_offset bin/common_midpoint bin/array2sac
 # ---------------- Move all other required files to bin folder ----------------
 cp materials/material_functions.py bin/material_functions.py
 cp materials/definitions.py bin/definitions.py
+cp vis/implot.py bin/implot.py 
 
 echo ""
 echo "Done."
