@@ -86,7 +86,7 @@ for fn in files:
 
 print('Creating the GIF')
 shellcommand = 'convert -delay ' + \
-    delay + ' -loop 0 magnitude.*.png ' + \
+    delay + ' -loop 0 magnitude.' + channel + '*.png ' + \
         channel + '.gif'
 call(shellcommand, shell = True)
 
