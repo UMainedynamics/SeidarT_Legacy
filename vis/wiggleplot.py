@@ -87,12 +87,12 @@ class Array:
         self.build()
     
     def build(self):
-		# Initialize variables
-		self.dt = None
-		self.dr = None
-		self.timeseries = None
-		self.t = None
-		self.channel= None
+        # Initialize variables
+        self.dt = None
+        self.dr = None
+        self.timeseries = None
+        self.t = None
+        self.channel= None
 
 array = Array()
 array.channel = channel
