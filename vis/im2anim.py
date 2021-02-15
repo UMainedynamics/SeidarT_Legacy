@@ -10,7 +10,8 @@ import argparse
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from scipy.io import FortranFile
-from definitions import *
+# from definitions import *
+from imgen import *
 
 # -------------------------- Command Line Arguments ---------------------------
 
