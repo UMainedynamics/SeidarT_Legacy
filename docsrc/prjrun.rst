@@ -8,7 +8,7 @@ prjrun
 
 .. code-block:: bash
 
-    prjrun -p [project_file].prj -M [n e s]
+    prjrun -p [project_file].prj -m [n e s]
 
 **Inputs**
 

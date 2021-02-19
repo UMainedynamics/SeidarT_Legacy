@@ -8,7 +8,7 @@ study area
 
 .. code-block:: bash
 
-    im2anim [project_file].prj -c [Ex Ez Vx Vz] -n [steps in time series] -f [frames per second]
+    im2anim -p [project_file].prj -c [Ex Ez Vx Vz] -n [steps in time series] -f [frames per second]
 
 
 **Inputs**
