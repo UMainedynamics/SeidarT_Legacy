@@ -85,9 +85,10 @@ class Array:
     def __init__(self):
         super().__init__()
         self.build()
-    
+
     def build(self):
-        # Initialize variables
+      
+# Initialize variables
         self.dt = None
         self.dr = None
         self.timeseries = None

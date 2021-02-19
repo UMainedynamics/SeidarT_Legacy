@@ -59,7 +59,7 @@ domain, material, seismic, electromag = loadproject(
 domain.cpml = int(domain.cpml[0])
 nx = int(domain.nx[0]) + 2*domain.cpml
 ny = int(domain.ny[0]) + 2*domain.cpml
-nz = int(domain.nz[0]) + 2*cpml
+nz = int(domain.nz[0]) + 2*domain.cpml
 ncells = nx*ny*nz
 
 # Create the coordinate system
@@ -84,8 +84,8 @@ for i in range(0, nx):
 # Add the source location to plot
 if channel == 'Ex' or channel == 'Ey' or channel == 'Ez':
     electromag.x = float(electromag.x[0])
-	electromag.y = float(electromag.y[0])
-	electromag.z = float(electromag.z[0])
+    electromag.y = float(electromag.y[0])
+    electromag.z = float(electromag.z[0])
     ex = electromag.x/domain.dx + domain.cpml+1
     ey = electromag.y/domain.dy + domain.cpml+1
     ez = electromag.z/domain.dz + domain.cpml+1
@@ -93,8 +93,8 @@ if channel == 'Ex' or channel == 'Ey' or channel == 'Ez':
     dt = float(electromag.dt[0])
 else:
     seismic.x = float(seismic.x[0])
-	seismic.y = float(seismic.y[0])
-	seismic.z = float(seismic.z[0])
+    seismic.y = float(seismic.y[0])
+    seismic.z = float(seismic.z[0])
     sx = seismic.x/domain.dx + domain.cpml+1
     sy = seismic.y/domain.dy + domain.cpml+1
     sz = seismic.z/domain.dz + domain.cpml+1
@@ -111,17 +111,17 @@ files.sort()
 # There are slight differences between the seismic and radar domains in
 # terms of staggered grid geometry
 if channel == 'Ex':
-	NX = nz
-	NY = ny
-	NZ = nx-1
+    NX = nz
+    NY = ny
+    NZ = nx-1
 elif channel == 'Ey':
-	NX = nz
-	NY = ny-1
-	NZ = nx
+    NX = nz
+    NY = ny-1
+    NZ = nx
 elif channel == 'Ez':
-	NX = nz-1
-	NY = ny
-	NZ = nx
+    NX = nz-1
+    NY = ny
+    NZ = nx
 else:
     NX = nz
     NY = ny
