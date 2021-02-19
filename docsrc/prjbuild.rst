@@ -7,7 +7,7 @@ prjbuild
 
 .. code-block:: bash
 
-    prjbuild -i [input_image].png -o [output_project_file].prj
+    prjbuild -i [input_image].png -p [output_project_file].prj
 
 **Inputs**
 
