@@ -10,7 +10,8 @@ import argparse
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from scipy.io import FortranFile
-from definitions import *
+# from definitions import *
+from imgen import *
 
 # -------------------------- Command Line Arguments ---------------------------
 
@@ -45,28 +46,18 @@ parser.add_argument(
 	seismic velocities, respectively."""
 )
 
-# parser.add_argument(
-#     '-d', '--delay', 
-#     nargs = 1, type = int, required = False, default = 1, 
-#     help = """The amount of delay between two frames"""
-# )
-
 parser.add_argument(
-    '-n', '--num_steps', 
-    nargs = 1, type = int, required = True, 
-    help = """The time step interval between the images that
-	are going to be used. Every time step is written to file which means that
-	we can take any equally spaced images to create the gif with an
-	appropriate resolution, time to compute, and file size. For example,
-	n=20 means that every 20 images will be used thus significantly reducing
-	how long it takes to compile the gif."""
+    '-d', '--delay', 
+    nargs = 1, type = int, required = False, default = [1], 
+    help = """The amount of delay between two frames"""
 )
+
 
 # Get the arguments
 args = parser.parse_args()
-project_file = ''.join(args.prjfile)
+prjfile = ''.join(args.prjfile)
 channel = ''.join(args.channel)
-delay = args.delay[0]
+delay = str(args.delay[0])
 num_steps = args.num_steps[0]
 
 
@@ -95,7 +86,7 @@ for fn in files:
 
 print('Creating the GIF')
 shellcommand = 'convert -delay ' + \
-    delay + ' -loop 0 magnitude.*.plot.png ' + \
+    delay + ' -loop 0 magnitude.' + channel + '*.png ' + \
         channel + '.gif'
 call(shellcommand, shell = True)
 

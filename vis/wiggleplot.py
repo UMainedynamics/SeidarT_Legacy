@@ -87,6 +87,7 @@ class Array:
         self.build()
 
     def build(self):
+      
 # Initialize variables
         self.dt = None
         self.dr = None
