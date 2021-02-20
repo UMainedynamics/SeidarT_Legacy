@@ -12,7 +12,7 @@ import matplotlib.image as mpimg
 from scipy.io import FortranFile
 # from definitions import *
 from imgen import *
-
+import os
 # -------------------------- Command Line Arguments ---------------------------
 
 parser = argparse.ArgumentParser(description="""This program builds a gif from
@@ -52,6 +52,13 @@ parser.add_argument(
     help = """The amount of delay between two frames"""
 )
 
+parser.add_argument(
+    '-a', '--alpha',
+    nargs = 1, type = float, required = False, default = [0.3],
+    help = """(OPTIONAL FLOAT [0,1]) Change the transparency of the model 
+    plotted in the background; default = 0.3. Zeros is full transparency, 1 is 
+    CIA transparency."""
+)
 
 # Get the arguments
 args = parser.parse_args()
@@ -59,6 +66,7 @@ prjfile = ''.join(args.prjfile)
 channel = ''.join(args.channel)
 delay = str(args.delay[0])
 num_steps = args.num_steps[0]
+alpha = min([1, args.alpha[0]] ) 
 
 
 # =============================================================================
@@ -74,7 +82,7 @@ for fn in files:
     if n == num_steps:
         mag = FDTDImage(prjfile, fn)
         mag.getprjvals()
-        mag.magnitudeplot()
+        mag.magnitudeplot(alpha = alpha)
         mag.addlabels()
         mag.plotfile = 'magnitude.' + fn[:-3] + '.png'
         plt.savefig(mag.plotfile)
@@ -85,8 +93,13 @@ for fn in files:
 
 
 print('Creating the GIF')
+# Use imagemagick via shell command to create the gif
 shellcommand = 'convert -delay ' + \
     delay + ' -loop 0 magnitude.' + channel + '*.png ' + \
         channel + '.gif'
 call(shellcommand, shell = True)
 
+# Remove the png files 
+for filepath in glob.glob('magnitude.' + channel + '*.png'):
+    os.remove(filepath)
+        
