@@ -11,7 +11,7 @@ Using SeidarT follows a relatively simple workflow.
   * A 2D image saved in *png* format.
   * A *csv* file listing the X,Y,Z coordinates of receivers for your survey
   * If your material is anisotropic, you need a file in the format delimited file specifying the
-  
+
   Euler angles for a number of crystals, with one triplet per line. See an example orientation
   file and/or generate one using the ``orientation_tensor`` function.
 
@@ -20,6 +20,8 @@ Using SeidarT follows a relatively simple workflow.
 #. Choose the style of survey you want to do [single shot, common offset, common midpoint, or (in development) polarimetric] and run the calculations.
 #. For single shot, you can create an animation of the wave propagation (``im2anim`` for 2D or ``vtkbuild`` for 2.5D).
 #. Display your results as radar- or seismograms, or wiggle plots. You can also save the timeseries-receiver data in a *csv* file for further processing in different software.
+
+Output from the seismic model is m/s and from the radar model is 
 
 Files to generate or edit
 ******************************

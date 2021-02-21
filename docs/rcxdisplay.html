@@ -98,32 +98,27 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">3. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">4. Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="routines.html">5. Routines and wrappers</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Extra material</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Initialize</span></p>
-<ul>
+<p class="caption"><span class="caption-text">Command reference</span></p>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="prjbuild.html">prjbuild</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Run</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="sourcefunction.html">sourcefunction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prjrun.html">prjrun</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_offset.html">common_offset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_midpoint.html">common_midpoint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="orientation_tensor.html">orientation_tensor</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Plot and visualize</span></p>
-<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="arraybuild.html">arraybuild</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">rcxdisplay</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wiggleplot.html">wiggleplot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="im2anim.html">im2anim</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vtkbuild.html">vtkbuild</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extra material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="png-creation.html">Creating a png file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="materials.html">Currently available materials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="units.html">Units</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
 </ul>
 
             
@@ -195,31 +190,30 @@
 <h1>rcxdisplay<a class="headerlink" href="#rcxdisplay" title="Permalink to this headline">¶</a></h1>
 <p><em>Plot the amplitude timeseries based on a csv matrix</em></p>
 <p><strong>Usage</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>rcxdisplay -p <span class="o">[</span>projectfile<span class="o">]</span> -f <span class="o">[</span>csv file with plottable output<span class="o">]</span> -r <span class="o">[</span>receiver location text file<span class="o">]</span> -g <span class="o">[</span>gain<span class="o">]</span> -e <span class="o">[</span>vertical exaggeration<span class="o">]</span> -s <span class="o">[</span>use <span class="k">if</span> seismic<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>rcxdisplay -p PRJFILE -f DATAFILE -r RCXFILE -g VALUE -e VALUE -s <span class="o">[</span>OPTIONAL<span class="o">]</span>
 </pre></div>
 </div>
 <p><strong>Inputs</strong></p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">-p</span> <span class="pre">FILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--prjfile</span> <span class="pre">FILE</span></code> .prj file</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-p</span> <span class="pre">PRJFILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--prjfile</span> <span class="pre">PRJFILE</span></code> .prj file</p>
 <blockquote>
-<div><p>The file path for the project file, completely filled in for the model
-type used except for permittivity and stiffness coefficients, and dt</p>
+<div><p>The file path for the project file.</p>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-f</span> <span class="pre">FILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--file</span> <span class="pre">FILE</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f</span> <span class="pre">DATAFILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--file</span> <span class="pre">DATAFILE</span></code></p>
 <blockquote>
 <div><p>Path to the csv file with receiver timeseries data,
-commonly receiver_array.csv or Ex.co.csv</p>
+commonly receiver_array.csv or [Vx Vy Vz Ex Ey Ez].co.csv. See arraybuild for how to generate this file for single shots.</p>
 </div></blockquote>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-g</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--gain</span> <span class="pre">VALUE</span></code></p>
 <blockquote>
-<div><p>Gain (smoothing length)</p>
+<div><p>Gain (smoothing length). Possible values are 1 through the number of timesteps.</p>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-e</span> <span class="pre">value</span></code>, <code class="docutils literal notranslate"><span class="pre">--exaggeration</span> <span class="pre">VALUE</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-e</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--exaggeration</span> <span class="pre">VALUE</span></code></p>
 <blockquote>
-<div><p>Vertical exaggeration. Set the aspect ratio between the x and y axes for
+<div><p>Vertical exaggeration. Set the aspect ratio between the x and z axes for
 plotting. Default is 0.5</p>
 </div></blockquote>
 </li>
@@ -235,7 +229,7 @@ model, this is the default)</p></li>
 </li>
 </ul>
 <p><strong>Outputs</strong></p>
-<p>Plot of amplitude value across area surveyed</p>
+<p>Plot of amplitude across area surveyed.</p>
 <p><a class="reference external" href="#top">Back to top ↑</a></p>
 </div>
 

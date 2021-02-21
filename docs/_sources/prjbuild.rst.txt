@@ -7,7 +7,7 @@ prjbuild
 
 .. code-block:: bash
 
-    prjbuild -i [input_image].png -o [output_project_file].prj
+    prjbuild -i IMAGEFILE -p PRJFILE
 
 **Inputs**
 
@@ -20,7 +20,7 @@ prjbuild
 
 **Outputs**
 
-* ``-o``: .prj filename to be filled in based on site characteristics
+* ``-o``: .prj filename, including extension, to be filled in based on site characteristics.
 
 
 `Back to top ↑ <#top>`_

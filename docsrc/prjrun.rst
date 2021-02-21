@@ -8,34 +8,23 @@ prjrun
 
 .. code-block:: bash
 
-    prjrun -p [project_file].prj -m [n e s]
+    prjrun -p PRJFILE -m [n e s]
 
 **Inputs**
 
-* ``-p FILE``, ``--prjfile FILE`` .prj file
+* ``-p PRJFILE``, ``--prjfile PRJFILE`` .prj file
 
     The file path for the project file, completely filled in for the model
     type used except for permittivity and stiffness coefficients, and dt
 
-* ``-i IMAGE_FILE``, ``--image_file IMAGE_FILE``
-
-    The full file path for the .png image
-
-* ``-o PROJECT_FILE``, ``--project_file PROJECT_FILE``
-
-    Name of the output file path with extension, .prj, and excluding
-    the full path directory
-
 * ``-M [n e s]`` Which model to run
 
-    * ``n`` calculates only timesteps and material tensors
+    * ``n`` calculates only timesteps and material tensors, necessary before running sourcefunction
     * ``e`` electromagnetic propagation
     * ``s`` seismic wave propagation
 
 **Outputs**
 
-.dat files equal in number to the number of time steps specified in the
-.prj file for both the x and z direction
-
+.dat files equal in number to the number of time steps specified in the .prj file.
 
 `Back to top ↑ <#top>`_

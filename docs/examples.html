@@ -39,7 +39,7 @@
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="5. Routines and wrappers" href="routines.html" />
+    <link rel="next" title="prjbuild" href="prjbuild.html" />
     <link rel="prev" title="3. Getting Started" href="getting_started.html" /> 
 </head>
 
@@ -98,35 +98,32 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">3. Getting Started</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">4. Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#shapes-model">4.1. Shapes model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#shapes-model-create-a-2-5d-animation-of-wave-propagation">4.1. Shapes model: create a 2.5D animation of wave propagation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fill-model-create-a-single-shot-seismogram-and-wiggleplot">4.2. Fill model: create a single shot seismogram and wiggleplot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fill-model-create-a-common-offset-radar-profile">4.3. Fill model: create a common offset radar profile</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="routines.html">5. Routines and wrappers</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Extra material</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Initialize</span></p>
+<p class="caption"><span class="caption-text">Command reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="prjbuild.html">prjbuild</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Run</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="sourcefunction.html">sourcefunction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prjrun.html">prjrun</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_offset.html">common_offset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_midpoint.html">common_midpoint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="orientation_tensor.html">orientation_tensor</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Plot and visualize</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="arraybuild.html">arraybuild</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rcxdisplay.html">rcxdisplay</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wiggleplot.html">wiggleplot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="im2anim.html">im2anim</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vtkbuild.html">vtkbuild</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extra material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="png-creation.html">Creating a png file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="materials.html">Currently available materials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="units.html">Units</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
 </ul>
 
             
@@ -197,98 +194,151 @@
   <div class="section" id="examples">
 <h1><span class="section-number">4. </span>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
 <p>The following are small, simple models to introduce the routines.</p>
-<div class="section" id="shapes-model">
-<h2><span class="section-number">4.1. </span>Shapes model<a class="headerlink" href="#shapes-model" title="Permalink to this headline">¶</a></h2>
-<p><em>Seismic and Electromagnetic Wavefields</em></p>
+<div class="section" id="shapes-model-create-a-2-5d-animation-of-wave-propagation">
+<h2><span class="section-number">4.1. </span>Shapes model: create a 2.5D animation of wave propagation<a class="headerlink" href="#shapes-model-create-a-2-5d-animation-of-wave-propagation" title="Permalink to this headline">¶</a></h2>
 <div class="figure align-center" id="id1">
 <span id="example1"></span><img alt="_images/shapes.png" src="_images/shapes.png" />
-<p class="caption"><span class="caption-text">The model PNG domain for the “shapes” example.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-text">The model domain for the “shapes” example.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
 </div>
-<p>After running the install script without errors then adding the
-program file parent directy to the path, open a terminal and change
-directories into the EXAMPLES folder. Input into the command line:</p>
+<ol class="arabic">
+<li><p>Open a terminal and change directories into the EXAMPLES&gt;shapes folder. Input into the command line:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">prjbuild</span> <span class="o">-</span><span class="n">i</span> <span class="n">shapes</span><span class="o">.</span><span class="n">png</span> <span class="o">-</span><span class="n">o</span> <span class="n">shapes</span><span class="o">.</span><span class="n">prj</span>
 </pre></div>
 </div>
-<p>Then using a text editor to modify <code class="docutils literal notranslate"><span class="pre">shapes.prj</span></code>, fill in the
-missing domain values for 1 meter spacing in both directions and an
-absorbing boundary of 30 pixels as</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">D</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="mi">1</span>
-<span class="n">D</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">n</span><span class="o">/</span><span class="n">a</span>
+</li>
+<li><p>Using a text editor to modify <code class="docutils literal notranslate"><span class="pre">shapes.prj</span></code>, add values to the appropriate lines below the header to match the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">I</span><span class="p">,</span><span class="n">shapes</span><span class="o">.</span><span class="n">png</span>
+<span class="n">D</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="mf">2.5</span>
+<span class="n">D</span><span class="p">,</span><span class="n">nx</span><span class="p">,</span><span class="mi">300</span>
+<span class="n">D</span><span class="p">,</span><span class="n">ny</span><span class="p">,</span><span class="mi">3</span>
+<span class="n">D</span><span class="p">,</span><span class="n">nz</span><span class="p">,</span><span class="mi">100</span>
+<span class="n">D</span><span class="p">,</span><span class="n">dx</span><span class="p">,</span><span class="mi">1</span>
+<span class="n">D</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="mi">1</span>
 <span class="n">D</span><span class="p">,</span><span class="n">dz</span><span class="p">,</span><span class="mi">1</span>
-<span class="n">D</span><span class="p">,</span><span class="n">cpml</span><span class="p">,</span><span class="mi">30</span>
-<span class="n">D</span><span class="p">,</span><span class="n">write</span><span class="p">,</span><span class="mi">10</span>
-</pre></div>
-</div>
-<p>then add the following material values</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">M</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">granite</span><span class="p">,</span><span class="mi">0</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2540</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span>
-<span class="n">M</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">water</span><span class="p">,</span><span class="mi">0</span><span class="o">/</span><span class="mi">100</span><span class="o">/</span><span class="mi">200</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span>
-<span class="n">M</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">ice1h</span><span class="p">,</span><span class="mi">50</span><span class="o">/</span><span class="mi">50</span><span class="o">/</span><span class="mi">200</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">910</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span>
-<span class="n">M</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">wet_sand</span><span class="p">,</span><span class="mi">80</span><span class="o">/</span><span class="mi">120</span><span class="o">/</span><span class="mi">120</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1500</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span>
-<span class="n">M</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">ice1h</span><span class="p">,</span><span class="mi">120</span><span class="o">/</span><span class="mi">152</span><span class="o">/</span><span class="mi">200</span><span class="p">,</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">910</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span>
-<span class="n">M</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="n">basalt</span><span class="p">,</span><span class="mi">200</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1200</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span>
-<span class="n">M</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="n">air</span><span class="p">,</span><span class="mi">200</span><span class="o">/</span><span class="mi">240</span><span class="o">/</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">1.3</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span>
-</pre></div>
-</div>
-<p>the source parameters for a seismic source just below the surface on
-the right side of the domain</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">S</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span><span class="n">time_steps</span><span class="p">,</span><span class="mi">2500</span> <span class="n">S</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="mi">280</span> <span class="n">S</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="mi">0</span> <span class="n">S</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="mi">21</span> <span class="n">S</span><span class="p">,</span><span class="n">f0</span><span class="p">,</span><span class="mi">80</span> <span class="n">S</span><span class="p">,</span><span class="n">theta</span><span class="p">,</span><span class="mi">0</span> <span class="n">S</span><span class="p">,</span><span class="n">phi</span><span class="p">,</span><span class="mi">0</span>
-</pre></div>
-</div>
-<p>and the source parameters for a transverse radar pulse source in the
-same location as the seismic source except at the surface</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">E</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span><span class="n">time_steps</span><span class="p">,</span><span class="mi">1600</span> <span class="n">E</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="mi">150</span> <span class="n">E</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="mi">0</span> <span class="n">E</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="mi">20</span> <span class="n">E</span><span class="p">,</span><span class="n">f0</span><span class="p">,</span><span class="mf">1e7</span> <span class="n">E</span><span class="p">,</span><span class="n">theta</span><span class="p">,</span><span class="mi">90</span>
-</pre></div>
-</div>
-<p>All lines that start with a <code class="docutils literal notranslate"><span class="pre">#</span></code> are commented lines but without the
-correct identifiers ‘D’, ‘M’, ‘S’, ‘C’, ‘E’, and ‘P’ the line will
-not be read by the computer so it is possible to make notes in the
-project file. If in doubt, and for good habit, use a hashtag.</p>
-<p>For reference, you can use the RGB values to identify the materials
-so it is important to keep track of these when creating a geometry.
-In this case, the top very light blue/green is air (M,6), the blue
-dot (M,1) is water, the red line (M,5) is a dirty horizon of ice, the
-dark blue (M,2) is saturated porous ice (2% porosity, 30% water
-content) while the overlying lavender (M,4) is porous colder ice, the
-green (M,3) is a moderately saturated till layer, and all underlain by
-granite bedrock (M,0).</p>
-<p>After filling in the domain and material values save then run the command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">prjrun</span> <span class="n">shapes</span><span class="o">.</span><span class="n">prj</span> <span class="o">-</span><span class="n">M</span> <span class="n">n</span>
-</pre></div>
-</div>
-<p>Even though we have all the required fields entered the model didn’t
-run because we used the ‘-M n’ option. This is because basalt was
-inserted as an arbitrary material type in the project file as a
-placeholder and to output values. We can just as well use ‘ice1h’ or
-any other material in the python dictionary. The project file is now
-updated so we can edit the ‘S,5’ and ‘P,5’ coefficients to be between
-the ‘ice1h’ values and basalt values. Values closer to ice are
-reasonable with conductivity values closer to granite or basalt. I
-chose</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">C</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">1.58e10</span><span class="p">,</span> <span class="mf">8.44e9</span><span class="p">,</span> <span class="mf">8.44e9</span><span class="p">,</span> <span class="mf">1.58e10</span><span class="p">,</span> <span class="mf">8.44e9</span><span class="p">,</span> <span class="mf">1.58e10</span><span class="p">,</span> <span class="mf">2.67e10</span><span class="p">,</span> <span class="mf">2.67e10</span><span class="p">,</span> <span class="mf">2.67e10</span><span class="p">,</span> <span class="mf">1050.0</span>
+<span class="n">D</span><span class="p">,</span><span class="n">cpml</span><span class="p">,</span><span class="mi">20</span>
+<span class="n">D</span><span class="p">,</span><span class="n">nmats</span><span class="p">,</span><span class="mi">3</span>
+<span class="n">D</span><span class="p">,</span><span class="n">tfile</span><span class="p">,</span><span class="mi">10</span>
 
-<span class="n">P</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">3.8</span><span class="p">,</span><span class="mf">3.8</span><span class="p">,</span><span class="mf">3.8</span><span class="p">,</span><span class="mf">1e-05</span><span class="p">,</span><span class="mf">1e-05</span><span class="p">,</span><span class="mf">1e-05</span>
+<span class="c1"># number, id, R/G/B, Temperature, Attenuation, Density, Porosity, Water_Content, Anisotropic, ANG_File</span>
+<span class="n">M</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">ice1h</span><span class="p">,</span><span class="mi">120</span><span class="o">/</span><span class="mi">152</span><span class="o">/</span><span class="mi">76</span><span class="p">,</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">917</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">FALSE</span><span class="p">,</span>
+<span class="n">M</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">water</span><span class="p">,</span><span class="mi">220</span><span class="o">/</span><span class="mi">220</span><span class="o">/</span><span class="mi">220</span><span class="p">,</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">FALSE</span><span class="p">,</span>
+<span class="n">M</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">granite</span><span class="p">,</span><span class="mi">255</span><span class="o">/</span><span class="mi">75</span><span class="o">/</span><span class="mi">75</span><span class="p">,</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2700</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">FALSE</span><span class="p">,</span>
+
+<span class="c1"># The source parameters for the seismic model</span>
+<span class="n">S</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span>
+<span class="n">S</span><span class="p">,</span><span class="n">time_steps</span><span class="p">,</span><span class="mi">400</span>
+<span class="n">S</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="mi">150</span>
+<span class="n">S</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="mi">1</span>
+<span class="n">S</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="mi">0</span>
+<span class="n">S</span><span class="p">,</span><span class="n">f0</span><span class="p">,</span><span class="mi">60</span>
+<span class="n">S</span><span class="p">,</span><span class="n">theta</span><span class="p">,</span><span class="mi">0</span>
+<span class="n">S</span><span class="p">,</span><span class="n">phi</span><span class="p">,</span><span class="mi">0</span>
+
+<span class="c1"># id, C11, C12, C13, C22, C23, C33, C44, C55, C66, rho</span>
+<span class="n">C</span><span class="p">,</span><span class="mi">0</span><span class="p">,,,,,,,,,,</span>
+<span class="n">C</span><span class="p">,</span><span class="mi">1</span><span class="p">,,,,,,,,,,</span>
+<span class="n">C</span><span class="p">,</span><span class="mi">2</span><span class="p">,,,,,,,,,,</span>
+
+<span class="c1"># The source parameters for the electromagnetic model</span>
+
+<span class="n">E</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span>
+<span class="n">E</span><span class="p">,</span><span class="n">time_steps</span><span class="p">,</span><span class="mi">400</span>
+<span class="n">E</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="mi">150</span>
+<span class="n">E</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="mi">1</span>
+<span class="n">E</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="mi">0</span>
+<span class="n">E</span><span class="p">,</span><span class="n">f0</span><span class="p">,</span><span class="mf">1e8</span>
+<span class="n">E</span><span class="p">,</span><span class="n">theta</span><span class="p">,</span><span class="mi">0</span>
+<span class="n">E</span><span class="p">,</span><span class="n">phi</span><span class="p">,</span><span class="mi">0</span>
+
+<span class="c1"># id, e11, e22, e33, s11, s22, s33</span>
+<span class="n">P</span><span class="p">,</span><span class="mi">0</span><span class="p">,,,,,,,,,,</span>
+<span class="n">P</span><span class="p">,</span><span class="mi">1</span><span class="p">,,,,,,,,,,</span>
+<span class="n">P</span><span class="p">,</span><span class="mi">2</span><span class="p">,,,,,,,,,,</span>
 </pre></div>
 </div>
-<p>Since large density gradients cause numerical instabilities, the
-density for air must be increased. A value of 400.0 works until a
-better formulation of the air-rock interface is implemented. Now you
-can run the model (both seismic and electromagnetic):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">prjrun</span> <span class="n">shapes</span><span class="o">.</span><span class="n">prj</span> <span class="o">-</span><span class="n">M</span> <span class="n">b</span>
+</li>
+</ol>
+<p>All lines that start with a <code class="docutils literal notranslate"><span class="pre">#</span></code> are commented lines.
+For reference, you can use the RGB values to identify the materials.</p>
+<p>After filling in the domain and material values, save the .prj file, then run the command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">prjrun</span> <span class="n">shapes</span><span class="o">.</span><span class="n">prj</span> <span class="o">-</span><span class="n">m</span> <span class="n">n</span>
 </pre></div>
 </div>
-<p>When that is finished let’s build the GIF to view the wavefield.
+<p>If you look at the prj file now, you will see that the dt lines and the stiffness and permittivity tensors are filled in.
+Even though we have all the required fields entered, the model didn’t
+perform any wave propagation calculations because we used the <code class="docutils literal notranslate"><span class="pre">-m</span> <span class="pre">n</span></code> option. The <code class="docutils literal notranslate"><span class="pre">-m</span> <span class="pre">n</span></code> step is required to prepare the file
+to calculate the sourcefunction (next step).</p>
+<p>Before we can do the wave propagation calculations, we need to generate a source function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sourcefunction</span> <span class="o">-</span><span class="n">p</span> <span class="n">shapes</span><span class="o">.</span><span class="n">prj</span> <span class="o">-</span><span class="n">S</span> <span class="n">gaus0</span> <span class="o">-</span><span class="n">m</span> <span class="n">b</span> <span class="o">-</span><span class="n">a</span> <span class="mi">10</span>
+</pre></div>
+</div>
+<p>Now you can run the model (both seismic and electromagnetic):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">prjrun</span> <span class="n">shapes</span><span class="o">.</span><span class="n">prj</span> <span class="o">-</span><span class="n">m</span> <span class="n">s</span>
+<span class="n">prjrun</span> <span class="n">shapes</span><span class="o">.</span><span class="n">prj</span> <span class="o">-</span><span class="n">m</span> <span class="n">e</span>
+</pre></div>
+</div>
+<p>When that is finished let’s build the vti files to view the wavefield.
 Starting with the seismic wavefield, enter:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">im2anim</span> <span class="n">shapes</span><span class="o">.</span><span class="n">prj</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">n</span> <span class="mi">10</span> <span class="n">Vx</span> <span class="o">-</span><span class="n">f</span> <span class="mi">30</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vtkbuild</span> <span class="o">-</span><span class="n">p</span> <span class="n">shapes</span><span class="o">.</span><span class="n">prj</span> <span class="o">-</span><span class="n">c</span> <span class="n">Ex</span> <span class="o">-</span><span class="n">n</span> <span class="mi">20</span>
 </pre></div>
 </div>
-<p>then repeat when the command line returns but change the ‘-c’ option
-to ‘Vz’, ‘Ex’, or ‘Ez’. Alternatively, you could change the frame rate
-(-f) to a higher or smaller number to adjust the speed of the GIF. We
-specified the ‘D,write’ parameter to 10 which is a little undersampled
-to view seismograms or radargrams but creating the GIF takes some time
-and we don’t need that much resolution. If you would like to create
-the seismograms decrease the write parameter between 2-4.</p>
+<p>This should produce a set of vti files identical to the ones in the folder “shapes_ex1_vti”. This is a short animation, but the steps for a larger one are the same.</p>
+</div>
+<div class="section" id="fill-model-create-a-single-shot-seismogram-and-wiggleplot">
+<h2><span class="section-number">4.2. </span>Fill model: create a single shot seismogram and wiggleplot<a class="headerlink" href="#fill-model-create-a-single-shot-seismogram-and-wiggleplot" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center" id="id2">
+<span id="example2"></span><img alt="_images/fill2.png" src="_images/fill2.png" />
+<p class="caption"><span class="caption-text">The model domain for the “fill” example.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
+<p>#. Open a terminal and change directories into the EXAMPLES&gt;fill folder.
+We have already created and completed a .prj file for this example (‘fill.prj’). As you can see from the materials,
+we have set it up to be a granite bedrock (blue) overlain by a subglacial (teal for ice) lake (red for water). We have also created a file listing the locations of the source and receiver
+(spaced every 2 m along the surface) from x=50 to x=190 meters.</p>
+<ol class="arabic">
+<li><p>Run the model:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">prjrun</span> <span class="o">-</span><span class="n">p</span> <span class="n">fill</span><span class="o">.</span><span class="n">prj</span> <span class="o">-</span><span class="n">m</span> <span class="n">s</span>
+</pre></div>
+</div>
+</li>
+<li><p>Build the csv file containing the receiver timeseries:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">arraybuild</span> <span class="o">-</span><span class="n">p</span> <span class="n">fill</span><span class="o">.</span><span class="n">prj</span> <span class="o">-</span><span class="n">c</span> <span class="n">Vx</span> <span class="o">-</span><span class="n">r</span> <span class="n">receivers</span><span class="o">.</span><span class="n">xyz</span>
+</pre></div>
+</div>
+</li>
+<li><p>Display the results:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rcxdisplay</span> <span class="o">-</span><span class="n">p</span> <span class="n">fill</span><span class="o">.</span><span class="n">prj</span> <span class="o">-</span><span class="n">f</span> <span class="n">receiver_array</span><span class="o">.</span><span class="n">csv</span> <span class="o">-</span><span class="n">g</span> <span class="mi">700</span> <span class="o">-</span><span class="n">e</span> <span class="mf">0.02</span>
+</pre></div>
+</div>
+</li>
+<li><p>Play with the gain and exaggeration to vary the image to your liking.</p></li>
+<li><p>To make a wiggleplot:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wiggleplot</span> <span class="o">-</span><span class="n">p</span> <span class="n">fill</span><span class="o">.</span><span class="n">prj</span> <span class="o">-</span><span class="n">g</span> <span class="mi">5</span> <span class="o">-</span><span class="n">r</span> <span class="n">receiver_array</span><span class="o">.</span><span class="n">csv</span> <span class="o">-</span><span class="n">c</span> <span class="n">Vx</span> <span class="o">-</span><span class="n">x</span> <span class="mi">2</span> <span class="o">-</span><span class="n">d</span> <span class="mi">1</span> <span class="o">-</span><span class="n">n</span> <span class="mi">5</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="fill-model-create-a-common-offset-radar-profile">
+<h2><span class="section-number">4.3. </span>Fill model: create a common offset radar profile<a class="headerlink" href="#fill-model-create-a-common-offset-radar-profile" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p>Using the same model as before, run it, this time with common offset:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">common_offset</span> <span class="o">-</span><span class="n">p</span> <span class="n">fill</span><span class="o">.</span><span class="n">prj</span> <span class="o">-</span><span class="n">o</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="o">-</span><span class="n">r</span> <span class="n">receivers</span><span class="o">.</span><span class="n">xyz</span>
+</pre></div>
+</div>
+</li>
+<li><p>The receiver timeseries are automatically generated, so you can directly display the results:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rcxdisplay</span> <span class="o">-</span><span class="n">p</span> <span class="n">fill</span><span class="o">.</span><span class="n">prj</span> <span class="o">-</span><span class="n">f</span> <span class="n">Ex</span><span class="o">.</span><span class="n">co</span><span class="o">.</span><span class="n">csv</span>  <span class="o">-</span><span class="n">g</span> <span class="mi">100</span> <span class="o">-</span><span class="n">e</span> <span class="mf">0.02</span>
+
+<span class="n">You</span> <span class="n">should</span> <span class="n">get</span> <span class="n">something</span> <span class="n">like</span> <span class="n">this</span><span class="p">:</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<div class="figure align-center" id="id3">
+<span id="example3"></span><img alt="_images/fill_ex_co.png" src="_images/fill_ex_co.png" />
+<p class="caption"><span class="caption-text">A common offset survey across the ‘fill’ example.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+<p>Play with the gain and exaggeration to vary the image to your liking.</p>
 <p><a class="reference external" href="#top">Back to top ↑</a></p>
 </div>
 </div>
@@ -299,7 +349,7 @@ the seismograms decrease the write parameter between 2-4.</p>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="routines.html" class="btn btn-neutral float-right" title="5. Routines and wrappers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="prjbuild.html" class="btn btn-neutral float-right" title="prjbuild" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="getting_started.html" class="btn btn-neutral float-left" title="3. Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

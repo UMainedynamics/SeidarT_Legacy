@@ -76,7 +76,7 @@ the :doc:`references` section.
 
     png-creation
     materials
-    appendix
+    units
     references
 
 Search documentation

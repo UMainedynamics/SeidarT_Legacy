@@ -9,11 +9,11 @@ vtkbuild
 
 .. code-block:: bash
 
-    vtkbuild [-h] -p PROJECTFILE -c CHANNEL -n NUM_STEPS
+    vtkbuild [-h] -p PRJFILE -c [Ex Ey Ez Vx Vy Vz] -n NUM_STEPS
 
 **Inputs**
 
-* ``-p FILE``, ``--prjfile FILE`` .prj file
+* ``-p PRJFILE``, ``--prjfile PRJFILE`` .prj file
 
     The full file path for the project file.
 
@@ -24,7 +24,7 @@ vtkbuild
 * ``-n VALUE``, ``--num_steps VALUE``
 
     The time step interval between the images that are
-    going to be used. n=20 means that 1 out of every 20 images will be used,
-     thus significantly reducing how long it takes to compile.
+    going to be used. n=20 means that 1 out of every 20 images will be used, 
+    thus significantly reducing how long it takes to compile.
 
 `Back to top ↑ <#top>`_

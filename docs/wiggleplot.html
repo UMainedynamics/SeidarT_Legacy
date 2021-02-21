@@ -98,32 +98,27 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">3. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">4. Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="routines.html">5. Routines and wrappers</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Extra material</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Initialize</span></p>
-<ul>
+<p class="caption"><span class="caption-text">Command reference</span></p>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="prjbuild.html">prjbuild</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Run</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="sourcefunction.html">sourcefunction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prjrun.html">prjrun</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_offset.html">common_offset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_midpoint.html">common_midpoint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="orientation_tensor.html">orientation_tensor</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Plot and visualize</span></p>
-<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="arraybuild.html">arraybuild</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rcxdisplay.html">rcxdisplay</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">wiggleplot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="im2anim.html">im2anim</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vtkbuild.html">vtkbuild</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extra material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="png-creation.html">Creating a png file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="materials.html">Currently available materials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="units.html">Units</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
 </ul>
 
             
@@ -196,31 +191,30 @@
 <p><em>Plot single, and select handful of amplitudes at specified X</em>
 <em>locations and all Z locations</em></p>
 <p><strong>Usage</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wiggleplot -r receiver_array.csv -p <span class="o">[</span>project_file<span class="o">]</span>.prj -g <span class="o">[</span>gain<span class="o">]</span> -d <span class="o">[</span>amplitude column plotting frequency<span class="o">]</span> -n <span class="o">[</span>singular amplitude column to plot<span class="o">]</span> -c <span class="o">[</span>Ex Ez Vx Vz<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wiggleplot -p PRJFILE -r DATAFILE -g VALUE -x VALUE -d VALUE -n VALUE -c <span class="o">[</span>Ex Ey Ez Vx Vy Vz<span class="o">]</span>
 </pre></div>
 </div>
 <p><strong>Input</strong></p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">-r</span> <span class="pre">receiver_array.csv</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-p</span> <span class="pre">PRJFILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--prjfile</span> <span class="pre">PRJFILE</span></code> .prj file</p>
 <blockquote>
-<div><p>The file path for the receiver array data</p>
+<div><p>The file path for the project file.</p>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-p</span> <span class="pre">FILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--prjfile</span> <span class="pre">FILE</span></code> .prj file</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-r</span> <span class="pre">receiver_array.csv</span></code></p>
 <blockquote>
-<div><p>The file path for the project file, completely filled in for the model
-type used except for permittivity and stiffness coefficients, and dt</p>
+<div><p>The file path for the receiver array data, typically receiver_array.csv</p>
 </div></blockquote>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-g</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--gain</span> <span class="pre">VALUE</span></code></p>
 <blockquote>
 <div><p>The linear horizontal exaggeration of the
-amplitude values from the receiver array file</p>
+amplitude values from the receiver array file.</p>
 </div></blockquote>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-x</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--receiver_spacing</span></code></p>
 <blockquote>
-<div><p>The horizontal distance between receivers, in meters</p>
+<div><p>The horizontal distance between receivers, in meters, to lable the x-axis properly.</p>
 </div></blockquote>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-d</span></code>, <code class="docutils literal notranslate"><span class="pre">--columns</span></code></p>
@@ -231,11 +225,11 @@ plotting from the csv file</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--single_plot_dist</span></code></p>
 <blockquote>
-<div><p>The distance along the image surface where the amplitude values will
-be plotted</p>
+<div><p>The receiver number (column) indicating amplitude values will
+be plotted in a single-wiggle plot</p>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">[Ex</span> <span class="pre">Ez</span> <span class="pre">Vx</span> <span class="pre">Vz]</span></code>, <code class="docutils literal notranslate"><span class="pre">--channel</span> <span class="pre">[Ex</span> <span class="pre">Ez</span> <span class="pre">Vx</span> <span class="pre">Vz]</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">[Ex</span> <span class="pre">Ey</span> <span class="pre">Ez</span> <span class="pre">Vx</span> <span class="pre">Vy</span> <span class="pre">Vz]</span></code>, <code class="docutils literal notranslate"><span class="pre">--channel</span> <span class="pre">[Ex</span> <span class="pre">Ey</span> <span class="pre">Ez</span> <span class="pre">Vx</span> <span class="pre">Vy</span> <span class="pre">Vz]</span></code></p>
 <blockquote>
 <div><p>The channel to query
 (<code class="docutils literal notranslate"><span class="pre">Vx</span></code> for the seismic x direction, for example)</p>

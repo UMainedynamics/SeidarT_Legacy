@@ -75,8 +75,8 @@ After filling in the domain and material values, save the .prj file, then run th
 
 If you look at the prj file now, you will see that the dt lines and the stiffness and permittivity tensors are filled in.
 Even though we have all the required fields entered, the model didn't
-perform any wave propagation calculations because we used the ``-m n`` option. The ``-m n`` step is not required, but is
-sometimes useful, particularly if you want to manually adjust any of the tensor values..
+perform any wave propagation calculations because we used the ``-m n`` option. The ``-m n`` step is required to prepare the file
+to calculate the sourcefunction (next step).
 
 Before we can do the wave propagation calculations, we need to generate a source function::
 
