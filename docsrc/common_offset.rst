@@ -8,7 +8,7 @@ common_offset
 
 .. code-block:: bash
 
-    common_offset -p [project_file].prj -o [offset in X Y Z] -r [receivers.xyz, typically uniform spacing]
+    common_offset -p PRJFILE -o X Y Z -r RCXFILE -s [OPTIONAL] -c VALUE [optional]
 
 
 **Inputs**
@@ -19,15 +19,17 @@ common_offset
 
 * ``-o X Y Z``, ``--offset X Y Z``
 
-    Source-reciever offset distance for all three directions (meters)
+    Source-receiver offset distance for all three directions (meters). Even in 2D calculations, you
+    must enter three space-separated X Y Z values.
 
-* ``-r FILE``, ``--receivers FILE``
+* ``-r RCXFILE``, ``--receivers RCXFILE``
 
-    The coordinate locations of every survey point (meters)
+    The coordinate locations of every survey point (meters). The file is comma-delimited
+    in each row, with the first row required to by 'X,Y,Z'
 
 * ``-s``, ``--seismic``
 
-    (OPTIONAL) Specifier to run seismic common offset. Default is EM.
+    (OPTIONAL) Specifier to run seismic common offset. Default is electromagnetic.
 
 * ``-c``, ``--cores``
 
@@ -36,7 +38,7 @@ common_offset
 
 **Outputs**
 
-Three CSV files, containing Ex, Ey, and Ez values
+Three CSV files, containing Ex, Ey, and Ez (or Vx, Vy, Vz) values, with time series in columns of the source locations.
 
 
 

@@ -98,32 +98,27 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">3. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">4. Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="routines.html">5. Routines and wrappers</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Extra material</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Initialize</span></p>
-<ul>
+<p class="caption"><span class="caption-text">Command reference</span></p>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="prjbuild.html">prjbuild</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Run</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="sourcefunction.html">sourcefunction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prjrun.html">prjrun</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_offset.html">common_offset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_midpoint.html">common_midpoint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="orientation_tensor.html">orientation_tensor</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Plot and visualize</span></p>
-<ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">arraybuild</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rcxdisplay.html">rcxdisplay</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wiggleplot.html">wiggleplot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="im2anim.html">im2anim</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vtkbuild.html">vtkbuild</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extra material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="png-creation.html">Creating a png file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="materials.html">Currently available materials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="units.html">Units</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
 </ul>
 
             
@@ -194,7 +189,7 @@
   <div class="section" id="arraybuild">
 <h1>arraybuild<a class="headerlink" href="#arraybuild" title="Permalink to this headline">¶</a></h1>
 <p><em>generates a csv file (receiver_array.csv) with the timeseries in columns</em>
-<em>r each receiver for the given channel</em></p>
+<em>by receiver</em></p>
 <p><strong>Usage</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>arraybuild <span class="o">[</span>-h<span class="o">]</span> -p PRJFILE -r RCXFILE <span class="o">[</span>-i INDEX<span class="o">]</span> -c CHANNEL
 </pre></div>
@@ -208,12 +203,12 @@
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-p</span> <span class="pre">PRJFILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--prjfile</span> <span class="pre">PRJFILE</span></code></p>
 <blockquote>
-<div><p>The project file path.</p>
+<div><p>The project file path</p>
 </div></blockquote>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-r</span> <span class="pre">RCXFILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--rcxfile</span> <span class="pre">RCXFILE</span></code></p>
 <blockquote>
-<div><p>the file path for the text file of receiver locations, in comma separated rows</p>
+<div><p>The file path for the text file of receiver locations</p>
 </div></blockquote>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-i</span> <span class="pre">INDEX</span></code>, <code class="docutils literal notranslate"><span class="pre">--index</span> <span class="pre">INDEX</span></code></p>

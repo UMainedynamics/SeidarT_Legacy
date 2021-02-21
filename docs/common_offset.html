@@ -98,32 +98,27 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">3. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">4. Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="routines.html">5. Routines and wrappers</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Extra material</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Initialize</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="prjbuild.html">prjbuild</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Run</span></p>
+<p class="caption"><span class="caption-text">Command reference</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="prjbuild.html">prjbuild</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sourcefunction.html">sourcefunction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prjrun.html">prjrun</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">common_offset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_midpoint.html">common_midpoint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="orientation_tensor.html">orientation_tensor</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Plot and visualize</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="arraybuild.html">arraybuild</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rcxdisplay.html">rcxdisplay</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wiggleplot.html">wiggleplot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="im2anim.html">im2anim</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vtkbuild.html">vtkbuild</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extra material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="png-creation.html">Creating a png file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="materials.html">Currently available materials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="units.html">Units</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
 </ul>
 
             
@@ -196,7 +191,7 @@
 <p><em>A wrapper script to create a common offset survey. The survey is</em>
 <em>along the x-direction, but can be extended to other directions.</em></p>
 <p><strong>Usage</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>common_offset -p <span class="o">[</span>project_file<span class="o">]</span>.prj -o <span class="o">[</span>offset in X Y Z<span class="o">]</span> -r <span class="o">[</span>receivers.xyz, typically uniform spacing<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>common_offset -p PRJFILE -o X Y Z -r RCXFILE -s <span class="o">[</span>OPTIONAL<span class="o">]</span> -c VALUE <span class="o">[</span>optional<span class="o">]</span>
 </pre></div>
 </div>
 <p><strong>Inputs</strong></p>
@@ -208,17 +203,19 @@
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">X</span> <span class="pre">Y</span> <span class="pre">Z</span></code>, <code class="docutils literal notranslate"><span class="pre">--offset</span> <span class="pre">X</span> <span class="pre">Y</span> <span class="pre">Z</span></code></p>
 <blockquote>
-<div><p>Source-reciever offset distance for all three directions (meters)</p>
+<div><p>Source-receiver offset distance for all three directions (meters). Even in 2D calculations, you
+must enter three space-separated X Y Z values.</p>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-r</span> <span class="pre">FILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--receivers</span> <span class="pre">FILE</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-r</span> <span class="pre">RCXFILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--receivers</span> <span class="pre">RCXFILE</span></code></p>
 <blockquote>
-<div><p>The coordinate locations of every survey point (meters)</p>
+<div><p>The coordinate locations of every survey point (meters). The file is comma-delimited
+in each row, with the first row required to by ‘X,Y,Z’</p>
 </div></blockquote>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-s</span></code>, <code class="docutils literal notranslate"><span class="pre">--seismic</span></code></p>
 <blockquote>
-<div><p>(OPTIONAL) Specifier to run seismic common offset. Default is EM.</p>
+<div><p>(OPTIONAL) Specifier to run seismic common offset. Default is electromagnetic.</p>
 </div></blockquote>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-c</span></code>, <code class="docutils literal notranslate"><span class="pre">--cores</span></code></p>
@@ -228,7 +225,7 @@
 </li>
 </ul>
 <p><strong>Outputs</strong></p>
-<p>Three CSV files, containing Ex, Ey, and Ez values</p>
+<p>Three CSV files, containing Ex, Ey, and Ez (or Vx, Vy, Vz) values, with time series in columns of the source locations.</p>
 <p><a class="reference external" href="#top">Back to top ↑</a></p>
 </div>
 

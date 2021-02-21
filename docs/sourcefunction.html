@@ -98,32 +98,27 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">3. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">4. Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="routines.html">5. Routines and wrappers</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Extra material</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Initialize</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="prjbuild.html">prjbuild</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Run</span></p>
+<p class="caption"><span class="caption-text">Command reference</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="prjbuild.html">prjbuild</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">sourcefunction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prjrun.html">prjrun</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_offset.html">common_offset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_midpoint.html">common_midpoint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="orientation_tensor.html">orientation_tensor</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Plot and visualize</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="arraybuild.html">arraybuild</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rcxdisplay.html">rcxdisplay</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wiggleplot.html">wiggleplot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="im2anim.html">im2anim</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vtkbuild.html">vtkbuild</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extra material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="png-creation.html">Creating a png file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="materials.html">Currently available materials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="units.html">Units</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
 </ul>
 
             
@@ -196,14 +191,15 @@
 <p><em>Creates .dat files needed to define the source impulse.</em>
 <em>Does not need to be run if files are already present.</em></p>
 <p><strong>Usage</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sourcefunction <span class="o">[</span>-h<span class="o">]</span> -p PROJECTFILE <span class="o">[</span>-S SOURCETYPE<span class="o">]</span> <span class="o">[</span>-m MODELTYPE<span class="o">][</span>-a AMPLITUDE<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sourcefunction <span class="o">[</span>-h<span class="o">]</span> -p PRJFILE -S SOURCETYPE -m <span class="o">[</span>s e b<span class="o">]</span> -a AMPLITUDE
 </pre></div>
 </div>
 <p><strong>Inputs</strong></p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">-p</span></code>: Project file</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-p</span></code>: PRJFILE</p>
 <blockquote>
-<div><p>Name of .prj file</p>
+<div><p>Path to the .prj file, which must have dt and permittivity and stiffness tensors completed
+(usually via the <code class="docutils literal notranslate"><span class="pre">-m</span> <span class="pre">n</span></code> option of <code class="docutils literal notranslate"><span class="pre">prjrun</span></code>).</p>
 </div></blockquote>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-S</span></code>: Source type</p>
@@ -226,28 +222,6 @@ seismic model. e: electromagnetic, s: seismic, b: both</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code></p>
 <blockquote>
 <div><p>show this help message and exit</p>
-</div></blockquote>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-p</span> <span class="pre">PROJECTFILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--projectfile</span> <span class="pre">PROJECTFILE</span></code></p>
-<blockquote>
-<div><p>The path to the project file</p>
-</div></blockquote>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-S</span> <span class="pre">SOURCETYPE</span></code>, <code class="docutils literal notranslate"><span class="pre">--sourcetype</span> <span class="pre">SOURCETYPE</span></code></p>
-<blockquote>
-<div><p>Specify the source type. Available wavelets are: gaus0, gaus1,
-gaus2 (gaussian n-th derivative), chirp, chirplet. (Default = gaus0)</p>
-</div></blockquote>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-m</span> <span class="pre">MODELTYPE</span></code>, <code class="docutils literal notranslate"><span class="pre">--modeltype</span> <span class="pre">MODELTYPE</span></code></p>
-<blockquote>
-<div><p>Specify whether to construct the source for an em or seismic model.
-s-seismic, e-electromagnetic, b-both</p>
-</div></blockquote>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-a</span> <span class="pre">AMPLITUDE</span></code>, <code class="docutils literal notranslate"><span class="pre">--amplitude</span> <span class="pre">AMPLITUDE</span></code></p>
-<blockquote>
-<div><p>Input the scalar factor for source amplification (Default = 1.0)</p>
 </div></blockquote>
 </li>
 </ul>

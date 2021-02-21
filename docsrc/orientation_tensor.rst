@@ -1,14 +1,14 @@
 orientation_tensor
 ###########################
 
-*Wrapper to generate the euler angles for the plunge and trend*
+*Wrapper to generate the Euler angles for the plunge and trend*
 *then plot the results*
 
 **Usage**
 
 .. code-block:: bash
 
-    common_offset -o [project_file].prj -n [VALUE] -P [VALUE] -t [VALUE] -a [VALUE] -A [VALUE]
+    orientation_tensor -o ANGFILE -n VALUE -P VALUE -t VALUE -a VALUE -A VALUE -S
 
 **Inputs**
 
@@ -22,19 +22,19 @@ orientation_tensor
 
 * ``-P VALUE``, ``--plunge VALUE``
 
-    Plunge angle in degrees
+    Plunge angle in degrees for center of single pole
 
 * ``-t VALUE``, ``--trend VALUE``
 
-    Trend angle in degrees
+    Trend angle in degrees for center of single pole
 
 * ``-a VALUE``, ``--anglemin VALUE``
 
-    Minimum angle deviation
+    Minimum angle deviation from center of single pole
 
 * ``-A VALUE``, ``--anglemax VALUE``
 
-    Maximum angle deviation
+    Maximum angle deviation from center of single pole
 
 * ``-S``, ``--suppress_plotting``
 
@@ -44,5 +44,6 @@ orientation_tensor
 
 * ``-o FILE``, ``--outputfile FILE``
 
+    This will produce a delimited file, the name of which you can enter on the materials line(s) in the prj file.
 
 `Back to top ↑ <#top>`_

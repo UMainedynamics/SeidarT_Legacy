@@ -8,28 +8,27 @@ wiggleplot
 
 .. code-block:: bash
 
-    wiggleplot -r receiver_array.csv -p [project_file].prj -g [gain] -d [amplitude column plotting frequency] -n [singular amplitude column to plot] -c [Ex Ez Vx Vz]
+    wiggleplot -p PRJFILE -r DATAFILE -g VALUE -x VALUE -d VALUE -n VALUE -c [Ex Ey Ez Vx Vy Vz]
 
 
 **Input**
 
+* ``-p PRJFILE``, ``--prjfile PRJFILE`` .prj file
+
+    The file path for the project file.
+
 * ``-r receiver_array.csv``
 
-    The file path for the receiver array data
-
-* ``-p FILE``, ``--prjfile FILE`` .prj file
-
-    The file path for the project file, completely filled in for the model
-    type used except for permittivity and stiffness coefficients, and dt
+    The file path for the receiver array data, typically receiver_array.csv
 
 * ``-g VALUE``, ``--gain VALUE``
 
     The linear horizontal exaggeration of the
-    amplitude values from the receiver array file
+    amplitude values from the receiver array file.
 
 * ``-x VALUE``, ``--receiver_spacing``
 
-    The horizontal distance between receivers, in meters
+    The horizontal distance between receivers, in meters, to lable the x-axis properly.
 
 * ``-d``, ``--columns``
 
@@ -38,10 +37,10 @@ wiggleplot
 
 * ``-n VALUE``, ``--single_plot_dist``
 
-    The distance along the image surface where the amplitude values will
-    be plotted
+    The receiver number (column) indicating amplitude values will
+    be plotted in a single-wiggle plot
 
-* ``-c [Ex Ez Vx Vz]``, ``--channel [Ex Ez Vx Vz]``
+* ``-c [Ex Ey Ez Vx Vy Vz]``, ``--channel [Ex Ey Ez Vx Vy Vz]``
 
     The channel to query
     (``Vx`` for the seismic x direction, for example)

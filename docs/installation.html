@@ -98,36 +98,32 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">2. Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#auto-installation">2.1. Auto-installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#manual-installation-instructions">2.2. Manual installation instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#folder-structure">2.3. Folder structure</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">3. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">4. Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="routines.html">5. Routines and wrappers</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Extra material</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Initialize</span></p>
+<p class="caption"><span class="caption-text">Command reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="prjbuild.html">prjbuild</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Run</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="sourcefunction.html">sourcefunction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prjrun.html">prjrun</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_offset.html">common_offset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_midpoint.html">common_midpoint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="orientation_tensor.html">orientation_tensor</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Plot and visualize</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="arraybuild.html">arraybuild</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rcxdisplay.html">rcxdisplay</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wiggleplot.html">wiggleplot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="im2anim.html">im2anim</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vtkbuild.html">vtkbuild</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extra material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="png-creation.html">Creating a png file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="materials.html">Currently available materials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="units.html">Units</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
 </ul>
 
             
@@ -206,6 +202,7 @@ section below.</p>
 <p>If you are an advanced user and looking to take more in-depth
 control of the installation process, you can use the
 <a class="reference internal" href="#manual-install"><span class="std std-ref">Manual installation instructions</span></a>.</p>
+<p>Below the installation instructions, we describe the <a class="reference internal" href="#folder-structure"><span class="std std-ref">Folder structure</span></a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p><strong>Mac OS X users</strong>: you will have to install
@@ -215,7 +212,7 @@ if you do not already have it.</p>
 <p><a class="reference external" href="#top">Back to top ↑</a></p>
 <div class="section" id="auto-installation">
 <span id="auto-install"></span><h2><span class="section-number">2.1. </span>Auto-installation<a class="headerlink" href="#auto-installation" title="Permalink to this headline">¶</a></h2>
-<p>First, some background for the uninitiated:</p>
+<p>First, some background:</p>
 <p>This method will install SeidarT on most Unix-based systems using a
 combination of Anaconda and Fortran compilation. It’s not necessary
 to know or do much more than execute a few command line entries.
@@ -359,7 +356,7 @@ line to your aliases (either in <code class="code docutils literal notranslate">
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Notes for inexperienced users:</p>
+<p>Notes for Macintosh users:</p>
 <p>Depending on the OS release (El Capitan, High Sierra, Mojave, etc.)
 and whether you have Anaconda installed appending a path might be
 different. Anaconda may set aliases so troubleshooting on a Mac can
@@ -394,6 +391,32 @@ echo $PYTHONPATH
 </dl>
 </li>
 </ol>
+</div>
+<div class="section" id="folder-structure">
+<span id="id3"></span><h2><span class="section-number">2.3. </span>Folder structure<a class="headerlink" href="#folder-structure" title="Permalink to this headline">¶</a></h2>
+<p>Here we describe the folders you may need to use while working with the software.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>bin</dt><dd><p>Contains the active Python and Fortran codes used in calculating and displaying the wave propagation.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>docs</dt><dd><p>Repository for html documentation.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>EXAMPLES</dt><dd><p>Hosts images and other files used in the tutorial. Also contains a shell script that can help with bookkeeping.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>materials</dt><dd><p>Library for definitions and subroutines.</p>
+</dd>
+</dl>
+</li>
+</ul>
 <hr class="docutils" />
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
