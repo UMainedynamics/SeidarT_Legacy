@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>im2anim &mdash; SeidarT  documentation</title>
+  <title>&lt;no title&gt; &mdash; SeidarT  documentation</title>
   
 
   
@@ -38,9 +38,7 @@
     
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="vtkbuild" href="vtkbuild.html" />
-    <link rel="prev" title="wiggleplot" href="wiggleplot.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -100,7 +98,7 @@
 <li class="toctree-l1"><a class="reference internal" href="examples.html">4. Examples</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Command reference</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="prjbuild.html">prjbuild</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sourcefunction.html">sourcefunction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prjrun.html">prjrun</a></li>
@@ -110,7 +108,7 @@
 <li class="toctree-l1"><a class="reference internal" href="arraybuild.html">arraybuild</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rcxdisplay.html">rcxdisplay</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wiggleplot.html">wiggleplot</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">im2anim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="im2anim.html">im2anim</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vtkbuild.html">vtkbuild</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Extra material</span></p>
@@ -167,13 +165,13 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>im2anim</li>
+      <li>&lt;no title&gt;</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/im2anim.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/dippingbed.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -186,60 +184,70 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="im2anim">
-<h1>im2anim<a class="headerlink" href="#im2anim" title="Permalink to this headline">¶</a></h1>
-<p>Create animation of the propagation of waves across a 2-dimensional
-study area</p>
-<p><strong>Usage</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>im2anim -p PRJFILE -c <span class="o">[</span>Ex Ez Vx Vz<span class="o">]</span> -n <span class="o">[</span>steps <span class="k">in</span> <span class="nb">time</span> series<span class="o">]</span> -d <span class="o">[</span>delay between frames<span class="o">]</span>
-</pre></div>
-</div>
-<p><strong>Inputs</strong></p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">-p</span> <span class="pre">FILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--prjfile</span> <span class="pre">FILE</span></code> .prj file</p>
-<blockquote>
-<div><p>The full file path for the project file, completely filled in for
-the model type used</p>
-</div></blockquote>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">[Ex</span> <span class="pre">Ez</span> <span class="pre">Vx</span> <span class="pre">Vz]</span></code>, <code class="docutils literal notranslate"><span class="pre">--channel</span> <span class="pre">[Ex</span> <span class="pre">Ez</span> <span class="pre">Vx</span> <span class="pre">Vz]</span></code></p>
-<blockquote>
-<div><p>Whether to plot the seismic or radar model in the X or Z direction</p>
-</div></blockquote>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--num_steps</span> <span class="pre">VALUE</span></code></p>
-<blockquote>
-<div><p>Interval between time series steps used to create the animation</p>
-</div></blockquote>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-d</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--delay</span> <span class="pre">VALUE</span></code> OPTIONAL</p>
-<blockquote>
-<div><p>Delay between frames, default=1</p>
-</div></blockquote>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-a</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--alpha</span> <span class="pre">VALUE</span></code> OPTIONAL</p>
-<blockquote>
-<div><p>Change the transparency of the model plotted in the background; default = 0.3.
-Zero is full transparency, 1 is opaque.</p>
-</div></blockquote>
-</li>
-</ul>
-<p><strong>Outputs</strong></p>
-<blockquote>
-<div><p>A GIF animation of the wave propagation.</p>
-</div></blockquote>
-<p><a class="reference external" href="#top">Back to top ↑</a></p>
-</div>
+  <p>#### Dipping Bed Model</p>
+<p><em>Seismic and Electromagnetic Wavefields</em></p>
+<p>These are small, simple models to introduce the routines.</p>
+<p>![Alt text](EXAMPLES/dipping_bed.png)
+After running the install script without errors then adding the program file parent directy to the path, open a terminal and change directories into the EXAMPLES folder. Input into the command line</p>
+<p>~~~
+prjbuild -i dipping_bed.png -o dipping_bed.prj
+~~~</p>
+<p>Fill in the missing domain values for 1 meter spacing in both directions and an absorbing boundary of 30 pixels as</p>
+<p>&gt;D,dx,1
+&gt;D,dy,n/a
+&gt;D,dz,1
+&gt;D,cpml,30
+&gt;D,write,10</p>
+<p>then add the following material values</p>
+<p>&gt;M,0,granite,0/0/0,-5,1,2540,1,10,False,
+&gt;M,1,water,0/100/200,-1,2,1000,0,0,False,
+&gt;M,2,ice1h,50/50/200,-2,3,910,2,30,False,
+&gt;M,3,wet_sand,80/120/120,-2,2,1500,4,40,False,
+&gt;M,4,ice1h,120/152/200,-10,2,910,2,5,False,
+&gt;M,5,basalt,200/0/0,-10,2,1200,0,0,False,
+&gt;M,6,air,200/240/255,0,0,1.3,0,0,False,</p>
+<p>the source parameters for a seismic source just below the surface on the right side of the domain</p>
+<p>&gt;S,dt,
+&gt;S,time_steps,2500
+&gt;S,x,280
+&gt;S,y,0
+&gt;S,z,21
+&gt;S,f0,80
+&gt;S,theta,0
+&gt;S,phi,0</p>
+<p>and the source parameters for a transverse radar pulse source in the same location as the seismic source except at the surface</p>
+<p>&gt;E,dt,
+&gt;E,time_steps,1600
+&gt;E,x,150
+&gt;E,y,0
+&gt;E,z,20
+&gt;E,f0,1e7
+&gt;E,theta,90</p>
+<p>All lines that start with a ‘#’ are commented lines but without the correct identifiers ‘D’, ‘M’, ‘S’, ‘C’, ‘E’, and ‘P’ the line will not be read by the computer so it is possible to make notes in the project file. If in doubt, and for good habit, use a hashtag.</p>
+<p>For reference, you can use the RGB values to identify the materials so it is important to keep track of these when creating a geometry. In this case, the top very light blue/green is air (M,6), the blue dot (M,1) is water, the red line (M,5) is a dirty horizon of ice, the dark blue (M,2) is saturated porous ice (2% porosity, 30% water content) while the overlying lavender (M,4) is porous colder ice, the green (M,3) is a moderately saturated till layer, and all underlain by granite bedrock (M,0).</p>
+<p>After filling in the domain and material values save then run the command</p>
+<p>~~~
+prjrun dipping_bed.prj -M n
+~~~</p>
+<p>Even though we have all the required fields entered the model didn’t run because we used the ‘-M n’ option. This is because basalt was inserted as an arbitrary material type in the project file as a placeholder and to output values. We can just as well use ‘ice1h’ or any other material in the python dictionary. The project file is now updated so we can edit the ‘S,5’ and ‘P,5’ coefficients to be between the ‘ice1h’ values and basalt values. Values closer to ice are reasonable with conductivity values closer to granite or basalt. I chose</p>
+<p>&gt;C,5.0,1.58e10, 8.44e9, 8.44e9, 1.58e10, 8.44e9, 1.58e10, 2.67e10, 2.67e10, 2.67e10, 1050.0</p>
+<p>&gt;P,5.0,3.8,3.8,3.8,1e-05,1e-05,1e-05</p>
+<p>Since large density gradients cause numerical instabilities, the density for air must be increased. A value of 400.0 works until a better formulation of the air-rock interface is implemented. Now you can run the model (both seismic and electromagnetic)</p>
+<p>~~~
+prjrun dipping_bed.prj -M b
+~~~</p>
+<p>When that is finished let’s build the GIF to view the wavefield. Starting with the seismic wavefield, enter</p>
+<p>~~~
+im2anim dipping_bed.prj -c -n 10 Vx -f 30
+~~~</p>
+<p>then repeat when the command line returns but change the ‘-c’ option to ‘Vz’, ‘Ex’, or ‘Ez’. Alternatively, you could change the frame rate (-f) to a higher or smaller number to adjust the speed of the GIF. We specified the ‘D,write’ parameter to 10 which is a little undersampled to view seismograms or radargrams but creating the GIF takes some time and we don`t need that much resolution. If you would like to create the seismograms decrease the write parameter between 2-4.</p>
+<p><em>Common Offset Survey</em></p>
 
 
            </div>
            
           </div>
           <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="vtkbuild.html" class="btn btn-neutral float-right" title="vtkbuild" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="wiggleplot.html" class="btn btn-neutral float-left" title="wiggleplot" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-    </div>
 
   <hr/>
 
