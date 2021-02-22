@@ -24,16 +24,16 @@ study area
 
 * ``-n VALUE``, ``--num_steps VALUE``
 
-    Number of steps in time series used, 50 works well
+    Interval between time series steps used to create the animation
 
-* ``-d VALUE``, ``--frames_per_second VALUE``
+* ``-d VALUE``, ``--delay VALUE`` OPTIONAL
 
-    Number of frames per second, 10 works well
+    Delay between frames, default=1
 
-* ``-a VALUE``, ``--alpha VALUE``
+* ``-a VALUE``, ``--alpha VALUE`` OPTIONAL
 
     Change the transparency of the model plotted in the background; default = 0.3.
-    Zeros is full transparency, 1 is opaque.
+    Zero is full transparency, 1 is opaque.
 
 **Outputs**
 
