@@ -40,12 +40,20 @@ parser.add_argument(
     default = 'n'
 )
 
+parser.add_argument(
+    '-a', '--append',
+    nargs = 1, type = int, required = False, default = [1],
+    help = """Append/recompute the coefficients to the permittivity and
+    stiffness matrices; 1 = yes, 0 = no; default = 1."""
+)
 
 # Get the arguments
 args = parser.parse_args()
 prjfile = ''.join(args.prjfile)
 model_type = ''.join(args.model)
+appendbool = args.append[0] == 1
 pwd = os.path.dirname(prjfile)
+
 
 # ------------- Globals ----------------
 clight = 2.99792458e8 # In general
@@ -84,7 +92,7 @@ material.para_check()
 # ---------------------------------------------------------------------
 # We will always compute the coefficients but we need to make sure that we have
 # everything needed to compute them
-if seismic.exit_status == 0 and material.material_flag:
+if seismic.exit_status == 0 and material.material_flag and appendbool:
     # The coefficients aren't provided but the materials are so we can compute them
     # assign the materials to their respective corners
     
@@ -106,7 +114,7 @@ if seismic.exit_status == 0 and material.material_flag:
     append_coefficients(prjfile, tensor, CP = 'C', dt = dt)
     print("Finished. Appending to project file.\n")
 
-if electromag.exit_status == 0 and material.material_flag:
+if electromag.exit_status == 0 and material.material_flag and appendbool:
     # The coefficients aren't provided but the materials are so we can compute them
     print('Computing the permittivity and conductivity coefficients.')
     material.sort_material_list()
