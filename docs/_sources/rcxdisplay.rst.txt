@@ -7,12 +7,12 @@ rcxdisplay
 
 .. code-block:: bash
 
-    rcxdisplay -p PRJFILE -f DATAFILE -r RCXFILE -g VALUE -e VALUE -s [OPTIONAL]
+    rcxdisplay -p PROJECTFILE -f DATAFILE -g VALUE -e VALUE -s [OPTIONAL]
 
 
 **Inputs**
 
-* ``-p PRJFILE``, ``--prjfile PRJFILE`` .prj file
+* ``-p PROJECTFILE``, ``--prjfile PROJECTFILE`` .prj file
 
     The file path for the project file.
 

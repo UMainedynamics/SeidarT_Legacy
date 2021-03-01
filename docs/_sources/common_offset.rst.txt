@@ -8,12 +8,12 @@ common_offset
 
 .. code-block:: bash
 
-    common_offset -p PRJFILE -o X Y Z -r RCXFILE -s [OPTIONAL] -c VALUE [optional]
+    common_offset -p PROJECTFILE -o X Y Z -r RCXFILE -s [OPTIONAL] -c VALUE [optional]
 
 
 **Inputs**
 
-* ``-p FILE``, ``--project FILE``
+* ``-p PROJECTFILE``, ``--project PROJECTFILE``
 
     Project file path
 

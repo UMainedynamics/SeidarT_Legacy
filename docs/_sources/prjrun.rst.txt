@@ -8,20 +8,26 @@ prjrun
 
 .. code-block:: bash
 
-    prjrun -p PRJFILE -m [n e s]
+    prjrun -p PROJECTFILE -m [n e s] -a [0 1]
 
 **Inputs**
 
-* ``-p PRJFILE``, ``--prjfile PRJFILE`` .prj file
+* ``-p PROJECTFILE``, ``--prjfile PROJECTFILE`` .prj file
 
     The file path for the project file, completely filled in for the model
     type used except for permittivity and stiffness coefficients, and dt
 
-* ``-M [n e s]`` Which model to run
+* ``-m [n e s]`` Which model to run
 
     * ``n`` calculates only timesteps and material tensors, necessary before running sourcefunction
     * ``e`` electromagnetic propagation
     * ``s`` seismic wave propagation
+
+* ``-a [0 1] (optional)
+
+    Append/recompute the coefficients to the permittivity and
+    stiffness matrices; 1 = yes, 0 = no; default = 1. Do not
+    recompute if you have made manual changes to the matrices in the prj file.
 
 **Outputs**
 

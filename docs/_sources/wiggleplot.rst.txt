@@ -8,12 +8,12 @@ wiggleplot
 
 .. code-block:: bash
 
-    wiggleplot -p PRJFILE -r DATAFILE -g VALUE -x VALUE -d VALUE -n VALUE -c [Ex Ey Ez Vx Vy Vz]
+    wiggleplot -p PROJECTFILE -r DATAFILE -g VALUE -x VALUE -d VALUE -n VALUE -c [Ex Ey Ez Vx Vy Vz]
 
 
 **Input**
 
-* ``-p PRJFILE``, ``--prjfile PRJFILE`` .prj file
+* ``-p PROJECTFILE``, ``--prjfile PROJECTFILE`` .prj file
 
     The file path for the project file.
 
