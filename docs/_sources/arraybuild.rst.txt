@@ -8,7 +8,7 @@ arraybuild
 
 .. code-block:: bash
 
-    arraybuild [-h] -p PRJFILE -r RCXFILE [-i INDEX] -c CHANNEL
+    arraybuild [-h] -p PROJECTFILE -r RCXFILE [-i INDEX] -c CHANNEL
 
 
 **Inputs**
@@ -17,7 +17,7 @@ arraybuild
 
     show this help message and exit
 
-* ``-p PRJFILE``, ``--prjfile PRJFILE``
+* ``-p PROJECTFILE``, ``--prjfile PROJECTFILE``
 
     The project file path
 

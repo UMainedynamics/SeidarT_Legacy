@@ -10,12 +10,12 @@ common_midpoint
 
 .. code-block:: bash
 
-    common_midpoint -p PRJFILE -t [X] -o [X] -d [distance between each receiver] [-s] [-p]
+    common_midpoint -p PROJECTFILE -t [X] -o [X] -d [distance between each receiver] [-s] [-p]
 
 
 **Inputs**
 
-* ``-p PRJFILE``, ``--prjfile PRJFILE``
+* ``-p PROJECTFILE``, ``--prjfile PROJECTFILE``
 
     The project file path
 

@@ -67,6 +67,9 @@ the :doc:`references` section.
     wiggleplot
     im2anim
     vtkbuild
+    implot
+    imvector
+    vectoranim
 
 .. _extras:
 

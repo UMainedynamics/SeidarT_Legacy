@@ -8,11 +8,11 @@ prjrun
 
 .. code-block:: bash
 
-    prjrun -p PRJFILE -m [n e s] -a [0 1]
+    prjrun -p PROJECTFILE -m [n e s] -a [0 1]
 
 **Inputs**
 
-* ``-p PRJFILE``, ``--prjfile PRJFILE`` .prj file
+* ``-p PROJECTFILE``, ``--prjfile PROJECTFILE`` .prj file
 
     The file path for the project file, completely filled in for the model
     type used except for permittivity and stiffness coefficients, and dt

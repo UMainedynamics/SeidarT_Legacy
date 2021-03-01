@@ -8,15 +8,14 @@ study area
 
 .. code-block:: bash
 
-    im2anim -p PRJFILE -c [Ex Ez Vx Vz] -n [steps in time series] -d [delay between frames]
+    im2anim -p PROJECTFILE -c [Ex Ez Vx Vz] -n [steps in time series] -d [delay between frames]
 
 
 **Inputs**
 
-* ``-p FILE``, ``--prjfile FILE`` .prj file
+* ``-p PROJECTFILE``, ``--prjfile PROJECTFILE`` .prj file
 
-    The full file path for the project file, completely filled in for
-    the model type used
+    The full file path for the project file
 
 * ``-c [Ex Ez Vx Vz]``, ``--channel [Ex Ez Vx Vz]``
 
