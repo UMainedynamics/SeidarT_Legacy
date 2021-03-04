@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.image as mpimg
 from subprocess import call
 import material_functions as mf
-from class_definitions import *
+from definitions import *
 
 # Modeling modules
 import seismicfdtd2d as seis2d
@@ -29,29 +29,39 @@ parser = argparse.ArgumentParser(
 )
 
 parser.add_argument(
-    'project_file', nargs=1, type=str,
+    '-p', '--prjfile', nargs=1, type=str, required = True,
     help='the full file path for the project file', default=None
 )
 
 parser.add_argument(
-    '-M', '--model', nargs = 1, type = str, required = False,
+    '-m', '--model', nargs = 1, type = str, required = False,
     help = """Specify whether to run the seismic (s), or electromagnetic (e), 
     or none (default = n)""",
     default = 'n'
 )
 
+parser.add_argument(
+    '-a', '--append',
+    nargs = 1, type = int, required = False, default = [1],
+    help = """Append/recompute the coefficients to the permittivity and
+    stiffness matrices; 1 = yes, 0 = no; default = 1."""
+)
 
 # Get the arguments
 args = parser.parse_args()
-project_file = ''.join(args.project_file)
+prjfile = ''.join(args.prjfile)
 model_type = ''.join(args.model)
-pwd = os.path.dirname(project_file)
+appendbool = args.append[0] == 1
+pwd = os.path.dirname(prjfile)
 
+
+# ------------- Globals ----------------
+clight = 2.99792458e8 # In general
 
 # ============================ Create the objects =============================
 # Let's initiate the domain
 domain, material, seismic, electromag = loadproject(
-    project_file,
+    prjfile,
     Domain(), 
     Material(),
     Model(),
@@ -80,8 +90,9 @@ material.para_check()
 # Correct the domain to account for the absorbing boundary
 
 # ---------------------------------------------------------------------
-# Make sure the coefficients are in the project file 
-if seismic.exit_status == 0 and seismic.compute_coefficients and material.material_flag:
+# We will always compute the coefficients but we need to make sure that we have
+# everything needed to compute them
+if seismic.exit_status == 0 and material.material_flag and appendbool:
     # The coefficients aren't provided but the materials are so we can compute them
     # assign the materials to their respective corners
     
@@ -100,10 +111,10 @@ if seismic.exit_status == 0 and seismic.compute_coefficients and material.materi
     dt = np.min([domain.dx, domain.dz]) / np.sqrt(3.0 * tensor.max()/max_rho )
     
     # We're going to find the lines marked 'C' and input the values there
-    append_coefficients(project_file, tensor, CP = 'C', dt = dt)
+    append_coefficients(prjfile, tensor, CP = 'C', dt = dt)
     print("Finished. Appending to project file.\n")
 
-if electromag.exit_status == 0 and electromag.compute_coefficients and material.material_flag:
+if electromag.exit_status == 0 and material.material_flag and appendbool:
     # The coefficients aren't provided but the materials are so we can compute them
     print('Computing the permittivity and conductivity coefficients.')
     material.sort_material_list()
@@ -117,7 +128,7 @@ if electromag.exit_status == 0 and electromag.compute_coefficients and material.
     )
     dt = np.min([domain.dx, domain.dz])/(2.0*clight)
     
-    append_coefficients(project_file, tensor, CP = 'P', dt = dt)
+    append_coefficients(prjfile, tensor, CP = 'P', dt = dt)
     print("Finished. Appending to project file.\n")
 
 
@@ -132,7 +143,7 @@ if model_type == 's':
         
         # We need to set a density gradient at air interfaces because high
         # density gradients lead to numerical instability
-        rhograd, zerostress = airsurf(material, domain, 2)
+        rhograd = airsurf(material, domain, 2)
         
         # Write the coefficient image to a fortran file
         seis25d.seismicfdtd25d.stiffness_write(
@@ -140,8 +151,7 @@ if model_type == 's':
             seismic.tensor_coefficients,
             domain.cpml,
             rhograd,
-            zerostress,
-            domain.nx, 
+            domain.nx,
             domain.nz
         )
         if domain.dim == 2.5:
@@ -161,7 +171,7 @@ if model_type == 's':
             seis2d.seismicfdtd2d.seismic_cpml_2d(
                 domain.nx + 2*domain.cpml, 
                 domain.nz + 2*domain.cpml,
-                domain.dx,domain.dz,
+                domain.dx, domain.dz,
                 domain.cpml,
                 seismic.src,
                 seismic.f0,
@@ -169,7 +179,6 @@ if model_type == 's':
             )
 
 # ------------------------------ ELECTROMAGNETIC ------------------------------
-clight = 2.99792458e8 # In general
 
 # Now let's see if we can do some em modeling
 if model_type == 'e':
@@ -177,13 +186,17 @@ if model_type == 'e':
         # The coefficients are provided. We don't need the material values
         
         print('Modeling the electromagnetic wavefield.\n')
+        # electromag, domain = prepme(electromag, domain)
+
         electromag, domain = prepme(electromag, domain)
         em25d.electromagfdtd25d.permittivity_write(
             domain.geometry+1,
             electromag.tensor_coefficients,
             domain.cpml,
-            domain.nx, domain.nz
+            domain.nx, 
+            domain.nz
         )
+        
         if domain.dim == 2.5:
             print('Running 2.5D model')
             em25d.electromagfdtd25d.electromag_cpml_25d(
@@ -198,13 +211,12 @@ if model_type == 'e':
             )
         else:
             print('Running 2 D model')
-            em2d.electromagfdtd2d.doall(
-                domain.geometry+1,
-                electromag.tensor_coefficients,
+            em2d.electromagfdtd2d.electromag_cpml_2d(
+                domain.nx + 2*domain.cpml,
+                domain.nz + 2*domain.cpml,
                 domain.dx, domain.dz,
                 domain.cpml,
                 electromag.src,
                 electromag.f0,
-                electromag.time_steps,
-                electromag.theta
+                electromag.time_steps
             )

@@ -1,0 +1,231 @@
+#!/bin/bash
+
+: '
+COMMON_OFFSET.SH is a wrapper script to create a common offset survey using the
+SeidarT programs. The survey is along the x-direction at each of the locations 
+specified in the receiver xyz file. 
+
+INPUT
+	-p, --project 	Project file path
+	-o, --offset 	Source and reciever offset distance (meters)
+	-s, --seismic 	(OPTIONAL) Specifier to run seismic common offset 
+	-r, --receivers	The coordinate locations of every survey point (meters).
+'
+start=`date +%s`
+
+wild='.*'
+
+while [[ $# -gt 0 ]]; do
+	key="$1"
+
+	case $key in
+	    -p|--project_file)
+	    prjfile="$2"
+	    shift # past argument
+	    shift # past value
+	    ;;
+	    -o|--offset)
+		dx="$2"
+		dy="$3"
+		dz="$4"
+		shift;shift;shift;shift
+		;;
+	    -s|--seismic)
+		seismic=true
+		shift
+		;;
+		-r|--receivers)
+		rcx="$2"
+		shift;shift
+		;;
+		-c|--cores)
+		ncores="$2"
+		shift;shift
+		;;
+		-h|--help)
+		help=true
+		shift
+	esac
+done
+
+# ============================== Print Help Menu ============================== 
+if [ $help ]; then
+	echo
+	echo ' COMMON_OFFSET.SH is a wrapper script to create a common offset survey using the'
+	echo ' SeidarT programs. The survey is along the x-direction, but can be extended to '
+	echo ' other directions.'
+	echo 
+	echo ' INPUT'
+	echo '	-p, --project 	Project file path'
+	echo '	-o, --offset    Source-reciever offset distance for all three directions (meters)'
+	echo '	-r, --receivers	The coordinate locations of every survey point (meters)'
+	echo ' 	-s, --seismic 	(OPTIONAL) Specifier to run seismic common offset. Default is EM.' 
+	echo '	-c, --cores		For parallel computation, specify the number of cores.'
+
+	exit 1
+fi
+
+# ============================== Define Globals ===============================
+tmp=temp.csv
+export prjfile=./$prjfile 
+export dx=$dx
+export dy=$dy 
+export dz=$dz
+export wild='.*'
+
+if [ $seismic ]; then
+	export c1='Vx'
+	export c2='Vy'
+	export c3='Vz'
+	export xstring='S,x,'
+	export ystring='S,y,'
+	export zstring='S,z,'
+	export mod=s
+else
+	export c1='Ex'
+	export c2='Ey'
+	export c3='Ez'
+	export xstring='E,x,'
+	export ystring='E,y,'
+	export zstring='E,z,'
+	export mod=e
+fi
+
+
+# -------------------------- Parallelizable function --------------------------
+function dosurvey()
+{
+	# Argument 1 - rcx x
+	# Argument 2 - rcx y 
+	# Argument 3 - rcx z
+	cd ./$1.$2.$3
+
+	echo "X,Y,Z" > receivers.xyz
+	echo "$1,$2,$3" >> receivers.xyz
+
+	srcx=`echo "$1+dx" | bc`
+	srcy=`echo "$2+dy" | bc`
+	srcz=`echo "$3+dz" | bc`
+
+	# Append to the project file
+	sed -i -e "s/$xstring$wild/$xstring$srcx/" $prjfile
+	sed -i -e "s/$ystring$wild/$ystring$srcy/" $prjfile
+	sed -i -e "s/$zstring$wild/$zstring$srcz/" $prjfile
+
+	prjrun $prjfile -M $mod
+
+	arraybuild -p $prjfile -r receivers.xyz -c $c1
+	mv receiver_array.csv ../$c1.$1.$2.$3.csv
+
+	arraybuild -p $prjfile -r receivers.xyz -c $c3
+	mv receiver_array.csv ../$c3.$1.$2.$3.csv
+	
+	if (( $(echo "$dim==2.5" | bc -l) )); then
+		arraybuild -p $prjfile -r receivers.xyz -c $c2
+		mv receiver_array.csv ../$c2.$1.$2.$3.csv
+	fi
+
+	cd ..
+	
+	# Remove the models for space
+	rm -rf $1.$2.$3 
+}
+
+export -f dosurvey
+
+# ================================ Error Checks ===============================
+# A quick check to make sure required arguments are given
+if [[ -z $prjfile ]]; then
+	echo ERROR: Missing project file
+	exit 1
+elif [[ -z $dx || -z $dy || -z $dz ]]; then
+	echo ERROR: Missing source to reciever offset
+	exit 1
+elif [[ -z $rcx ]]; then
+	echo ERROR: Missing receiver locations
+	exit 1
+else
+	echo 
+fi
+
+# We want to use a default value if number of cores isn't specified 
+if [[ -z $ncores ]]; then
+	ncores=1
+fi
+
+
+# ================================ Get to work ================================
+
+# Determine if it is 2D
+dim=`grep -F 'D,dim,' $prjfile`
+dim=$(echo $dim | cut -f3 -d,)
+export dim
+
+# Make sure the header fields are in X,Y,Z format
+rhead=`head -n 1 $rcx`
+
+if [[ $rhead != 'X,Y,Z' ]]; then
+	echo ERROR: Receiver coordinates need to be ordered in X,Y,Z 
+	exit 1
+fi
+
+
+# Clone the directories for each receiver location
+sed 1d $rcx | while IFS=, read -r X Y Z;
+do
+	mkdir $X.$Y.$Z 
+	cp $prjfile $X.$Y.$Z/
+	cp *.dat $X.$Y.$Z/
+	cp *.png $X.$Y.$Z/
+done
+
+
+# Run the model
+# if (( $(echo "$ncores==1" | bc -l) )); then
+# 	sed 1d receivers.xyz | dosurvey
+sed 1d receivers.xyz | parallel -j$ncores --colsep ',' dosurvey {1} {2} {3}
+
+# ======================== Concatenate All Timeseries =========================
+
+cofilex=$c1.co.csv
+cofiley=$c2.co.csv
+cofilez=$c3.co.csv
+
+# Create the output text files 
+if (( $(echo "$dim==2.5" | bc -l) )); then
+	touch $cofiley 
+fi 
+touch $cofilex 
+touch $cofilez 
+
+sed 1d $rcx | while IFS=, read X Y Z;
+do
+	paste -d',' $cofilex $c1.$X.$Y.$Z.csv > $tmp
+	mv $tmp $cofilex
+	rm $c1.$X.$Y.$Z.csv
+
+	paste -d',' $cofilez $c3.$X.$Y.$Z.csv > $tmp
+	mv $tmp $cofilez
+	rm $c3.$X.$Y.$Z.csv
+
+	if (( $(echo "$dim==2.5" | bc -l) )); then
+		paste -d',' $cofiley $c2.$X.$Y.$Z.csv > $tmp
+		mv $tmp $cofiley
+		rm $c2.$X.$Y.$Z.csv
+	fi
+done
+
+# We need to drop the first column
+sed 's/\([^,]*\),\(.*\)/\2/' $cofilex > $tmp
+mv $tmp $cofilex
+
+sed 's/\([^,]*\),\(.*\)/\2/' $cofilez > $tmp
+mv $tmp $cofilez
+
+if (( $(echo "$dim==2.5" | bc -l) )); then
+	sed 's/\([^,]*\),\(.*\)/\2/' $cofilex > $tmp
+	mv $tmp $cofiley
+fi
+
+end=`date +%s`
+echo $((end-start))

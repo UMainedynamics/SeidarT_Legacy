@@ -6,19 +6,16 @@ import numpy as np
 import argparse
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-
-from imdefinitions import * 
-from class_definitions import * 
+from definitions import *
 
 # -------------------------- Command Line Arguments ---------------------------
-parser = argparse.ArgumentParser(description="""This program creates an equally
-	spaced array of receivers given the x, y, and z coordinates. If the model 
-	isn't specified as 2.5d in the project file then """ )
+parser = argparse.ArgumentParser(description="""This program creates a csv file of time series for each receiver location
+	listed in the the specified receiver file.""" )
 
 parser.add_argument(
     '-p', '--prjfile',
     nargs = 1, type = str, required = True,
-    help = 'The project file path.'
+    help = 'The project file path'
 )
 
 parser.add_argument(
@@ -42,31 +39,31 @@ parser.add_argument(
 
 # Get the arguments
 args = parser.parse_args()
-project_file = ''.join(args.prjfile)
+prjfile = ''.join(args.prjfile)
 receiver_file = ''.join(args.rcxfile)
 channel = ''.join(args.channel)
-rind = args.index[0] == 0	
+rind = args.index[0] == 0
 
 # ==================== Create the object and assign inputs ====================
 # We don't need the material values
 domain, material, seismic, electromag = loadproject(
-    project_file, 
-    Domain(), 
-    Material(), 
-    Model(), 
-    Model()  
+    prjfile,
+    Domain(),
+    Material(),
+    Model(),
+    Model()
 )
 
 xyz = np.genfromtxt(
-    receiver_file, 
-    delimiter = ',', 
-    names = True, 
+    receiver_file,
+    delimiter = ',',
+    names = True,
     dtype = float
 )
 
-# We need to make sure the recievers are ordered correctly and the absorbing 
+# We need to make sure the recievers are ordered correctly and the absorbing
 # boundary is corrected for
-# First check to see if the inputs are indices or 
+# First check to see if the inputs are indices or
 domain.dim = domain.dim[0]
 cpml = int(domain.cpml[0])
 if rind:
@@ -93,7 +90,7 @@ domain.nz = int(domain.nz[0]) + 2*cpml
 
 if channel == 'Ex' or channel == 'Ey' or channel == 'Ez':
 	source_location = np.array(
-		[ 
+		[
 			float(electromag.x[0])/float(domain.dx[0]) + cpml,
 			float(electromag.y[0])/float(domain.dy[0]) + cpml,
 			float(electromag.z[0])/float(domain.dz[0]) + cpml
@@ -106,7 +103,7 @@ else:
 			float(seismic.y[0])/float(domain.dy[0]) + cpml,
 			float(seismic.z[0])/float(domain.dz[0]) + cpml
 		]
-	) 
+	)
 
 # Get the timeseries for each receiver. It will be saved in a file called receiver_array.csv
 getrcx(channel, receiver_locations, domain)

@@ -2,6 +2,29 @@
 
 # Install script for SEIDART toolbox
 
+# ----------------------------- Anaconda install ------------------------------
+ver="v0.2"
+echo "--------------------------------------------
+SeidarT Anaconda-based installer $ver
+Univ. of Maine / Univ. of Washington, 2020
+--------------------------------------------
+This installer will check for Anaconda/Miniconda and install a SeidarT environment prior to compiling.
+You will have the option to install Miniconda if no existing conda is found.
+"
+bash conda_deps.sh ||
+echo "Conda installation failed. Try installing dependencies the run the noconda_install script." ||
+exit 1
+
+`grep etc/profile.d/conda.sh ~/.bashrc`
+conda activate SeidarT &&
+echo "Successfully activated SeidarT environment for compiling" ||
+echo "Could not find SeidarT conda environment. Exiting." ||
+exit 1
+
+echo ""
+echo "Starting compiling/installation process..."
+
+# -----------------------------------------------------------------------------
 # Make sure we have a folder to put everything in
 if [ ! -d "bin" ]; then
 	mkdir bin
@@ -29,14 +52,15 @@ dos2unix vis/*
 dos2unix survey_wrappers/*
 dos2unix exe/* 
 dos2unix materials/*
+dos2unix fdtd/*
 
 # Compile the fortran code
 #2D
 cd fdtd
-f2py3 -c --fcompiler=gnu95 -m emfdtd2d emFDTD2D.f95
-f2py3 -c --fcompiler=gnu95 -m seismicfdtd2d seismicFDTD2D.f95
-f2py3 -c --fcompiler=gnu95 -m emfdtd25d emFDTD25D.f95
-f2py3 -c --fcompiler=gnu95 -m seismicfdtd25d seismicFDTD25D.f95
+f2py3 -c --fcompiler=gnu95 -DNPY_NO_DEPRECATED_API -m emfdtd2d emFDTD2D.f95
+f2py3 -c --fcompiler=gnu95 -DNPY_NO_DEPRECATED_API -m seismicfdtd2d seismicFDTD2D.f95
+f2py3 -c --fcompiler=gnu95 -DNPY_NO_DEPRECATED_API -m emfdtd25d emFDTD25D.f95
+f2py3 -c --fcompiler=gnu95 -DNPY_NO_DEPRECATED_API -m seismicfdtd25d seismicFDTD25D.f95
 mv *.so ../bin
 cd ..
 
@@ -52,14 +76,17 @@ cp exe/prjbuild.py bin/prjbuild
 cp exe/prjrun.py bin/prjrun
 cp exe/sourcefunction.py bin/sourcefunction
 cp materials/orientation_tensor.py bin/orientation_tensor
-# cp materials/class_definitions.py bin/class_definitions
 
 # Move the visualization tools
 cp vis/arraybuild.py bin/arraybuild
-cp vis/codisplay.py bin/codisplay
+cp vis/rcxdisplay.py bin/rcxdisplay
 cp vis/im2anim.py bin/im2anim
 cp vis/vtkbuild.py bin/vtkbuild 
 cp vis/wiggleplot.py bin/wiggleplot 
+cp vis/imgen.py bin/imgen.py # The generalized image functions module
+cp vis/imvector.py bin/imvector
+cp vis/vectoranim.py bin/vectoranim
+cp vis/implot.py bin/implot
 
 # move the conversion scripts
 cp io/array2segy.py bin/array2segy
@@ -69,12 +96,16 @@ chmod +x bin/prjbuild \
         bin/prjrun \
         bin/sourcefunction \
         bin/arraybuild \
-        bin/codisplay \
+        bin/rcxdisplay \
         bin/wiggleplot \
         bin/im2anim \
         bin/orientation_tensor \
         bin/array2segy \
-	bin/vtkbuild 
+	      bin/vtkbuild \
+        bin/imvector \
+        bin/vectoranim \
+        bin/implot
+
 
 
 # Now do the bash scripts
@@ -88,5 +119,8 @@ chmod +x bin/common_offset bin/common_midpoint bin/array2sac
 
 # ---------------- Move all other required files to bin folder ----------------
 cp materials/material_functions.py bin/material_functions.py
-cp materials/class_definitions.py bin/class_definitions.py
-cp vis/imdefinitions.py bin/imdefinitions.py 
+cp materials/definitions.py bin/definitions.py
+
+echo ""
+echo "Done."
+echo 'Type "conda activate SeidarT" to access the SeidarT environment.'

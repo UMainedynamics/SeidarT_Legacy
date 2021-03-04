@@ -1,0 +1,119 @@
+
+# This is a project file template for the SeidarT software. In order to run the
+# model for seismic, electromagnetic or both, the required inputs must be
+#
+# Domain Input Values:
+#	dim 		- STR; either '2' or '2.5'; default is '2'
+#	nx,ny,nz 	- INT; the dimensions of the image. If dim = 2.5, and ny is
+#			  empty then default ny=1
+#	dx,dy,dz	- REAL; the spatial step size for each dimension in meters. If
+#			  dim = 2.5 and dy is empty then default dy=min(dx,dz)
+#
+# Material Input Values:
+#	id 		- INT; the identifier given to each unique rgb value as it
+#			  is read into the computer. It's recommended to use this
+#			  script to make sure it's sorted correctly.
+#	R/G/B 		- STR; the 0-255 values for each color code.
+#	Temperature 	- REAL; temperature in Celsius.
+#	Attenuation 	- REAL; (placeholder) will be attenuation length soon.
+#	Density 	- REAL; density in kg/m^3
+#	Porosity 	- REAL; percent porosity
+#	Water_Content 	- REAL; percent of pores that contain water
+#	Anisotropic 	- BOOL; whether the material is anisotropic (True) or
+#			  isotropic (False).
+#	ANG_File 	- STR; if Anisotrpic is True then the full path to the
+#			  .ang file is supplied. The .ang file is a delimited text
+#			  file that contains the 3-by-n array of euler rotation
+#			  angles in radians.
+#
+#		or alternatively...
+#	C11-C66 	- REAL; the stiffness coefficients with the appropriate id
+#	E11-E33,S11-S33	- REAL; the permittivity and conductivity coefficients and
+#			  'id' value corresponding to the coefficients along the diagonal
+#			  of their respective tensors.
+#
+#
+# Source Input Values:
+#	dt 		- REAL; dx/(2*maxvelcity)
+#	steps 		- INT; the total number of time steps
+#	x,y,z 		- REAL; locations in meters, +x is to the right, +z is down, +y is into the screen
+#	f0 		- REAL; center frequency for the guassian pulse function if
+#			  'source_file' isn't supplied
+#	theta 		- REAL; source orientation in the x-z plane,
+#	phi 		- REAL; source orientation in the x-y plane for 2.5/3D only,
+#	source_file	- STR; the pointer to the text file that contains the source
+#			  timeseries as a steps-by-1 vector.
+#
+# 	**phi and theta are the rotation angles for spherical coordinates so
+#		x = r sin(theta)cos(phi)
+#		y = r sin(theta)sin(phi)
+#		z = r cos(theta)
+#
+#	Theta is the angle from the z-axis (+ down relative to image), phi is the
+#	angle from x-axis in the x-y plane (+ counterclockwise when viewed from above)
+#
+# Written by Steven Bernsen
+# University of Maine
+# -----------------------------------------------------------------------------
+
+
+I,increasingvelocity.png
+
+D,dim,2
+D,nx,200
+D,ny,n/a
+D,nz,80
+D,dx,1
+D,dy,n/a
+D,dz,1
+D,cpml,10
+D,nmats,7
+D,tfile,
+
+# number, id, R/G/B, Temperature, Attenuation, Density, Porosity, Water_Content, Anisotropic, ANG_File
+M,0,granite,0/34/85,0,0,2500,2,0,False,
+M,1,wet_sand,0/51/128,0,0,2000,5,20,False,
+M,2,wet_sand,0/68/170,0,0,1800,10,5,False,
+M,3,dry_sand,0/85/212,0,0,1500,20,5,False,
+M,4,dry_sand,0/102/255,0,0,1300,25,5,False,
+M,5,soil,42/127/255,0,0,1000,50,25,False,
+M,6,air,222/212/212,0,0,1.34,0,0,False,
+
+# The source parameters for the seismic model
+S,dt,0.00012564267392548974
+S,time_steps,8000
+S,x,10
+S,y,0
+S,z,11
+S,f0,10
+S,theta,90
+S,phi,0
+
+# id, C11, C12, C13, C22, C23, C33, C44, C55, C66, rho
+C,0.0,51733758802.44,19852232621.86,19852232621.86,51733758802.44,19852232621.86,51733758802.44,15940763090.29,15940763090.29,15940763090.29,2450.02
+C,1.0,4457865124.57,3810657906.92,3810657906.92,4457865124.57,3810657906.92,4457865124.57,323603608.83,323603608.83,323603608.83,1900.05
+C,2.0,3801051176.72,3249202323.62,3249202323.62,3801051176.72,3249202323.62,3801051176.72,275924426.55,275924426.55,275924426.55,1620.1
+C,3.0,243863025.82,206128142.03,206128142.03,243863025.82,206128142.03,243863025.82,18867441.89,18867441.89,18867441.89,1200.2
+C,4.0,198156487.19,167494143.08,167494143.08,198156487.19,167494143.08,198156487.19,15331172.06,15331172.06,15331172.06,975.25
+C,5.0,52989143.1,40277361.27,40277361.27,52989143.1,40277361.27,52989143.1,6355890.92,6355890.92,6355890.92,500.5
+C,6.0,157649.66,157649.66,157649.66,157649.66,157649.66,157649.66,0.0,0.0,0.0,1.34
+
+# The source parameters for the electromagnetic model
+E,dt,1.6678204759907602e-09
+E,time_steps,1500
+E,x,5
+E,y,0
+E,z,10
+E,f0,1e8
+E,theta,0
+E,phi,0
+
+# id, e11, e22, e33, s11, s22, s33
+P,0.0,14.2,14.2,14.2,0.00018,0.00018,0.00018
+P,1.0,173.067,173.067,173.067,0.0018333333333333333,0.0018333333333333333,0.0018333333333333333
+P,2.0,343.233,343.233,343.233,0.003416666666666667,0.003416666666666667,0.003416666666666667
+P,3.0,14.9,14.9,14.9,0.001,0.001,0.001
+P,4.0,17.9,17.9,17.9,0.001,0.001,0.001
+P,5.0,27.082,27.082,27.082,0.09181818181818183,0.09181818181818183,0.09181818181818183
+P,6.0,1.0,1.0,1.0,1e-16,1e-16,1e-16
+
