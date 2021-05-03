@@ -28,12 +28,12 @@ not be able to edit source code.
 read -rp $'Type "yes" and press Enter to delete source files. (default: no)\n' EUMODE
 
 if [[ "$EUMODE" == "yes" || "$EUMODE" == "Yes" || "$EUMODE" == "YES" ]] ; then
-        # move instead of copy (end-user mode)
-        FX=mv
+        # end-user mode
+        EUMODE="yes"
 else
-        # straight copy (for developer mode)
+        # developer mode
+        unset EUMODE
         echo "Developer mode enabled. Source scripts will not be deleted."
-        FX=cp
 fi
 
 bash conda_deps.sh ||
@@ -97,24 +97,24 @@ cd ..
 
 # --------------------------- Create the executables --------------------------
 # Start with the python scripts
-$FX exe/prjbuild.py bin/prjbuild
-$FX exe/prjrun.py bin/prjrun
-$FX exe/sourcefunction.py bin/sourcefunction
-$FX materials/orientation_tensor.py bin/orientation_tensor
+cp exe/prjbuild.py bin/prjbuild
+cp exe/prjrun.py bin/prjrun
+cp exe/sourcefunction.py bin/sourcefunction
+cp materials/orientation_tensor.py bin/orientation_tensor
 
 # Move the visualization tools
-$FX vis/arraybuild.py bin/arraybuild
-$FX vis/rcxdisplay.py bin/rcxdisplay
-$FX vis/im2anim.py bin/im2anim
-$FX vis/vtkbuild.py bin/vtkbuild 
-$FX vis/wiggleplot.py bin/wiggleplot 
-$FX vis/imgen.py bin/imgen.py # The generalized image functions module
-$FX vis/imvector.py bin/imvector
-$FX vis/vectoranim.py bin/vectoranim
-$FX vis/implot.py bin/implot
+cp vis/arraybuild.py bin/arraybuild
+cp vis/rcxdisplay.py bin/rcxdisplay
+cp vis/im2anim.py bin/im2anim
+cp vis/vtkbuild.py bin/vtkbuild 
+cp vis/wiggleplot.py bin/wiggleplot 
+cp vis/imgen.py bin/imgen.py # The generalized image functions module
+cp vis/imvector.py bin/imvector
+cp vis/vectoranim.py bin/vectoranim
+cp vis/implot.py bin/implot
 
 # move the conversion scripts
-$FX io/array2segy.py bin/array2segy
+cp io/array2segy.py bin/array2segy
 
 # Change them to executables
 chmod +x bin/prjbuild \
@@ -134,17 +134,27 @@ chmod +x bin/prjbuild \
 
 
 # Now do the bash scripts
-$FX survey_wrappers/common_offset bin/common_offset
-$FX survey_wrappers/common_midpoint bin/common_midpoint
+cp survey_wrappers/common_offset bin/common_offset
+cp survey_wrappers/common_midpoint bin/common_midpoint
 
-$FX io/array2sac bin/array2sac
+cp io/array2sac bin/array2sac
 
 chmod +x bin/common_offset bin/common_midpoint bin/array2sac
 
 
 # ---------------- Move all other required files to bin folder ----------------
-$FX materials/material_functions.py bin/material_functions.py
-$FX materials/definitions.py bin/definitions.py
+cp materials/material_functions.py bin/material_functions.py
+cp materials/definitions.py bin/definitions.py
+
+if [ ! -z ${EUMODE+x} ]; then
+        echo "Deleting source files..."
+        rm -rfv exe materials vis io survey_wrappers
+        echo "Source files deleted. You will need to download the
+        software again if you'd like to edit source files.
+        Developers should not commit changes on this branch as
+        this will cause unwanted consequences in source control."
+        unset EUMODE
+fi
 
 echo ""
 echo "Done."
