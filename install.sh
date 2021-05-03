@@ -3,21 +3,46 @@
 # Install script for SEIDART toolbox
 
 # ----------------------------- Anaconda install ------------------------------
-ver="v0.2"
-echo "--------------------------------------------
-SeidarT Anaconda-based installer $ver
+VER="v0.2"
+echo '--------------------------------------------
+SeidarT Anaconda-based installer $VER
 Univ. of Maine / Univ. of Washington, 2020
 --------------------------------------------
-This installer will check for Anaconda/Miniconda and install a SeidarT environment prior to compiling.
-You will have the option to install Miniconda if no existing conda is found.
-"
+This installer will check for Anaconda/Miniconda
+and install a SeidarT environment prior to compiling from
+source.
+You will have the option to install Miniconda
+if no existing conda is found.
+
+Please follow instructions in prompts.
+'
+read -rp $'Press Enter to continue...\n'
+
+
+echo '
+Do you wish to delete source files after installation?
+This will not affect how the program runs, but you will
+not be able to edit source code.
+'
+# ask if we should enable pure end-user mode and delete the source scripts
+read -rp $'Type "yes" and press Enter to delete source files. (default: no)\n' EUMODE
+
+if [[ "$EUMODE" == "yes" || "$EUMODE" == "Yes" || "$EUMODE" == "YES" ]] ; then
+        # move instead of copy (end-user mode)
+        FX=mv
+else
+        # straight copy (for developer mode)
+        echo "Developer mode enabled. Source scripts will not be deleted."
+        FX=cp
+fi
+
 bash conda_deps.sh ||
 echo "Conda installation failed. Try installing dependencies the run the noconda_install script." ||
 exit 1
 
 `grep etc/profile.d/conda.sh ~/.bashrc`
 conda activate SeidarT &&
-echo "Successfully activated SeidarT environment for compiling" ||
+echo "conda activate SeidarT : Successfully activated SeidarT environment." ||
 echo "Could not find SeidarT conda environment. Exiting." ||
 exit 1
 
@@ -36,8 +61,8 @@ fi
 # can read the f2py or gfortran outputs
 
 # Just clean up if specified 
-clean=${1:-"none"}
-if [[ $clean == "clean" ]] ; then 
+CLEAN=${1:-"none"}
+if [[ $CLEAN == "clean" ]] ; then 
         # Clear the bin folder
         rm -rf bin/* 
         # Remove .mod and .o (if any) files generated during the fortran compile
@@ -72,24 +97,24 @@ cd ..
 
 # --------------------------- Create the executables --------------------------
 # Start with the python scripts
-cp exe/prjbuild.py bin/prjbuild
-cp exe/prjrun.py bin/prjrun
-cp exe/sourcefunction.py bin/sourcefunction
-cp materials/orientation_tensor.py bin/orientation_tensor
+$FX exe/prjbuild.py bin/prjbuild
+$FX exe/prjrun.py bin/prjrun
+$FX exe/sourcefunction.py bin/sourcefunction
+$FX materials/orientation_tensor.py bin/orientation_tensor
 
 # Move the visualization tools
-cp vis/arraybuild.py bin/arraybuild
-cp vis/rcxdisplay.py bin/rcxdisplay
-cp vis/im2anim.py bin/im2anim
-cp vis/vtkbuild.py bin/vtkbuild 
-cp vis/wiggleplot.py bin/wiggleplot 
-cp vis/imgen.py bin/imgen.py # The generalized image functions module
-cp vis/imvector.py bin/imvector
-cp vis/vectoranim.py bin/vectoranim
-cp vis/implot.py bin/implot
+$FX vis/arraybuild.py bin/arraybuild
+$FX vis/rcxdisplay.py bin/rcxdisplay
+$FX vis/im2anim.py bin/im2anim
+$FX vis/vtkbuild.py bin/vtkbuild 
+$FX vis/wiggleplot.py bin/wiggleplot 
+$FX vis/imgen.py bin/imgen.py # The generalized image functions module
+$FX vis/imvector.py bin/imvector
+$FX vis/vectoranim.py bin/vectoranim
+$FX vis/implot.py bin/implot
 
 # move the conversion scripts
-cp io/array2segy.py bin/array2segy
+$FX io/array2segy.py bin/array2segy
 
 # Change them to executables
 chmod +x bin/prjbuild \
@@ -101,7 +126,7 @@ chmod +x bin/prjbuild \
         bin/im2anim \
         bin/orientation_tensor \
         bin/array2segy \
-	      bin/vtkbuild \
+	bin/vtkbuild \
         bin/imvector \
         bin/vectoranim \
         bin/implot
@@ -109,17 +134,17 @@ chmod +x bin/prjbuild \
 
 
 # Now do the bash scripts
-cp survey_wrappers/common_offset bin/common_offset
-cp survey_wrappers/common_midpoint bin/common_midpoint
+$FX survey_wrappers/common_offset bin/common_offset
+$FX survey_wrappers/common_midpoint bin/common_midpoint
 
-cp io/array2sac bin/array2sac
+$FX io/array2sac bin/array2sac
 
 chmod +x bin/common_offset bin/common_midpoint bin/array2sac
 
 
 # ---------------- Move all other required files to bin folder ----------------
-cp materials/material_functions.py bin/material_functions.py
-cp materials/definitions.py bin/definitions.py
+$FX materials/material_functions.py bin/material_functions.py
+$FX materials/definitions.py bin/definitions.py
 
 echo ""
 echo "Done."
