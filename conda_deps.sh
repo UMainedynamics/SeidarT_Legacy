@@ -12,15 +12,18 @@ LINUX_EXE="Miniconda3-latest-Linux-x86_64.sh"
 ARM_EXE="Berryconda3-2.0.0-Linux-armv7l.sh"
 X86_BASE_URL="https://repo.anaconda.com/miniconda/"
 ARM_BASE_URL="https://github.com/jjhelmus/berryconda/releases/download/v2.0.0/"
-if [[ "$ARCH" == "armv"* ]]; then RELEASE='berryconda3'; else RELEASE='miniconda3'; fi
+if [[ "$ARCH" == "armv"* ]]; then
+  RELEASE='berryconda3'
+  RPI='rpi'
+else
+  RELEASE='miniconda3'
+fi
 # conda install location:
 PREFIX="$HOME/$RELEASE"         # $HOME/miniconda3 is default location
 FULL="$HOME/anaconda3"          # full release install location
 BERRYCONDA="$HOME/berryconda3"  # berryconda install location
 MINICONDA="$HOME/miniconda3"    # miniconda install location
 
-echo "Please follow instructions in prompts."
-read -rp $'Press Enter to continue...\n'
 
 # first we have to test if there is an existing anaconda installation
 # the simplest case, that the conda command works:
@@ -75,20 +78,8 @@ if [ -z ${CONDA_EXISTS+x} ]; then
     unset $PYTHONPATH
   fi
 
-  if [[ "$ARCH" == "armv"* ]]; then
+  if [[ ! -z ${RPI+x} ]]; then
     # installing on ARM architecture (RPi or similar)
-    rpi="rpi"
-
-    if [[ "$NODE" == "raspberryshake" ]]; then
-      # warn the user about installing on a Shake
-      echo '---------------------------------------------------------------'
-      echo "WARNING: You are installing this on the Raspberry Shake itself."
-      echo "Although this is possible, it is not tested or supported."
-      echo "Raspberry Shake S.A. is not liable for strange Shake behavior"
-      echo "if you choose to do this! Proceed at your own risk."
-      read -n1 -rp $'Press any key to continue or Ctrl+C to exit...\n'
-    fi
-
     wget "$ARM_BASE_URL$ARM_EXE" -O "$TMP_EXE" && DL=1
 
   else
@@ -140,9 +131,9 @@ else
   echo 'make activating conda easier (just type "conda activate" into a terminal).'
   echo 'This is highly recommended to make it easier to access conda environments in the future.'
   echo "This line is: $SOURCELINE"
-  read -rp $'Press Enter to continue, or type no and press Enter to prevent this...\n' key
+  read -rp $'Press Enter to continue, or type no and press Enter to prevent this...\n' SOURCEINPUT
 
-  if [[ "$key" == "no" ]]; then
+  if [[ "$SOURCEINPUT" == "no" ]]; then
     echo "Not appending sourcing line to bashrc."
     echo "You can add it later by adding the following line to the bottom of ~/.bashrc:"
     echo $SOURCELINE
