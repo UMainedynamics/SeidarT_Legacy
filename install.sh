@@ -40,7 +40,7 @@ bash conda_deps.sh ||
 echo "Conda installation failed. Try installing dependencies the run the noconda_install script." ||
 exit 1
 
-`grep etc/profile.d/conda.sh ~/.bashrc`
+`grep etc/profile.d/conda.sh ~/.bashrc` &&
 conda activate SeidarT &&
 echo "conda activate SeidarT : Successfully activated SeidarT environment." ||
 echo "Could not find SeidarT conda environment. Exiting." ||
@@ -149,13 +149,16 @@ cp materials/definitions.py bin/definitions.py
 if [ ! -z ${EUMODE+x} ]; then
         echo "Deleting source files..."
         rm -rfv exe materials vis io survey_wrappers
-        echo "Source files deleted. You will need to download the
-        software again if you'd like to edit source files.
-        Developers should not commit changes on this branch as
-        this will cause unwanted consequences in source control."
+        echo '
+Source files deleted. You will need to download the
+software again if you would like to edit source files.
+Developers should not commit changes on this branch as
+this will cause unwanted consequences in source control.
+Developers can also use the git command "git restore ."
+to restore all deleted files to source control.'
         unset EUMODE
 fi
 
-echo ""
-echo "Done."
-echo 'Type "conda activate SeidarT" to access the SeidarT environment.'
+echo '
+Done.
+Type "conda activate SeidarT" to access the SeidarT environment.'
