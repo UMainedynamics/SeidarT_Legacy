@@ -154,7 +154,7 @@ if [ -z ${CONDA_EXISTS+x} ]; then
   exit 2
 fi
 
-if [[ "$ARCH" == "armv"* ]]; then
+if [[ ! -z ${RPI+x} ]]; then
   # may not need to differentiate depending on testing, otherwise arm python=3.6.6
   ENV_INSTALL="conda create -n SeidarT python=3 pip git dos2unix ghostscript imagemagick numpy matplotlib scipy pyevtk vtk -y"
 else
@@ -166,7 +166,7 @@ if [ ! -f $HOME/.condarc ]; then
   echo "No $HOME/.condarc file exists. Creating..."
   echo $'channels:\n  -\n   defaults\n  -\n   rpi\n  -\n   conda-forge\n' > $HOME/.condarc
 fi
-if [[ "$ARCH" == "armv"* ]]; then
+if [[ ! -z ${RPI+x} ]]; then
   cat $HOME/.condarc | grep "rpi" >/dev/null && echo "Found rpi channel in $HOME/.condarc" ||
   (echo "Appending rpi to conda channels..." &&
   conda config --append channels rpi)
