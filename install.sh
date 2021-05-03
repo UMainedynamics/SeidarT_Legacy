@@ -150,6 +150,7 @@ if [ ! -z ${EUMODE+x} ]; then
         echo "Deleting source files..."
         rm -rfv exe materials vis io survey_wrappers
         echo '
+[end user mode]:
 Source files deleted. You will need to download the
 software again if you would like to edit source files.
 Developers should not commit changes on this branch as
@@ -160,5 +161,5 @@ to restore all deleted files to source control.'
 fi
 
 echo '
-Done.
+Done!
 Type "conda activate SeidarT" to access the SeidarT environment.'
