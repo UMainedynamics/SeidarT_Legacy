@@ -3,21 +3,46 @@
 # Install script for SEIDART toolbox
 
 # ----------------------------- Anaconda install ------------------------------
-ver="v0.2"
+VER="v0.2"
 echo "--------------------------------------------
-SeidarT Anaconda-based installer $ver
+SeidarT Anaconda-based installer $VER
 Univ. of Maine / Univ. of Washington, 2020
 --------------------------------------------
-This installer will check for Anaconda/Miniconda and install a SeidarT environment prior to compiling.
-You will have the option to install Miniconda if no existing conda is found.
+This installer will check for Anaconda/Miniconda
+and install a SeidarT environment prior to compiling from
+source.
+You will have the option to install Miniconda
+if no existing conda is found.
+
+Please follow instructions in prompts.
 "
+read -rp $'Press Enter to continue...\n'
+
+
+echo '
+Do you wish to delete source files after installation?
+This will not affect how the program runs, but you will
+not be able to edit source code.
+'
+# ask if we should enable pure end-user mode and delete the source scripts
+read -rp $'Type "yes" and press Enter to delete source files. (default: no)\n' EUMODE
+
+if [[ "$EUMODE" == "yes" || "$EUMODE" == "Yes" || "$EUMODE" == "YES" ]] ; then
+        # end-user mode
+        EUMODE="yes"
+else
+        # developer mode
+        unset EUMODE
+        echo "Developer mode enabled. Source scripts will not be deleted."
+fi
+
 bash conda_deps.sh ||
 echo "Conda installation failed. Try installing dependencies the run the noconda_install script." ||
 exit 1
 
-`grep etc/profile.d/conda.sh ~/.bashrc`
+`grep etc/profile.d/conda.sh ~/.bashrc` &&
 conda activate SeidarT &&
-echo "Successfully activated SeidarT environment for compiling" ||
+echo "conda activate SeidarT : Successfully activated SeidarT environment." ||
 echo "Could not find SeidarT conda environment. Exiting." ||
 exit 1
 
@@ -36,8 +61,8 @@ fi
 # can read the f2py or gfortran outputs
 
 # Just clean up if specified 
-clean=${1:-"none"}
-if [[ $clean == "clean" ]] ; then 
+CLEAN=${1:-"none"}
+if [[ $CLEAN == "clean" ]] ; then 
         # Clear the bin folder
         rm -rf bin/* 
         # Remove .mod and .o (if any) files generated during the fortran compile
@@ -101,7 +126,7 @@ chmod +x bin/prjbuild \
         bin/im2anim \
         bin/orientation_tensor \
         bin/array2segy \
-	      bin/vtkbuild \
+	bin/vtkbuild \
         bin/imvector \
         bin/vectoranim \
         bin/implot
@@ -121,6 +146,20 @@ chmod +x bin/common_offset bin/common_midpoint bin/array2sac
 cp materials/material_functions.py bin/material_functions.py
 cp materials/definitions.py bin/definitions.py
 
-echo ""
-echo "Done."
-echo 'Type "conda activate SeidarT" to access the SeidarT environment.'
+if [ ! -z ${EUMODE+x} ]; then
+        echo "Deleting source files..."
+        rm -rfv exe materials vis io survey_wrappers
+        echo '
+[end user mode]:
+Source files deleted. You will need to download the
+software again if you would like to edit source files.
+Developers should not commit changes on this branch as
+this will cause unwanted consequences in source control.
+Developers can also use the git command "git restore ."
+to restore all deleted files to source control.'
+        unset EUMODE
+fi
+
+echo '
+Done!
+Type "conda activate SeidarT" to access the SeidarT environment.'
