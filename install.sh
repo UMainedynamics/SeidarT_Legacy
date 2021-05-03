@@ -4,7 +4,7 @@
 
 # ----------------------------- Anaconda install ------------------------------
 VER="v0.2"
-echo '--------------------------------------------
+echo "--------------------------------------------
 SeidarT Anaconda-based installer $VER
 Univ. of Maine / Univ. of Washington, 2020
 --------------------------------------------
@@ -15,7 +15,7 @@ You will have the option to install Miniconda
 if no existing conda is found.
 
 Please follow instructions in prompts.
-'
+"
 read -rp $'Press Enter to continue...\n'
 
 
