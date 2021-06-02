@@ -3,3 +3,4 @@ bin/
 docsrc/_build
 SDdata/
 .vscode
+*.fuse_hidden*
