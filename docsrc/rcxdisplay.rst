@@ -7,28 +7,27 @@ rcxdisplay
 
 .. code-block:: bash
 
-    rcxdisplay -p [projectfile] -f [csv file with plottable output] -r [receiver location text file] -g [gain] -e [vertical exaggeration] -s [use if seismic]
+    rcxdisplay -p PROJECTFILE -f DATAFILE -g VALUE -e VALUE -s [OPTIONAL]
 
 
 **Inputs**
 
-* ``-p FILE``, ``--prjfile FILE`` .prj file
+* ``-p PROJECTFILE``, ``--prjfile PROJECTFILE`` .prj file
 
-    The file path for the project file, completely filled in for the model
-    type used except for permittivity and stiffness coefficients, and dt
+    The file path for the project file.
 
-* ``-f FILE``, ``--file FILE``
+* ``-f DATAFILE``, ``--file DATAFILE``
 
     Path to the csv file with receiver timeseries data,
-    commonly receiver_array.csv or Ex.co.csv
+    commonly receiver_array.csv or [Vx Vy Vz Ex Ey Ez].co.csv. See arraybuild for how to generate this file for single shots.
 
 * ``-g VALUE``, ``--gain VALUE``
 
-    Gain (smoothing length)
+    Gain (smoothing length). Possible values are 1 through the number of timesteps.
 
-* ``-e value``, ``--exaggeration VALUE``
+* ``-e VALUE``, ``--exaggeration VALUE``
 
-    Vertical exaggeration. Set the aspect ratio between the x and y axes for
+    Vertical exaggeration. Set the aspect ratio between the x and z axes for
     plotting. Default is 0.5
 
 * ``-s VALUE``, ``--seismic VALUE``
@@ -42,7 +41,7 @@ rcxdisplay
 
 **Outputs**
 
-Plot of amplitude value across area surveyed
+Plot of amplitude across area surveyed.
 
 
 .. |top| raw:: html

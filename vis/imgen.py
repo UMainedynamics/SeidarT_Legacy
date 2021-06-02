@@ -131,7 +131,7 @@ class FDTDImage:
             minlength = 0.1
         )
     
-    def magnitudeplot(self, papercolumnwidth = 7.2):
+    def magnitudeplot(self, alpha = 0.3, papercolumnwidth = 7.2):
         dat = datinput(self.velocityfile, self.nx, self.nz)
         
         self.fig = plt.figure(
@@ -141,12 +141,12 @@ class FDTDImage:
         self.ax.imshow(
             dat, 
             cmap = 'seismic',
-            extent = [0, self.nx, self.nz, 0]
+            extent = self.extent
         )
         self.ax.imshow(
             self.background,
-            alpha = 0.3,
-            extent = [0, self.nx-2*self.cpml,self.nz-2*self.cpml, 0]
+            alpha = alpha,
+            extent = [0, self.nx-2*self.cpml, self.nz-2*self.cpml, 0]
         )
         
     

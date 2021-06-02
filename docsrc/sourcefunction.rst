@@ -8,14 +8,15 @@ sourcefunction
 
 .. code-block:: bash
 
-    sourcefunction [-h] -p PROJECTFILE [-S SOURCETYPE] [-m MODELTYPE][-a AMPLITUDE]
+    sourcefunction [-h] -p PRJFILE -S SOURCETYPE -m [s e b] -a AMPLITUDE
 
 
 **Inputs**
 
-* ``-p``: Project file
+* ``-p``: PRJFILE
 
-    Name of .prj file
+    Path to the .prj file, which must have dt and permittivity and stiffness tensors completed
+    (usually via the ``-m n`` option of ``prjrun``).
 
 * ``-S``: Source type
 
@@ -34,25 +35,6 @@ sourcefunction
 * ``-h``, ``--help``
 
     show this help message and exit
-
-* ``-p PROJECTFILE``, ``--projectfile PROJECTFILE``
-
-    The path to the project file
-
-* ``-S SOURCETYPE``, ``--sourcetype SOURCETYPE``
-
-    Specify the source type. Available wavelets are: gaus0, gaus1,
-    gaus2 (gaussian n-th derivative), chirp, chirplet. (Default = gaus0)
-
-* ``-m MODELTYPE``, ``--modeltype MODELTYPE``
-
-    Specify whether to construct the source for an em or seismic model.
-    s-seismic, e-electromagnetic, b-both
-
-* ``-a AMPLITUDE``, ``--amplitude AMPLITUDE``
-
-    Input the scalar factor for source amplification (Default = 1.0)
-
 
 **Outputs**
 

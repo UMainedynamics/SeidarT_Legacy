@@ -1,6 +1,8 @@
 import numpy as np 
 import material_functions as mf 
+import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+import matplotlib.animation as anim
 import os.path
 from subprocess import call
 from scipy.io import FortranFile
@@ -17,22 +19,23 @@ class Domain:
         self.build()
 
     def build(self):
-    	# Initialize variables
-    	self.geometry = None
-    	self.dim = None
-    	self.nx = None
-    	self.ny = None
-    	self.nz = None
-    	self.dx = None
-    	self.dy = None
-    	self.dz = None
-    	self.cpml = None
-    	self.write = None
-    	self.exit_status = 1
-
-    	# Flag to specify whether the all inputs are fulfilled
-    	self.seismic_model = False 
-    	self.electromag_model = False
+        # Initialize variables
+        self.geometry = None
+        self.dim = None
+        self.nx = None
+        self.ny = None
+        self.nz = None
+        self.dx = None
+        self.dy = None
+        self.dz = None
+        self.cpml = None
+        self.write = None	
+        self.imfile = None
+        self.exit_status = 1
+        
+        # Flag to specify whether the all inputs are fulfilled
+        self.seismic_model = False 
+        self.electromag_model = False
 
     def para_check(self):
     	self.exit_status = 0
@@ -202,13 +205,16 @@ class AnimatedGif:
         self.images = []
         self.background = []
         self.source_location = []
+        self.nx = size[0]
+        self.nz = size[1]
+        self.output_format = 0
         
     def add(self, image, label='', extent=None ):
         bound = np.max([abs(np.min(image)),abs(np.max(image))])
         plt_im = plt.imshow(
             image,cmap='seismic', 
             animated=True, 
-            extent=(0, (nx), (nz), 0),
+            extent=(0, (self.nx), (self.nz), 0),
             vmin=-bound,vmax=bound
         )
         plt_bg = plt.imshow(
@@ -239,7 +245,7 @@ class AnimatedGif:
                                          interval = frame_rate, 
                                          blit = True
                                         )
-        if output_format == 1:
+        if self.output_format == 1:
             animation.save(filename, dpi = 300)
         else:
             animation.save(filename, dpi = 300, writer = 'imagemagick')
@@ -385,114 +391,114 @@ def append_coefficients(prjfile, tensor, CP = None, dt=1 ):
 def loadproject(project_file, domain, material, seismic, electromag):
     # domain, material, seismic, electromag are the objects that we will assign
     # values to
-	f = open(project_file)
-
-	# Let the if train begin
-	for line in f:
-
-		if line[0] == 'I':
-			# There's a trailing new line value
-			im = image2int(line[2:-1])
-			domain.geometry = im.transpose().astype(int)
-
-		# All domain inputs must be input except for ny and dy
-		if line[0] == 'D':
-			temp = line.split(',')
-
-			if temp[1] == 'dim':
-				domain.dim = temp[2].rsplit()
-			if temp[1] == 'nx':
-				domain.nx = temp[2].rsplit()
-			if temp[1] == 'ny':
-				domain.ny = temp[2].rsplit()
-			if temp[1] == 'nz':
-				domain.nz = temp[2].rsplit()
-			if temp[1] == 'dx':
-				domain.dx = temp[2].rsplit()
-			if temp[1] == 'dy':
-				domain.dy = temp[2].rsplit()
-			if temp[1] == 'dz':
-				domain.dz = temp[2].rsplit()
-			if temp[1] == 'cpml':
-				domain.cpml = temp[2].rsplit()
-			if temp[1] == 'write':
-				domain.write = temp[2].rsplit()
-
-
-		if line[0] == 'S':
-			temp = line.split(',')
-			if temp[1] == 'dt':
-				seismic.dt = temp[2].rsplit()
-			if temp[1] == 'time_steps':
-				seismic.time_steps = temp[2].rsplit()
-			if temp[1] == 'x':
-				seismic.x = temp[2].rsplit()
-			if temp[1] == 'y':
-				seismic.y = temp[2].rsplit()
-			if temp[1] == 'z':
-				seismic.z = temp[2].rsplit()
-			if temp[1] == 'f0':
-				seismic.f0 = temp[2].rsplit()
-			if temp[1] == 'theta':
-				seismic.theta = temp[2].rsplit()
-			if temp[1] == 'phi':
-				seismic.phi = temp[2].rsplit()
-
-		if line[0] == 'E':
-			temp = line.split(',')
-			if temp[1] == 'dt':
-				electromag.dt = temp[2].rsplit()
-			if temp[1] == 'time_steps':
-				electromag.time_steps = temp[2].rsplit()
-			if temp[1] == 'x':
-				electromag.x = temp[2].rsplit()
-			if temp[1] == 'y':
-				electromag.y = temp[2].rsplit()
-			if temp[1] == 'z':
-				electromag.z = temp[2].rsplit()
-			if temp[1] == 'f0':
-				electromag.f0 = temp[2].rsplit()
-			if temp[1] == 'theta':
-				electromag.theta = temp[2].rsplit()
-			if temp[1] == 'phi':
-				electromag.phi = temp[2].rsplit()
-			
-		if line[0] == 'M':
-			line = line[0:-1]
-			temp = line.split(',')
-			if temp[1] == '0':
-				material.material_list = temp[1:]
-			else:
-				material.material_list = np.row_stack( (material.material_list, temp[1:]))
-
-		if line[0] == 'C':
-			temp = line.split(',')
-			# We need to remove the '\n' at the end. Whether the coefficients are 
-			# given results in a different string
-			try:
-				temp[-1] = temp[-1].rsplit()[0]
-			except:
-				temp[-1] = ''
-
-			if temp[1] == '0' or temp[1] == '0.0':
-				seismic.tensor_coefficients = temp[1:]
-			else:
-				seismic.tensor_coefficients = np.row_stack((seismic.tensor_coefficients, temp[1:]))
-
-		if line[0] == 'P':
-			temp = line.split(',')
-			try:
-				temp[-1] = temp[-1].rsplit()[0] # An index error will be given if coefficients are provided
-			except:
-				temp[-1] = ''
-
-			if temp[1] == '0' or temp[1] == '0.0':
-				electromag.tensor_coefficients = temp[1:]
-			else:
-				electromag.tensor_coefficients = np.row_stack( (electromag.tensor_coefficients, temp[1:]))
-
-	f.close()
-	return domain, material, seismic, electromag
+    f = open(project_file)
+    
+    # Let the if train begin
+    for line in f:
+        if line[0] == 'I':
+            # There's a trailing new line value
+            im = image2int(line[2:-1])
+            domain.geometry = im.transpose().astype(int)
+            # Get the image file
+            domain.imfile = line[2:-1]
+            
+        # All domain inputs must be input except for ny and dy
+        if line[0] == 'D':
+            temp = line.split(',')
+            
+            if temp[1] == 'dim':
+                domain.dim = temp[2].rsplit()
+            if temp[1] == 'nx':
+                domain.nx = temp[2].rsplit()
+            if temp[1] == 'ny':
+                domain.ny = temp[2].rsplit()    
+            if temp[1] == 'nz':
+                domain.nz = temp[2].rsplit()
+            if temp[1] == 'dx':
+                domain.dx = temp[2].rsplit()
+            if temp[1] == 'dy':
+                domain.dy = temp[2].rsplit()
+            if temp[1] == 'dz':
+                domain.dz = temp[2].rsplit()
+            if temp[1] == 'cpml':
+                domain.cpml = temp[2].rsplit()
+            if temp[1] == 'write':
+                domain.write = temp[2].rsplit()
+            
+        if line[0] == 'S':
+            temp = line.split(',')
+            if temp[1] == 'dt':
+                seismic.dt = temp[2].rsplit()
+            if temp[1] == 'time_steps':
+                seismic.time_steps = temp[2].rsplit()
+            if temp[1] == 'x':
+                seismic.x = temp[2].rsplit()
+            if temp[1] == 'y':
+                seismic.y = temp[2].rsplit()
+            if temp[1] == 'z':
+                seismic.z = temp[2].rsplit()
+            if temp[1] == 'f0':
+                seismic.f0 = temp[2].rsplit()
+            if temp[1] == 'theta':
+                seismic.theta = temp[2].rsplit()
+            if temp[1] == 'phi':
+                seismic.phi = temp[2].rsplit()
+                
+        if line[0] == 'E': 
+            temp = line.split(',')
+            if temp[1] == 'dt':
+                electromag.dt = temp[2].rsplit()
+            if temp[1] == 'time_steps':
+                electromag.time_steps = temp[2].rsplit()
+            if temp[1] == 'x':
+                electromag.x = temp[2].rsplit()
+            if temp[1] == 'y':
+                electromag.y = temp[2].rsplit()
+            if temp[1] == 'z':
+                electromag.z = temp[2].rsplit()
+            if temp[1] == 'f0':
+                electromag.f0 = temp[2].rsplit()
+            if temp[1] == 'theta':
+                electromag.theta = temp[2].rsplit()
+            if temp[1] == 'phi':
+                electromag.phi = temp[2].rsplit()
+            
+        if line[0] == 'M':
+            line = line[0:-1]
+            temp = line.split(',')
+            if temp[1] == '0':
+                material.material_list = temp[1:]
+            else:
+                material.material_list = np.row_stack( (material.material_list, temp[1:]))
+            
+        if line[0] == 'C':
+            temp = line.split(',')
+            # We need to remove the '\n' at the end. Whether the coefficients are 
+            # given results in a different string
+            try:
+                temp[-1] = temp[-1].rsplit()[0]
+            except:
+                temp[-1] = ''
+            
+            if temp[1] == '0' or temp[1] == '0.0':
+                seismic.tensor_coefficients = temp[1:]
+            else:
+                seismic.tensor_coefficients = np.row_stack((seismic.tensor_coefficients, temp[1:]))
+        
+        if line[0] == 'P':
+            temp = line.split(',')
+            try:
+                temp[-1] = temp[-1].rsplit()[0] # An index error will be given if coefficients are provided
+            except:
+                temp[-1] = ''
+            
+            if temp[1] == '0' or temp[1] == '0.0':
+                electromag.tensor_coefficients = temp[1:]
+            else:
+                electromag.tensor_coefficients = np.row_stack( (electromag.tensor_coefficients, temp[1:]))
+    
+    f.close()
+    return domain, material, seismic, electromag
 
 
 # -----------------------------------------------------------------------------

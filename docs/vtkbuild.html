@@ -39,6 +39,7 @@
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="implot" href="implot.html" />
     <link rel="prev" title="im2anim" href="im2anim.html" /> 
 </head>
 
@@ -97,32 +98,30 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">3. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">4. Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="routines.html">5. Routines and wrappers</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Extra material</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Initialize</span></p>
-<ul>
+<p class="caption"><span class="caption-text">Command reference</span></p>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="prjbuild.html">prjbuild</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Run</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="sourcefunction.html">sourcefunction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prjrun.html">prjrun</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_offset.html">common_offset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_midpoint.html">common_midpoint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="orientation_tensor.html">orientation_tensor</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Plot and visualize</span></p>
-<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="arraybuild.html">arraybuild</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rcxdisplay.html">rcxdisplay</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wiggleplot.html">wiggleplot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="im2anim.html">im2anim</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">vtkbuild</a></li>
+<li class="toctree-l1"><a class="reference internal" href="implot.html">implot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="imvector.html">imvector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vectoranim.html">vectoranim</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extra material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="png-creation.html">Creating a png file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="materials.html">Currently available materials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="units.html">Units</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
 </ul>
 
             
@@ -196,30 +195,26 @@
 <em>Paraview to generate an animation. (Directly building the animation is</em>
 <em>planned for a future release.)</em></p>
 <p><strong>Usage</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>vtkbuild <span class="o">[</span>-h<span class="o">]</span> -c CHANNEL <span class="o">[</span>-f FRAMES_PER_SECOND<span class="o">]</span> -n NUM_STEPS project_file
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>vtkbuild <span class="o">[</span>-h<span class="o">]</span> -p PROJECTFILE -c <span class="o">[</span>Ex Ey Ez Vx Vy Vz<span class="o">]</span> -n NUM_STEPS
 </pre></div>
 </div>
 <p><strong>Inputs</strong></p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">-p</span> <span class="pre">FILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--prjfile</span> <span class="pre">FILE</span></code> .prj file</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-p</span> <span class="pre">PROJECTFILE</span></code>, <code class="docutils literal notranslate"><span class="pre">--prjfile</span> <span class="pre">PROJECTFILE</span></code> .prj file</p>
 <blockquote>
-<div><p>The full file path for the project file, completely filled in for
-the model type used</p>
+<div><p>The full file path for the project file.</p>
 </div></blockquote>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">[Ex</span> <span class="pre">Ez</span> <span class="pre">Vx</span> <span class="pre">Vz]</span></code>, <code class="docutils literal notranslate"><span class="pre">--channel</span> <span class="pre">[Ex</span> <span class="pre">Ez</span> <span class="pre">Vx</span> <span class="pre">Vz]</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">[Ex</span> <span class="pre">Ey</span> <span class="pre">Ez</span> <span class="pre">Vx</span> <span class="pre">Vy</span> <span class="pre">Vz]</span></code>, <code class="docutils literal notranslate"><span class="pre">--channel</span> <span class="pre">[Ex</span> <span class="pre">Ey</span> <span class="pre">Ez</span> <span class="pre">Vx</span> <span class="pre">Vy</span> <span class="pre">Vz]</span></code></p>
 <blockquote>
-<div><p>Whether to plot the seismic or radar model in the X or Z direction</p>
+<div><p>Whether to plot the seismic or radar model in the X, Y, or Z direction</p>
 </div></blockquote>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">VALUE</span></code>, <code class="docutils literal notranslate"><span class="pre">--num_steps</span> <span class="pre">VALUE</span></code></p>
 <blockquote>
 <div><p>The time step interval between the images that are
-going to be used. Every time step is written to file which means that
-we can take any equally spaced images to create the gif with an
-appropriate resolution, time to compute, and file size. For example,
-n=20 means that every 20 images will be used thus significantly reducing
-how long it takes to compile.</p>
+going to be used. n=20 means that 1 out of every 20 images will be used,
+thus significantly reducing how long it takes to compile.</p>
 </div></blockquote>
 </li>
 </ul>
@@ -232,6 +227,7 @@ how long it takes to compile.</p>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="implot.html" class="btn btn-neutral float-right" title="implot" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="im2anim.html" class="btn btn-neutral float-left" title="im2anim" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

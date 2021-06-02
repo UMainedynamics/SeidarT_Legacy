@@ -7,7 +7,7 @@ prjbuild
 
 .. code-block:: bash
 
-    prjbuild -i [input_image].png -o [output_project_file].prj
+    prjbuild -i IMAGEFILE -p PROJECTFILE
 
 **Inputs**
 
@@ -18,10 +18,12 @@ prjbuild
     * Start with small dimensions (150x150, 200x500), as larger
       dimensions quickly become more time intensive
 
+* ``-p``: filename, including .prj extension
+
+
 **Outputs**
 
-* ``-o``: .prj filename to be filled in based on site characteristics
-
+* Project file to fill in based on site characteristics
 
 .. |top| raw:: html
 

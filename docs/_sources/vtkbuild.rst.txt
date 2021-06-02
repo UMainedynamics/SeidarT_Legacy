@@ -9,28 +9,22 @@ vtkbuild
 
 .. code-block:: bash
 
-    vtkbuild [-h] -c CHANNEL [-f FRAMES_PER_SECOND] -n NUM_STEPS project_file
-
+    vtkbuild [-h] -p PROJECTFILE -c [Ex Ey Ez Vx Vy Vz] -n NUM_STEPS
 
 **Inputs**
 
-* ``-p FILE``, ``--prjfile FILE`` .prj file
+* ``-p PROJECTFILE``, ``--prjfile PROJECTFILE`` .prj file
 
-    The full file path for the project file, completely filled in for
-    the model type used
+    The full file path for the project file.
 
-* ``-c [Ex Ez Vx Vz]``, ``--channel [Ex Ez Vx Vz]``
+* ``-c [Ex Ey Ez Vx Vy Vz]``, ``--channel [Ex Ey Ez Vx Vy Vz]``
 
-    Whether to plot the seismic or radar model in the X or Z direction
+    Whether to plot the seismic or radar model in the X, Y, or Z direction
 
 * ``-n VALUE``, ``--num_steps VALUE``
 
     The time step interval between the images that are
-    going to be used. Every time step is written to file which means that
-    we can take any equally spaced images to create the gif with an
-    appropriate resolution, time to compute, and file size. For example,
-    n=20 means that every 20 images will be used thus significantly reducing
-    how long it takes to compile.
-
+    going to be used. n=20 means that 1 out of every 20 images will be used,
+    thus significantly reducing how long it takes to compile.
 
 `Back to top ↑ <#top>`_

@@ -15,8 +15,7 @@ import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-
-from class_definitions import *
+from definitions import *
 
 # -------------------------- Command Line Arguments ---------------------------
 parser = argparse.ArgumentParser(
@@ -36,7 +35,7 @@ parser.add_argument(
 
 parser.add_argument(
     '-g', '--gain',
-    nargs = 1, type = float, required = False, default = 100,
+    nargs = 1, type = float, required = False, default = [100],
     help = "The smoothing length"
 )
 
@@ -68,15 +67,14 @@ parser.add_argument(
 
 
 args = parser.parse_args()
-project_file = ''.join(args.prjfile)
+prjfile = ''.join(args.prjfile)
 cofile = ''.join(args.file)
 gain = args.gain[0]
 exaggeration = args.exaggeration[0]
-seismic = args.seismic[0] == 1
+seismicbool = args.seismic[0] == 1
 #survey_type = ''.join(args.surveytype)
 
-
-# project_file = 'easy_greenland.prj'
+# prjfile = 'easy_greenland.prj'
 # cofile = 'receiver_array.csv'
 # gain = 101
 # exaggeration = 0.25
@@ -84,7 +82,7 @@ seismic = args.seismic[0] == 1
 # -----------------------------------------------------------------------------
 # Load the values from the project file
 domain, material, seismic, electromag = loadproject(
-    project_file,
+    prjfile,
     Domain(),
     Material(),
     Model(),
@@ -95,7 +93,7 @@ domain, material, seismic, electromag = loadproject(
 dat = np.genfromtxt(cofile, delimiter = ',')
 m,n = dat.shape
 
-if seismic:
+if seismicbool:
     mult = 1e2
 else:
     mult = 1e6
@@ -104,7 +102,7 @@ timelocs = np.arange(0, m, int(m/10) ) # 10 tick marks along y-axis
 rcxlocs = np.arange(0, n, int(n/5) ) # 5 tick marks along x-axis
 
 
-if seismic:
+if seismicbool:
     timevals = np.round(timelocs*float(seismic.dt[0]) * mult, 2)
 else:
     timevals = np.round(timelocs*float(electromag.dt[0]) * mult, 2)
@@ -114,13 +112,13 @@ if gain == 0:
 elif gain < m:
     for j in range(0, n):
         # Subtract the mean value
-        dat[:,j] = dat[:,j] - np.mean(dat[:,j])
+        # dat[:,j] = dat[:,j] - np.mean(dat[:,j])
         dat[:,j] = agc(dat[:,j], gain, "mean")
 else:
     gain = m
 
 
-fig = plt.figure(figsize =(n/2,m/2) )
+fig = plt.figure()#figsize =(n/2,m/2) )
 ax1 = plt.gca()
 # ax2 = ax1.twinx()
 
@@ -137,7 +135,7 @@ ax1.set_yticklabels(timevals)
 # Other figure handle operations
 ax1.set_aspect(aspect = exaggeration)
 
-if seismic:
+if seismicbool:
 	ax1.text(0, m + 0.03*m, 'x $10^{-2}$')
 else:
 	ax1.text(0, m + 0.03*m, 'x $10^{-6}$')

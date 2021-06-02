@@ -40,12 +40,20 @@ parser.add_argument(
     default = 'n'
 )
 
+parser.add_argument(
+    '-a', '--append',
+    nargs = 1, type = int, required = False, default = [1],
+    help = """Append/recompute the coefficients to the permittivity and
+    stiffness matrices; 1 = yes, 0 = no; default = 1."""
+)
 
 # Get the arguments
 args = parser.parse_args()
-project_file = ''.join(args.prjfile)
+prjfile = ''.join(args.prjfile)
 model_type = ''.join(args.model)
-pwd = os.path.dirname(project_file)
+appendbool = args.append[0] == 1
+pwd = os.path.dirname(prjfile)
+
 
 # ------------- Globals ----------------
 clight = 2.99792458e8 # In general
@@ -53,7 +61,7 @@ clight = 2.99792458e8 # In general
 # ============================ Create the objects =============================
 # Let's initiate the domain
 domain, material, seismic, electromag = loadproject(
-    project_file,
+    prjfile,
     Domain(), 
     Material(),
     Model(),
@@ -84,7 +92,7 @@ material.para_check()
 # ---------------------------------------------------------------------
 # We will always compute the coefficients but we need to make sure that we have
 # everything needed to compute them
-if seismic.exit_status == 0 and material.material_flag:
+if seismic.exit_status == 0 and material.material_flag and appendbool:
     # The coefficients aren't provided but the materials are so we can compute them
     # assign the materials to their respective corners
     
@@ -103,10 +111,10 @@ if seismic.exit_status == 0 and material.material_flag:
     dt = np.min([domain.dx, domain.dz]) / np.sqrt(3.0 * tensor.max()/max_rho )
     
     # We're going to find the lines marked 'C' and input the values there
-    append_coefficients(project_file, tensor, CP = 'C', dt = dt)
+    append_coefficients(prjfile, tensor, CP = 'C', dt = dt)
     print("Finished. Appending to project file.\n")
 
-if electromag.exit_status == 0 and material.material_flag:
+if electromag.exit_status == 0 and material.material_flag and appendbool:
     # The coefficients aren't provided but the materials are so we can compute them
     print('Computing the permittivity and conductivity coefficients.')
     material.sort_material_list()
@@ -120,7 +128,7 @@ if electromag.exit_status == 0 and material.material_flag:
     )
     dt = np.min([domain.dx, domain.dz])/(2.0*clight)
     
-    append_coefficients(project_file, tensor, CP = 'P', dt = dt)
+    append_coefficients(prjfile, tensor, CP = 'P', dt = dt)
     print("Finished. Appending to project file.\n")
 
 

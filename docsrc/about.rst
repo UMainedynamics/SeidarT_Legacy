@@ -2,7 +2,9 @@ About
 #################
 
 SeidarT is a powerful numerical modeling tool to calculate englacial
-mechanical and electromagnetic wave propagation.
+seismic and electromagnetic wave propagation. Though it grew out
+of a desire to simulate field surveys in glaciers and ice sheets, the
+code is general enough for any Earth material.
 
 .. _sample_anim:
 .. figure:: _static/10Mhz_dx_1m_s2.gif
@@ -17,6 +19,9 @@ mechanical and electromagnetic wave propagation.
 Statement of Purpose
 *************************
 
+Known issues
+*************************
+* The volume around the source rings in the electromagnetic modeling.
 
 
 .. |top| raw:: html

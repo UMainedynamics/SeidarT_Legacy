@@ -96,37 +96,36 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">1. About</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#statement-of-purpose">1.1. Statement of Purpose</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#known-issues">1.2. Known issues</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">3. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">4. Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="routines.html">5. Routines and wrappers</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Extra material</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Initialize</span></p>
+<p class="caption"><span class="caption-text">Command reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="prjbuild.html">prjbuild</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Run</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="sourcefunction.html">sourcefunction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prjrun.html">prjrun</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_offset.html">common_offset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_midpoint.html">common_midpoint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="orientation_tensor.html">orientation_tensor</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Plot and visualize</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="arraybuild.html">arraybuild</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rcxdisplay.html">rcxdisplay</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wiggleplot.html">wiggleplot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="im2anim.html">im2anim</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vtkbuild.html">vtkbuild</a></li>
+<li class="toctree-l1"><a class="reference internal" href="implot.html">implot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="imvector.html">imvector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vectoranim.html">vectoranim</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extra material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="png-creation.html">Creating a png file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="materials.html">Currently available materials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="units.html">Units</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
 </ul>
 
             
@@ -197,7 +196,9 @@
   <div class="section" id="about">
 <h1><span class="section-number">1. </span>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h1>
 <p>SeidarT is a powerful numerical modeling tool to calculate englacial
-mechanical and electromagnetic wave propagation.</p>
+seismic and electromagnetic wave propagation. Though it grew out
+of a desire to simulate field surveys in glaciers and ice sheets, the
+code is general enough for any Earth material.</p>
 <div class="figure align-center" id="id1">
 <span id="sample-anim"></span><img alt="_images/10Mhz_dx_1m_s2.gif" src="_images/10Mhz_dx_1m_s2.gif" />
 <p class="caption"><span class="caption-text">An example of model output calculated by SeidarT, showing wave
@@ -209,6 +210,12 @@ complex geometry between the layers.</span><a class="headerlink" href="#id1" tit
 </div>
 <div class="section" id="statement-of-purpose">
 <h2><span class="section-number">1.1. </span>Statement of Purpose<a class="headerlink" href="#statement-of-purpose" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="known-issues">
+<h2><span class="section-number">1.2. </span>Known issues<a class="headerlink" href="#known-issues" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>The volume around the source rings in the electromagnetic modeling.</p></li>
+</ul>
 <p><a class="reference external" href="#top">Back to top ↑</a></p>
 </div>
 </div>

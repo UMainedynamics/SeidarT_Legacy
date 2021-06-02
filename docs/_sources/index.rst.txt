@@ -49,7 +49,27 @@ the :doc:`references` section.
     installation
     getting_started
     examples
-    routines
+
+.. _modules:
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Command reference
+
+    prjbuild
+    sourcefunction
+    prjrun
+    common_offset
+    common_midpoint
+    orientation_tensor
+    arraybuild
+    rcxdisplay
+    wiggleplot
+    im2anim
+    vtkbuild
+    implot
+    imvector
+    vectoranim
 
 .. _extras:
 
@@ -57,44 +77,10 @@ the :doc:`references` section.
     :maxdepth: 2
     :caption: Extra material
 
-    appendix
+    png-creation
+    materials
+    units
     references
-
-.. _modules:
-
-Code documentation
-========================
-
-The modules available in SeidarT are organized by type below.
-
-------------
-
-.. toctree::
-    :maxdepth: 2
-    :caption: Initialize
-
-    prjbuild
-
-.. toctree::
-    :maxdepth: 2
-    :caption: Run
-
-    sourcefunction
-    prjrun
-    common_offset
-    common_midpoint
-    orientation_tensor
-
-.. toctree::
-    :maxdepth: 2
-    :caption: Plot and visualize
-
-    arraybuild
-    rcxdisplay
-    wiggleplot
-    im2anim
-    vtkbuild
-
 
 Search documentation
 ======================

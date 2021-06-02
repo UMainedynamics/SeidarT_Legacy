@@ -2,13 +2,13 @@ arraybuild
 ###################
 
 *generates a csv file (receiver_array.csv) with the timeseries in columns*
-*r each receiver for the given channel*
+*by receiver*
 
 **Usage**
 
 .. code-block:: bash
 
-    arraybuild [-h] -p PRJFILE -r RCXFILE [-i INDEX] -c CHANNEL
+    arraybuild [-h] -p PROJECTFILE -r RCXFILE [-i INDEX] -c CHANNEL
 
 
 **Inputs**
@@ -17,13 +17,13 @@ arraybuild
 
     show this help message and exit
 
-* ``-p PRJFILE``, ``--prjfile PRJFILE``
+* ``-p PROJECTFILE``, ``--prjfile PROJECTFILE``
 
-    The project file path.
+    The project file path
 
 * ``-r RCXFILE``, ``--rcxfile RCXFILE``
 
-    the file path for the text file of receiver locations, in comma separated rows
+    The file path for the text file of receiver locations
 
 * ``-i INDEX``, ``--index INDEX``
 

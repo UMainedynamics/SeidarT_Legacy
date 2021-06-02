@@ -97,32 +97,30 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">3. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">4. Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="routines.html">5. Routines and wrappers</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Extra material</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Initialize</span></p>
+<p class="caption"><span class="caption-text">Command reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="prjbuild.html">prjbuild</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Run</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="sourcefunction.html">sourcefunction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prjrun.html">prjrun</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_offset.html">common_offset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_midpoint.html">common_midpoint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="orientation_tensor.html">orientation_tensor</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Plot and visualize</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="arraybuild.html">arraybuild</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rcxdisplay.html">rcxdisplay</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wiggleplot.html">wiggleplot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="im2anim.html">im2anim</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vtkbuild.html">vtkbuild</a></li>
+<li class="toctree-l1"><a class="reference internal" href="implot.html">implot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="imvector.html">imvector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vectoranim.html">vectoranim</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extra material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="png-creation.html">Creating a png file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="materials.html">Currently available materials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="units.html">Units</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
 </ul>
 
             
@@ -218,67 +216,55 @@ the <a class="reference internal" href="references.html"><span class="doc">Refer
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="about.html">1. About</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="about.html#statement-of-purpose">1.1. Statement of Purpose</a></li>
+<li class="toctree-l2"><a class="reference internal" href="about.html#known-issues">1.2. Known issues</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#auto-installation">2.1. Auto-installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#manual-installation-instructions">2.2. Manual installation instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#folder-structure">2.3. Folder structure</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">3. Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="getting_started.html#understanding-model-inputs">3.1. Understanding model inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started.html#initiating-a-project">3.2. Initiating a project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started.html#todo-describe-what-all-is-in-this-file">3.3. TODO: Describe what all is in this file?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#general-workflow">3.1. General workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#files-to-generate-or-edit">3.2. Files to generate or edit</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">4. Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="examples.html#shapes-model">4.1. Shapes model</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="routines.html">5. Routines and wrappers</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="routines.html#routines">5.1. Routines</a></li>
-<li class="toctree-l2"><a class="reference internal" href="routines.html#wrappers">5.2. Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#shapes-model-create-a-2-5d-animation-of-wave-propagation">4.1. Shapes model: create a 2.5D animation of wave propagation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#fill-model-create-a-single-shot-seismogram-and-wiggleplot">4.2. Fill model: create a single shot seismogram and wiggleplot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#fill-model-create-a-common-offset-radar-profile">4.3. Fill model: create a common offset radar profile</a></li>
 </ul>
 </li>
 </ul>
 </div>
-<div class="toctree-wrapper compound" id="extras">
-<p class="caption"><span class="caption-text">Extra material</span><a class="headerlink" href="#extras" title="Permalink to this toctree">¶</a></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="appendix.html">Appendices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
-</ul>
-</div>
-<div class="section" id="code-documentation">
-<span id="modules"></span><h2>Code documentation<a class="headerlink" href="#code-documentation" title="Permalink to this headline">¶</a></h2>
-<p>The modules available in SeidarT are organized by type below.</p>
-<hr class="docutils" />
-<div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Initialize</span></p>
+<div class="toctree-wrapper compound" id="modules">
+<p class="caption"><span class="caption-text">Command reference</span><a class="headerlink" href="#modules" title="Permalink to this toctree">¶</a></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="prjbuild.html">prjbuild</a></li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Run</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="sourcefunction.html">sourcefunction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prjrun.html">prjrun</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_offset.html">common_offset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common_midpoint.html">common_midpoint</a></li>
 <li class="toctree-l1"><a class="reference internal" href="orientation_tensor.html">orientation_tensor</a></li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Plot and visualize</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="arraybuild.html">arraybuild</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rcxdisplay.html">rcxdisplay</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wiggleplot.html">wiggleplot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="im2anim.html">im2anim</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vtkbuild.html">vtkbuild</a></li>
+<li class="toctree-l1"><a class="reference internal" href="implot.html">implot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="imvector.html">imvector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vectoranim.html">vectoranim</a></li>
 </ul>
 </div>
+<div class="toctree-wrapper compound" id="extras">
+<p class="caption"><span class="caption-text">Extra material</span><a class="headerlink" href="#extras" title="Permalink to this toctree">¶</a></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="png-creation.html">Creating a png file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="materials.html">Currently available materials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="units.html">Units</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
 </div>
 <div class="section" id="search-documentation">
 <h2>Search documentation<a class="headerlink" href="#search-documentation" title="Permalink to this headline">¶</a></h2>

@@ -1,4 +1,5 @@
 *.dat
 bin/
 docsrc/_build
+SDdata/
 .vscode

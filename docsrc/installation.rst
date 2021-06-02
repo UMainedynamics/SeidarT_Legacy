@@ -12,6 +12,8 @@ If you are an advanced user and looking to take more in-depth
 control of the installation process, you can use the
 :ref:`manual-install`.
 
+Below the installation instructions, we describe the :ref:`folder-structure`.
+
 .. note::
 
     **Mac OS X users**: you will have to install
@@ -30,7 +32,7 @@ control of the installation process, you can use the
 Auto-installation
 *********************************
 
-First, some background for the uninitiated:
+First, some background:
 
 This method will install SeidarT on most Unix-based systems using a
 combination of Anaconda and Fortran compilation. It's not necessary
@@ -130,7 +132,7 @@ and additionally, these Python dependencies are also required:
         conda create -n seidart python=3 pip git ghostscript imagemagick numpy matplotlib scipy pyevtk vtk
         conda activate seidart
         pip install mplstereonet
-    
+
 #. Get the software
     ::
 
@@ -160,7 +162,7 @@ and additionally, these Python dependencies are also required:
         alias python=python3
 
     .. note::
-        Notes for inexperienced users:
+        Notes for Macintosh users:
 
         Depending on the OS release (El Capitan, High Sierra, Mojave, etc.)
         and whether you have Anaconda installed appending a path might be
@@ -183,7 +185,7 @@ and additionally, these Python dependencies are also required:
         and input into the command line::
 
             sudo nano .bashrc
-        
+
         and append the :code:`export PATH=...` lines at the bottom.
         Save and close the file (*CTRL+X*, then *Y* and enter) then check
         to make sure it is included in the path::
@@ -192,6 +194,24 @@ and additionally, these Python dependencies are also required:
             echo $PATH
             echo $PYTHONPATH
 
+.. _folder-structure:
+
+Folder structure
+***********************************
+
+Here we describe the folders you may need to use while working with the software.
+
+* bin
+    Contains the active Python and Fortran codes used in calculating and displaying the wave propagation.
+
+* docs
+    Repository for html documentation.
+
+* EXAMPLES
+    Hosts images and other files used in the tutorial. Also contains a shell script that can help with bookkeeping.
+
+* materials
+    Library for definitions and subroutines.
 
 ................
 

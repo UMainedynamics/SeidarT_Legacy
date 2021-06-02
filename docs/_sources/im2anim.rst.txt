@@ -8,15 +8,14 @@ study area
 
 .. code-block:: bash
 
-    im2anim [project_file].prj -c [Ex Ez Vx Vz] -n [steps in time series] -f [frames per second]
+    im2anim -p PROJECTFILE -c [Ex Ez Vx Vz] -n [steps in time series] -d [delay between frames]
 
 
 **Inputs**
 
-* ``-p FILE``, ``--prjfile FILE`` .prj file
+* ``-p PROJECTFILE``, ``--prjfile PROJECTFILE`` .prj file
 
-    The full file path for the project file, completely filled in for
-    the model type used
+    The full file path for the project file
 
 * ``-c [Ex Ez Vx Vz]``, ``--channel [Ex Ez Vx Vz]``
 
@@ -24,25 +23,20 @@ study area
 
 * ``-n VALUE``, ``--num_steps VALUE``
 
-    Number of steps in time series used, 50 works well
+    Interval between time series steps used to create the animation
 
-* ``-f VALUE``, ``--frames_per_second VALUE``
+* ``-d VALUE``, ``--delay VALUE`` OPTIONAL
 
-    Number of frames per second, 10 works well
+    Delay between frames, default=1
 
-* ``-t VALUE``, ``--threshold VALUE``
+* ``-a VALUE``, ``--alpha VALUE`` OPTIONAL
 
-    (OPTIONAL) Set array values to zero when they go below a specific
-    threshold
+    Change the transparency of the model plotted in the background; default = 0.3.
+    Zero is full transparency, 1 is opaque.
 
 **Outputs**
 
-``-o OUTPUT``, ``--output OUTPUT``
-
-    Specify the output format. 0 - GIF (default), 1 - MP4
-
-    Outputs an animation containing an image of the wave propagation
-    at each frame
+    A GIF animation of the wave propagation.
 
 
 
