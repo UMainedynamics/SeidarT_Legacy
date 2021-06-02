@@ -46,4 +46,5 @@ common_midpoint
 
 **Outputs**
 
-`Back to top ↑ <#top>`_
+
+

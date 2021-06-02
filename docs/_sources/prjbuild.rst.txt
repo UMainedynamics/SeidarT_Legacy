@@ -25,4 +25,3 @@ prjbuild
 
 * Project file to fill in based on site characteristics
 
-`Back to top ↑ <#top>`_

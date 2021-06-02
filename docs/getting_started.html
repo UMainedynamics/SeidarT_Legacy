@@ -13,8 +13,6 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -31,7 +29,6 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -251,46 +248,161 @@ more typically meters as the units.</p>
 <div><p>This file is the heart of the software. It defines domain values, material properties, and survey conditions for
 electromagnetic and seismic runs. Here, we identify what each line means and which to edit.
 All lines with # are comments. Bold text indicates a line the user should edit.</p>
-<p><code class="docutils literal notranslate"><span class="pre">I,fill2.png</span></code> The image file associated with this <em>.prj</em> file.</p>
-<p><code class="docutils literal notranslate"><span class="pre">D,dim,2</span></code> <strong>Choose either 2D or 2.5D.</strong> 2.5D is the 2D image extruded in the y-direction.</p>
-<p><code class="docutils literal notranslate"><span class="pre">D,nx,240</span></code> Read from the image file. Do not change.</p>
-<p><code class="docutils literal notranslate"><span class="pre">D,ny,1</span></code> <strong>Number of pixels in the extruded direction if using 2.5D.</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">D,nz,50</span></code> Read from the image file. Do not change.</p>
-<p><code class="docutils literal notranslate"><span class="pre">D,dx,1</span></code> <strong>Number of meters each pixel represents in the x direction.</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">D,dy,1</span></code> <strong>Number of meters each pixel represents in the y direction.</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">D,dz,1</span></code> <strong>Number of meters each pixel represents in the z direction.</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">D,cpml,20</span></code> <strong>Thickness of absorbing boundary layer. A typical value is 20.</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">D,nmats,3</span></code> Read from the image file. Do not change.</p>
-<p><code class="docutils literal notranslate"><span class="pre">D,tfile,</span></code> An attenuation processing value that is not yet implemented.</p>
-<p><code class="docutils literal notranslate"><span class="pre">M,1,ice1h,98/197/178,-10,2,910,0,0,TRUE,test.ang</span></code> One comma-separated-values line per material (per color in the model image). <strong>User should change/add
-the material name (see list), temperature (in degrees Celsius), density, porosity, water content,
-whether the material is anisotropic (TRUE or FALSE), and if anistropic, the name of the anisotropy file. Use a dummy value of 2 for attenuation,
-recognizing that attenuation is not yet incorporated in the calculations.</strong> User should not change the material ID or R/G/B values. Note: Since large density
-gradients cause numerical instabilities, the
-density for air must be increased. A value of 400.0 works until a
-better formulation of the air-rock interface is implemented.</p>
-<p><code class="docutils literal notranslate"><span class="pre">S,dt,</span></code> Timestep will be calculated automatically.</p>
-<p><code class="docutils literal notranslate"><span class="pre">S,time_steps,500</span></code> <strong>Decide how many timesteps you want the model to run.</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">S,x,100</span></code> <strong>x-coordinate of the seismic source</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">S,y,0</span></code> <strong>y-coordinate of the seismic source</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">S,z,0</span></code> <strong>z-coordinate of the seismic source</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">S,f0,60</span></code> <strong>Frequencyt of hte seismic source</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">S,theta,0</span></code> <strong>Inclination of the seismic source (+ is down)</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">S,phi,0</span></code> <strong>Angle of seismic source from x-axis in the x-y plane (+ is counterclockwise when viewed from above)</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">C,0.0,</span></code> Stiffness tensor for each material. User <em>can</em> enter or change this manually if desired. If blank, calculated from materials information
-in the earlier section.</p>
-<p><code class="docutils literal notranslate"><span class="pre">E,dt,</span></code> Timestep will be calculated automatically.</p>
-<p><code class="docutils literal notranslate"><span class="pre">E,time_steps,500</span></code> <strong>Decide how many timesteps you want the model to run.</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">E,x,100</span></code> <strong>x-coordinate of the radar source</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">E,y,0</span></code> <strong>y-coordinate of the radar source</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">E,z,0</span></code> <strong>z-coordinate of the radar source</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">E,f0,1e8</span></code> <strong>Frequencyt of hte radar source. 10-100MHz is a good range to start.</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">E,theta,0</span></code> <strong>Inclination of the radar source (+ is down)</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">E,phi,0</span></code> <strong>Angle of radar source from x-axis in the x-y plane (+ is counterclockwise when viewed from above)</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">P,0.0,</span></code> Permittivity tensor for each material. User <em>can</em> enter or change this manually if desired. If blank, calculated from materials information
-in the earlier section.</p>
 </div></blockquote>
 </li>
+</ul>
+<table class="colwidths-given docutils align-default" id="id1">
+<caption><span class="caption-text">.prj File values</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">I,fill2.png</span></code></p></td>
+<td><p>The image file associated with this <em>.prj</em> file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">D,dim,2</span></code></p></td>
+<td><div class="line-block">
+<div class="line"><strong>Choose either 2D or 2.5D.</strong></div>
+<div class="line">2.5D is the 2D image extruded in the y-direction.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">D,nx,240</span></code></p></td>
+<td><p>Read from the image file. Do not change.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">D,ny,1</span></code></p></td>
+<td><p><strong>Number of pixels in the extruded direction if using 2.5D.</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">D,nz,50</span></code></p></td>
+<td><p>Read from the image file. Do not change.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">D,dx,1</span></code></p></td>
+<td><p><strong>Number of meters each pixel represents in the x direction.</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">D,dy,1</span></code></p></td>
+<td><p><strong>Number of meters each pixel represents in the y direction.</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">D,dz,1</span></code></p></td>
+<td><p><strong>Number of meters each pixel represents in the z direction.</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">D,cpml,20</span></code></p></td>
+<td><p><strong>Thickness of absorbing boundary layer. A typical value is 20.</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">D,nmats,3</span></code></p></td>
+<td><p>Read from the image file. Do not change.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">D,tfile,</span></code></p></td>
+<td><p>An attenuation processing value that is not yet implemented.</p></td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">M,1,ice1h,98/197/178,</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">-10,2,910,0,0,TRUE,</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">test.ang</span></code></div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line">One comma-separated-values line per material</div>
+<div class="line">(per color in the model image).</div>
+<div class="line"><strong>User should change/add the material name (see list),</strong></div>
+<div class="line"><strong>temperature (in degrees Celsius), density, porosity, water content,</strong></div>
+<div class="line"><strong>whether the material is anisotropic (TRUE or FALSE),</strong></div>
+<div class="line"><strong>and if anistropic, the name of the anisotropy file.</strong></div>
+<div class="line"><strong>Use a dummy value of 2 for attenuation, recognizing that</strong></div>
+<div class="line"><strong>attenuation is not yet incorporated in the calculations.</strong></div>
+<div class="line">User should not change the material ID or R/G/B values.</div>
+<div class="line">Note: Since large density gradients cause numerical instabilities,</div>
+<div class="line">the density for air must be increased.</div>
+<div class="line">A value of 400.0 works until a better formulation</div>
+<div class="line">of the air-rock interface is implemented.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">S,dt,</span></code></p></td>
+<td><p>Timestep will be calculated automatically.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">S,time_steps,500</span></code></p></td>
+<td><p><strong>Decide how many timesteps you want the model to run.</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">S,x,100</span></code></p></td>
+<td><p><strong>x-coordinate of the seismic source</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">S,y,0</span></code></p></td>
+<td><p><strong>y-coordinate of the seismic source</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">S,z,0</span></code></p></td>
+<td><p><strong>z-coordinate of the seismic source</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">S,f0,60</span></code></p></td>
+<td><p><strong>Frequency of the seismic source</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">S,theta,0</span></code></p></td>
+<td><p><strong>Inclination of the seismic source (+ is down)</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">S,phi,0</span></code></p></td>
+<td><div class="line-block">
+<div class="line"><strong>Angle of seismic source from x-axis in the x-y plane</strong></div>
+<div class="line"><strong>(+ is counterclockwise when viewed from above)</strong></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">C,0.0,</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Stiffness tensor for each material. User <em>can</em></div>
+<div class="line">enter or change this manually if desired. If blank,</div>
+<div class="line">calculated from materials information in the earlier section.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">E,dt,</span></code></p></td>
+<td><p>Timestep will be calculated automatically.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">E,time_steps,500</span></code></p></td>
+<td><p><strong>Number of timesteps to run the model.</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">E,x,100</span></code></p></td>
+<td><p><strong>x-coordinate of the radar source</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">E,y,0</span></code></p></td>
+<td><p><strong>y-coordinate of the radar source</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">E,z,0</span></code></p></td>
+<td><p><strong>z-coordinate of the radar source</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">E,f0,1e8</span></code></p></td>
+<td><div class="line-block">
+<div class="line"><strong>Frequency of the radar source.</strong></div>
+<div class="line"><strong>10-100MHz is a good range to start.</strong></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">E,theta,0</span></code></p></td>
+<td><p><strong>Inclination of the radar source (+ is down)</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">E,phi,0</span></code></p></td>
+<td><div class="line-block">
+<div class="line"><strong>Angle of radar source from x-axis in the x-y plane</strong></div>
+<div class="line"><strong>(+ is counterclockwise when viewed from above)</strong></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">P,0.0,</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Permittivity tensor for each material.</div>
+<div class="line">User <em>can</em> enter or change this manually if desired.</div>
+<div class="line">If blank, calculated from materials information in the</div>
+<div class="line">earlier section.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<ul>
 <li><p><em>orientation file</em></p>
 <blockquote>
 <div><p>A delimited file of one entry of Bunge notation Euler angles per line.
@@ -298,7 +410,6 @@ A typical number of entries is 500 to ensure a smooth data field.</p>
 </div></blockquote>
 </li>
 </ul>
-<p><a class="reference external" href="#top">Back to top ↑</a></p>
 </div>
 </div>
 

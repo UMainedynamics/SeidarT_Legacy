@@ -1,7 +1,7 @@
 SeidarT |version|
 #####################################
 
-| |github|
+| `https://github.com/sbernsen/SeidarT <https://github.com/sbernsen/SeidarT>`_
 | **Multi-layer Fortran-based geophysical wave modeling**
 | *by Steven Bernsen and Christopher Gerbi*
 
@@ -31,7 +31,7 @@ glacier seismic and radar experiments do not expand into regional
 parameter estimation and velocity modeling.
 
 Much of this code has been adopted from the SEISMIC_CPML software
-provided by |CIG|.
+provided by `Computational Infrastucture for Geophysics (CIG) <https://geodynamics.org/cig/software/>`_.
 Further details to the backend numerical code can be found in
 the :doc:`references` section.
 

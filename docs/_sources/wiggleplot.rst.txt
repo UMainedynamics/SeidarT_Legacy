@@ -53,4 +53,3 @@ wiggleplot
   aligned across a graph
 
 
-`Back to top ↑ <#top>`_
