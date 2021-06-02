@@ -43,8 +43,3 @@ Three CSV files, containing Ex, Ey, and Ez (or Vx, Vy, Vz) values, with time ser
 
 
 
-.. |top| raw:: html
-
-   <a href="#top">Back to top ↑</a>
-
-|top|

@@ -44,8 +44,3 @@ rcxdisplay
 Plot of amplitude across area surveyed.
 
 
-.. |top| raw:: html
-
-   <a href="#top">Back to top ↑</a>
-
-|top|

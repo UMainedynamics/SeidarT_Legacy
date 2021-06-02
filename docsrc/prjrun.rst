@@ -33,8 +33,3 @@ prjrun
 
 .dat files equal in number to the number of time steps specified in the .prj file.
 
-.. |top| raw:: html
-
-   <a href="#top">Back to top ↑</a>
-
-|top|

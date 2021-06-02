@@ -21,11 +21,6 @@ Below the installation instructions, we describe the :ref:`folder-structure`.
     if you do not already have it.
 
 
-.. |top| raw:: html
-
-   <a href="#top">Back to top ↑</a>
-
-|top|
 
 .. _auto-install:
 
@@ -90,7 +85,6 @@ environment.
 You should now be able to move on to the :doc:`getting_started`
 section.
 
-|top|
 
 .. _manual-install:
 
@@ -219,5 +213,4 @@ Here we describe the folders you may need to use while working with the software
 * :ref:`search`
 
 
-|top|
 

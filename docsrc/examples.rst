@@ -150,8 +150,3 @@ Fill model: create a common offset radar profile
 Play with the gain and exaggeration to vary the image to your liking.
 
 
-.. |top| raw:: html
-
-   <a href="#top">Back to top ↑</a>
-
-|top|

@@ -87,8 +87,3 @@ Need to look something up?
 
 * :ref:`search`
 
-.. |top| raw:: html
-
-   <a href="#top">Back to top ↑</a>
-
-|top|

@@ -25,8 +25,3 @@ prjbuild
 
 * Project file to fill in based on site characteristics
 
-.. |top| raw:: html
-
-   <a href="#top">Back to top ↑</a>
-
-|top|

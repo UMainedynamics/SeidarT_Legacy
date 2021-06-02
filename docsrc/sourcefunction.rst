@@ -41,8 +41,3 @@ sourcefunction
 .dat files in x, y, z for each model type
 
 
-.. |top| raw:: html
-
-   <a href="#top">Back to top ↑</a>
-
-|top|

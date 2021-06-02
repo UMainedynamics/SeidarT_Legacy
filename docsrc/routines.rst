@@ -75,11 +75,6 @@ orientation of the fabric.
 See :doc:`orientation_tensor`.
 
 
-.. |top| raw:: html
-
-   <a href="#top">Back to top ↑</a>
-
-|top|
 
 Wrappers
 *************************
@@ -112,4 +107,3 @@ See :doc:`common_midpoint`.
 
 
 
-|top|

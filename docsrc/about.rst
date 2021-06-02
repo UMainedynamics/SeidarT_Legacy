@@ -23,9 +23,3 @@ Known issues
 *************************
 * The volume around the source rings in the electromagnetic modeling.
 
-
-.. |top| raw:: html
-
-   <a href="#top">Back to top ↑</a>
-
-|top|
