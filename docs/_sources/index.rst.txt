@@ -66,6 +66,7 @@ the :doc:`references` section.
     :caption: Extra material
 
     png-creation
+    build-docs
     materials
     units
     references
