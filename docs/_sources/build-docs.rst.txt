@@ -30,6 +30,6 @@ Additional information can be found
 
 .. note::
 
-    Note that Sphinx 4.0 and above depreciates a function that rst2pdf
-    relies on to build the PDF file. At this time it is necessary to
-    downgrade to Sphinx 3.5.4 in order to build docs in PDF format.
+    Sphinx 4.0 and above depreciates a function that rst2pdf relies
+    on to build the PDF file. At this time it is necessary to downgrade
+    to Sphinx 3.5.4 in order to build documentation in PDF format.
