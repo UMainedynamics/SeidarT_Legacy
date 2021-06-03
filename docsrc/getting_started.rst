@@ -52,11 +52,11 @@ Files to generate or edit
     electromagnetic and seismic runs. Here, we identify what each line means and which to edit.
     All lines with # are comments. Bold text indicates a line the user should edit.
 
-.. list-table:: .prj File values
+.. list-table:: Table: .prj File lines and their meanings
     :widths: 20 80
     :header-rows: 1
 
-    * - Value
+    * - Line
       - Description
     * - ``I,fill2.png``
       - The image file associated with this *.prj* file.

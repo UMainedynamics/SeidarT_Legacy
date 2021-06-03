@@ -112,7 +112,8 @@ and additionally, these Python dependencies are also required:
     and via **apt** (on Linux) with::
 
         sudo apt update
-        sudo apt install gcc-10 git dos2unix ghostscript imagemagick python3.8 python3-numpy python3-vtk python3-pip
+        sudo apt install gcc-10 git dos2unix ghostscript imagemagick \
+          python3.8 python3-numpy python3-vtk python3-pip
 
 #. Install `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`_
     `Anaconda <https://www.anaconda.com/products/individual#Downloads>`_
@@ -123,7 +124,8 @@ and additionally, these Python dependencies are also required:
     From a Terminal window in which the :code:`conda` command is accessible,
     run the following commands::
 
-        conda create -n seidart python=3 pip git ghostscript imagemagick numpy matplotlib scipy pyevtk vtk
+        conda create -n seidart python=3 pip git ghostscript imagemagick \
+          numpy matplotlib scipy pyevtk vtk
         conda activate seidart
         pip install mplstereonet
 

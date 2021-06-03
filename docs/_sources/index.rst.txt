@@ -5,17 +5,6 @@ SeidarT |version|
 | **Multi-layer Fortran-based geophysical wave modeling**
 | *by Steven Bernsen and Christopher Gerbi*
 
-.. the following are definitions for raw html to insert in | substitution-tags |
-
-
-.. |github| raw:: html
-
-   <a href="https://github.com/sbernsen/SeidarT" target="_blank">https://github.com/sbernsen/SeidarT</a>
-
-.. |CIG| raw:: html
-
-   <a href="https://geodynamics.org/cig/software/" target="_blank">Computational Infrastucture for Geophysics (CIG)</a>
-
 
 The Seismic and Radar Toolbox (SeidarT) is a collaboration between
 researchers at the Universities of Maine and Washington to provide
@@ -47,6 +36,7 @@ the :doc:`references` section.
     installation
     getting_started
     examples
+    routines
 
 .. _modules:
 

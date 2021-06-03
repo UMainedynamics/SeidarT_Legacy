@@ -30,7 +30,9 @@ Shapes model: create a 2.5D animation of wave propagation
     D,nmats,3
     D,tfile,10
 
-    # number, id, R/G/B, Temperature, Attenuation, Density, Porosity, Water_Content, Anisotropic, ANG_File
+    # Material definitions:
+    # number, id, R/G/B, Temperature, Attenuation, Density,
+    #       Porosity, Water_Content, Anisotropic, ANG_File
     M,0,ice1h,120/152/76,-20,2,917,0,0,FALSE,
     M,1,water,220/220/220,-20,2,1000,0,0,FALSE,
     M,2,granite,255/75/75,-20,2,2700,0,0,FALSE,
@@ -94,6 +96,16 @@ Starting with the seismic wavefield, enter::
 
 This should produce a set of vti files identical to the ones in the folder "shapes_ex1_vti". This is a short animation, but the steps for a larger one are the same.
 
+When that is finished let's build the GIF to view the wavefield. Starting with the seismic wavefield, enter::
+
+    im2anim dipping_bed.prj -c -n 10 Vx -f 30
+
+then repeat when the command line returns but change the '-c' option to 'Vz', 'Ex', or 'Ez'.
+Alternatively, you could change the frame rate (-f) to a higher or smaller number to adjust the speed of the GIF.
+We specified the 'D,write' parameter to 10 which is a little undersampled to view seismograms or radargrams,
+but creating the GIF takes some time and we don't need that much resolution.
+If you would like to create the seismograms decrease the write parameter between 2-4.
+
 
 Fill model: create a single shot seismogram and wiggleplot
 **********************************************************
@@ -148,5 +160,4 @@ Fill model: create a common offset radar profile
     A common offset survey across the 'fill' example.
 
 Play with the gain and exaggeration to vary the image to your liking.
-
 

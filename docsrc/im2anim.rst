@@ -8,7 +8,8 @@ study area
 
 .. code-block:: bash
 
-    im2anim -p PROJECTFILE -c [Ex Ez Vx Vz] -n [steps in time series] -d [delay between frames]
+    im2anim -p PROJECTFILE -c [Ex Ez Vx Vz] -n [steps in time series] \
+      -d [delay between frames]
 
 
 **Inputs**
