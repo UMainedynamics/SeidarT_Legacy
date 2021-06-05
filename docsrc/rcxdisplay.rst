@@ -44,4 +44,3 @@ rcxdisplay
 Plot of amplitude across area surveyed.
 
 
-`Back to top ↑ <#top>`_

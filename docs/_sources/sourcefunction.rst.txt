@@ -41,4 +41,3 @@ sourcefunction
 .dat files in x, y, z for each model type
 
 
-`Back to top ↑ <#top>`_

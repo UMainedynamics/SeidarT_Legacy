@@ -17,12 +17,13 @@ help:
 pdf:
 	@mkdir -p "$(BUILDDIR)/pdf"
 	@$(SPHINXBUILD) -b pdf "$(SOURCEDIR)" "$(BUILDDIR)/pdf"
+	@echo "Build finished. The PDF files are in $(BUILDDIR)/pdf."
 
 github:
 	@make html
 	@cp -a "$(BUILDDIR)/html/." "$(CPDIR)"
-	# @make pdf
-	# @cp -a "$(BUILDDIR)/pdf/." "$(CPDIR)"
+	@make pdf
+	@cp -a "$(BUILDDIR)/pdf/." "$(CPDIR)"
 
 
 # Catch-all target: route all unknown targets to Sphinx using the new

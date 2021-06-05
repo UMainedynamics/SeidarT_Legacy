@@ -8,7 +8,8 @@ wiggleplot
 
 .. code-block:: bash
 
-    wiggleplot -p PROJECTFILE -r DATAFILE -g VALUE -x VALUE -d VALUE -n VALUE -c [Ex Ey Ez Vx Vy Vz]
+    wiggleplot -p PROJECTFILE -r DATAFILE -g VALUE -x VALUE -d VALUE -n VALUE \
+      -c [Ex Ey Ez Vx Vy Vz]
 
 
 **Input**
@@ -53,4 +54,3 @@ wiggleplot
   aligned across a graph
 
 
-`Back to top ↑ <#top>`_

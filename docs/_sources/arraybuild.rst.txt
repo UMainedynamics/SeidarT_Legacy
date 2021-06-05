@@ -52,5 +52,3 @@ arraybuild
 CSV of amplitude values for all pixels surveyed (*receiver_array.csv*)
 
 
-
-`Back to top ↑ <#top>`_

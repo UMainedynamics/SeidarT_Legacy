@@ -98,6 +98,7 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">3. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">4. Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routines.html">5. Routines and wrappers</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Command reference</span></p>
 <ul class="current">
@@ -194,7 +195,8 @@
 <p><em>Plot single, and select handful of amplitudes at specified X</em>
 <em>locations and all Z locations</em></p>
 <p><strong>Usage</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wiggleplot -p PROJECTFILE -r DATAFILE -g VALUE -x VALUE -d VALUE -n VALUE -c <span class="o">[</span>Ex Ey Ez Vx Vy Vz<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wiggleplot -p PROJECTFILE -r DATAFILE -g VALUE -x VALUE -d VALUE -n VALUE <span class="se">\</span>
+  -c <span class="o">[</span>Ex Ey Ez Vx Vy Vz<span class="o">]</span>
 </pre></div>
 </div>
 <p><strong>Input</strong></p>
@@ -245,7 +247,6 @@ be plotted in a single-wiggle plot</p>
 <li><p>Plot of the amplitude value of every pixel in every nth column
 aligned across a graph</p></li>
 </ul>
-<p><a class="reference external" href="#top">Back to top ↑</a></p>
 </div>
 
 

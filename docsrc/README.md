@@ -69,7 +69,5 @@ Updated documentation should be available on Github Pages shortly after pushing.
 
 Usually, an error running `make html` or `make github` means that you are not in an environment that has Sphinx in it. See [Requirements](#requirements).
 
-Navigational links within the documentation should be fully navigable when viewing on your local machine (regardless of the internet connection status). This is possible because they are **internal links** which use relative hyperlinks rather than absolute ones. If a link should work but does not, then it probably does not follow the reStructuredText guidelines for cross-referencing. See [this section](https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html#internal-links) in the reStructuredText Primer.
-
-Sometimes, running `make clean; make html` will clear up internal link problems.
-
+Sphinx 4.0 and above depreciates a function that rst2pdf relies on to build the PDF file. At this time it is necessary to downgrade to Sphinx 3.5.4 in order to build documentation in PDF format.
+If you encounter an error stemming from rst2pdf, downgrading usually solves this.

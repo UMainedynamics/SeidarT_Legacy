@@ -28,4 +28,3 @@ Plot a snapshot of the vector wavefield in 2D
 
 
 
-`Back to top ↑ <#top>`_

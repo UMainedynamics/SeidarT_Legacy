@@ -103,6 +103,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">3. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">4. Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routines.html">5. Routines and wrappers</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Command reference</span></p>
 <ul>
@@ -212,7 +213,6 @@ control of the installation process, you can use the
 <a class="reference external" href="https://brew.sh/">Homebrew</a> prior to installing this software
 if you do not already have it.</p>
 </div>
-<p><a class="reference external" href="#top">Back to top ↑</a></p>
 <div class="section" id="auto-installation">
 <span id="auto-install"></span><h2><span class="section-number">2.1. </span>Auto-installation<a class="headerlink" href="#auto-installation" title="Permalink to this headline">¶</a></h2>
 <p>First, some background:</p>
@@ -279,7 +279,6 @@ this repository.</p>
 </ol>
 <p>You should now be able to move on to the <a class="reference internal" href="getting_started.html"><span class="doc">Getting Started</span></a>
 section.</p>
-<p><a class="reference external" href="#top">Back to top ↑</a></p>
 </div>
 <div class="section" id="manual-installation-instructions">
 <span id="manual-install"></span><h2><span class="section-number">2.2. </span>Manual installation instructions<a class="headerlink" href="#manual-installation-instructions" title="Permalink to this headline">¶</a></h2>
@@ -301,7 +300,8 @@ can be with Homebrew (on OS X) using the commands:</p>
 </div>
 <p>and via <strong>apt</strong> (on Linux) with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span> <span class="n">update</span>
-<span class="n">sudo</span> <span class="n">apt</span> <span class="n">install</span> <span class="n">gcc</span><span class="o">-</span><span class="mi">10</span> <span class="n">git</span> <span class="n">dos2unix</span> <span class="n">ghostscript</span> <span class="n">imagemagick</span> <span class="n">python3</span><span class="o">.</span><span class="mi">8</span> <span class="n">python3</span><span class="o">-</span><span class="n">numpy</span> <span class="n">python3</span><span class="o">-</span><span class="n">vtk</span> <span class="n">python3</span><span class="o">-</span><span class="n">pip</span>
+<span class="n">sudo</span> <span class="n">apt</span> <span class="n">install</span> <span class="n">gcc</span><span class="o">-</span><span class="mi">10</span> <span class="n">git</span> <span class="n">dos2unix</span> <span class="n">ghostscript</span> <span class="n">imagemagick</span> \
+  <span class="n">python3</span><span class="o">.</span><span class="mi">8</span> <span class="n">python3</span><span class="o">-</span><span class="n">numpy</span> <span class="n">python3</span><span class="o">-</span><span class="n">vtk</span> <span class="n">python3</span><span class="o">-</span><span class="n">pip</span>
 </pre></div>
 </div>
 </dd>
@@ -317,7 +317,8 @@ and will only install what you need.</p>
 <li><dl>
 <dt>Get Python prerequisites</dt><dd><p>From a Terminal window in which the <code class="code docutils literal notranslate"><span class="pre">conda</span></code> command is accessible,
 run the following commands:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">seidart</span> <span class="n">python</span><span class="o">=</span><span class="mi">3</span> <span class="n">pip</span> <span class="n">git</span> <span class="n">ghostscript</span> <span class="n">imagemagick</span> <span class="n">numpy</span> <span class="n">matplotlib</span> <span class="n">scipy</span> <span class="n">pyevtk</span> <span class="n">vtk</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">seidart</span> <span class="n">python</span><span class="o">=</span><span class="mi">3</span> <span class="n">pip</span> <span class="n">git</span> <span class="n">ghostscript</span> <span class="n">imagemagick</span> \
+  <span class="n">numpy</span> <span class="n">matplotlib</span> <span class="n">scipy</span> <span class="n">pyevtk</span> <span class="n">vtk</span>
 <span class="n">conda</span> <span class="n">activate</span> <span class="n">seidart</span>
 <span class="n">pip</span> <span class="n">install</span> <span class="n">mplstereonet</span>
 </pre></div>
@@ -396,7 +397,7 @@ echo $PYTHONPATH
 </ol>
 </div>
 <div class="section" id="folder-structure">
-<span id="id3"></span><h2><span class="section-number">2.3. </span>Folder structure<a class="headerlink" href="#folder-structure" title="Permalink to this headline">¶</a></h2>
+<span id="id2"></span><h2><span class="section-number">2.3. </span>Folder structure<a class="headerlink" href="#folder-structure" title="Permalink to this headline">¶</a></h2>
 <p>Here we describe the folders you may need to use while working with the software.</p>
 <ul class="simple">
 <li><dl class="simple">
@@ -425,7 +426,6 @@ echo $PYTHONPATH
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
-<p><a class="reference external" href="#top">Back to top ↑</a></p>
 </div>
 </div>
 

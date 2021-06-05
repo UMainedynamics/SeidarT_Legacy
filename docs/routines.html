@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Routines and wrappers &mdash; SeidarT  documentation</title>
+  <title>5. Routines and wrappers &mdash; SeidarT  documentation</title>
   
 
   
@@ -38,7 +38,9 @@
     
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="prjbuild" href="prjbuild.html" />
+    <link rel="prev" title="4. Examples" href="examples.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -91,11 +93,29 @@
             
             
               <p class="caption"><span class="caption-text">Tutorial guide</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="about.html">1. About</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">3. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">4. Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">5. Routines and wrappers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#routines">5.1. Routines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prjbuild-py">5.1.1. prjbuild.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sourcefunction-py">5.1.2. sourcefunction.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prjrun-py">5.1.3. prjrun.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#im2anim-py">5.1.4. im2anim.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#arraybuild-py">5.1.5. arraybuild.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rcxdisplay-py">5.1.6. rcxdisplay.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#orientation-tensor-py">5.1.7. orientation_tensor.py</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#wrappers">5.2. Wrappers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#common-offset-sh">5.2.1. common_offset.sh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#common-midpoint-sh">5.2.2. common_midpoint.sh</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">Command reference</span></p>
 <ul>
@@ -168,7 +188,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Routines and wrappers</li>
+      <li><span class="section-number">5. </span>Routines and wrappers</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -188,24 +208,24 @@
            <div itemprop="articleBody">
             
   <div class="section" id="routines-and-wrappers">
-<h1>Routines and wrappers<a class="headerlink" href="#routines-and-wrappers" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">5. </span>Routines and wrappers<a class="headerlink" href="#routines-and-wrappers" title="Permalink to this headline">¶</a></h1>
 <p>The following is a brief overview of the commands available in the SeidarT
 environment. More information is available in the <a class="reference internal" href="index.html#modules"><span class="std std-ref">Command reference</span></a>.</p>
 <div class="section" id="routines">
-<h2>Routines<a class="headerlink" href="#routines" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">5.1. </span>Routines<a class="headerlink" href="#routines" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="prjbuild-py">
-<h3>prjbuild.py<a class="headerlink" href="#prjbuild-py" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">5.1.1. </span>prjbuild.py<a class="headerlink" href="#prjbuild-py" title="Permalink to this headline">¶</a></h3>
 <p>Constructs a template and assigns default values from a PNG image.
 See <a class="reference internal" href="prjbuild.html"><span class="doc">prjbuild</span></a>.</p>
 </div>
 <div class="section" id="sourcefunction-py">
-<h3>sourcefunction.py<a class="headerlink" href="#sourcefunction-py" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">5.1.2. </span>sourcefunction.py<a class="headerlink" href="#sourcefunction-py" title="Permalink to this headline">¶</a></h3>
 <p>Creates .dat files needed to define the source impulse.
 Does not need to be run if source function files are already present.
 See <a class="reference internal" href="sourcefunction.html"><span class="doc">sourcefunction</span></a>.</p>
 </div>
 <div class="section" id="prjrun-py">
-<h3>prjrun.py<a class="headerlink" href="#prjrun-py" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">5.1.3. </span>prjrun.py<a class="headerlink" href="#prjrun-py" title="Permalink to this headline">¶</a></h3>
 <p>Reads the project file assigns coefficients given that all the required
 fields are satisfied then runs the specified 2D forward model. You can
 suppress modeling and edit the stiffness and/or permittivity and conductivity
@@ -216,7 +236,7 @@ the existing tensor coefficients if included in the project file.
 See <a class="reference internal" href="prjrun.html"><span class="doc">prjrun</span></a>.</p>
 </div>
 <div class="section" id="im2anim-py">
-<h3>im2anim.py<a class="headerlink" href="#im2anim-py" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">5.1.4. </span>im2anim.py<a class="headerlink" href="#im2anim-py" title="Permalink to this headline">¶</a></h3>
 <p>Create a animation from the model outputs. Currently, this takes some time to run
 which you can speed up by increasing the ‘write’ value in the project file.
 This only takes 2D models, and there are bugs with matplotlib that cause
@@ -224,7 +244,7 @@ red/blue flashing.
 See <a class="reference internal" href="im2anim.html"><span class="doc">im2anim</span></a>.</p>
 </div>
 <div class="section" id="arraybuild-py">
-<h3>arraybuild.py<a class="headerlink" href="#arraybuild-py" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">5.1.5. </span>arraybuild.py<a class="headerlink" href="#arraybuild-py" title="Permalink to this headline">¶</a></h3>
 <p>Build the basis for plotting the seismograms or radargrams for the wide
 angle survey. You can suppress plotting which will return a .csv file. An
 auto-controlled gain function can be called for better visualization. The
@@ -234,7 +254,7 @@ is top left when viewing the image.
 See <a class="reference internal" href="arraybuild.html"><span class="doc">arraybuild</span></a>.</p>
 </div>
 <div class="section" id="rcxdisplay-py">
-<h3>rcxdisplay.py<a class="headerlink" href="#rcxdisplay-py" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">5.1.6. </span>rcxdisplay.py<a class="headerlink" href="#rcxdisplay-py" title="Permalink to this headline">¶</a></h3>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Originally “codisplay” in legacy code</p>
@@ -245,26 +265,25 @@ function can be called.
 See <a class="reference internal" href="rcxdisplay.html"><span class="doc">rcxdisplay</span></a>.</p>
 </div>
 <div class="section" id="orientation-tensor-py">
-<h3>orientation_tensor.py<a class="headerlink" href="#orientation-tensor-py" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">5.1.7. </span>orientation_tensor.py<a class="headerlink" href="#orientation-tensor-py" title="Permalink to this headline">¶</a></h3>
 <p>Compute the Euler angles and orientation tensor for a fabric defined by
 it’s trend and plunge angles. The orientation tensor isn’t required by the
 program but it provides useful quantitative information describing the
 orientation of the fabric.
 See <a class="reference internal" href="orientation_tensor.html"><span class="doc">orientation_tensor</span></a>.</p>
-<p><a class="reference external" href="#top">Back to top ↑</a></p>
 </div>
 </div>
 <div class="section" id="wrappers">
-<h2>Wrappers<a class="headerlink" href="#wrappers" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">5.2. </span>Wrappers<a class="headerlink" href="#wrappers" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="common-offset-sh">
-<h3>common_offset.sh<a class="headerlink" href="#common-offset-sh" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">5.2.1. </span>common_offset.sh<a class="headerlink" href="#common-offset-sh" title="Permalink to this headline">¶</a></h3>
 <p>This is a wrapper that simulates a common offset survey. The receiver
 .xyz file is input to give the points of the survey and the source is
 offset from this location given the offsets for the x, y, and z directions.
 See <a class="reference internal" href="common_offset.html"><span class="doc">common_offset</span></a>.</p>
 </div>
 <div class="section" id="common-midpoint-sh">
-<h3>common_midpoint.sh<a class="headerlink" href="#common-midpoint-sh" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">5.2.2. </span>common_midpoint.sh<a class="headerlink" href="#common-midpoint-sh" title="Permalink to this headline">¶</a></h3>
 <p>This is similar to the common offset survey but it shifts the source and
 reciever away from a common midpoint. The midpoint is specified by the
 source location in the project file. By default the source will be to the
@@ -288,6 +307,10 @@ then run the plotting scripts individually not the wrapper scripts.</p>
            
           </div>
           <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="prjbuild.html" class="btn btn-neutral float-right" title="prjbuild" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="examples.html" class="btn btn-neutral float-left" title="4. Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
   <hr/>
 
