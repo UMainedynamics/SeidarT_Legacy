@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,6 +31,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -97,6 +100,7 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">3. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">4. Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routines.html">5. Routines and wrappers</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Command reference</span></p>
 <ul>
@@ -118,6 +122,7 @@
 <p class="caption"><span class="caption-text">Extra material</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="png-creation.html">Creating a png file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build-docs.html">Building documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="materials.html">Currently available materials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="units.html">Units</a></li>
 <li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
@@ -191,28 +196,29 @@
   <div class="section" id="seidart-version">
 <h1>SeidarT 1.0<a class="headerlink" href="#seidart-version" title="Permalink to this headline">¶</a></h1>
 <div class="line-block">
-<div class="line"><a href="https://github.com/sbernsen/SeidarT" target="_blank">https://github.com/sbernsen/SeidarT</a></div>
-<div class="line"><strong>Multi-layer Fortran-based geophysical wave modeling</strong></div>
-<div class="line"><em>by Steven Bernsen and Christopher Gerbi</em></div>
+<div class="line"><a class="reference external" href="https://github.com/ChristopherGerbi/SeidarT">https://github.com/ChristopherGerbi/SeidarT</a></div>
+<div class="line"><strong>Geophysical wave modeling through complex media</strong></div>
+<div class="line"><strong>Primary creator:</strong> <em>Steven Bernsen</em></div>
+<div class="line"><strong>with:</strong> <em>Christopher Gerbi, Ian Nesbitt, Ann Hill, Senthil Vel, Knut Christianson, Seth Campbell, Ben Hills</em></div>
+</div>
+<div class="line-block">
+<div class="line"><em>Support from this work comes from</em> <a class="reference external" href="https://nsf.gov/awardsearch/showAward?AWD_ID=1643301&amp;HistoricalAwards=false">NSF awards</a> <em>1643301 and 1643353.</em></div>
 </div>
 <p>The Seismic and Radar Toolbox (SeidarT) is a collaboration between
-researchers at the Universities of Maine and Washington to provide
-an open source platform for forward modeling mechanical and
-electromagnetic wave propagation. The major objective of the
+the Universities of Maine and Washington to provide
+an open source platform for forward modeling elastic (seismic) and
+electromagnetic (radar) wave propagation. The major objective of the
 project is to easily and quickly implement isotropic and anisotropic
-complex geometries and/or velocity structures to develop prior
-constraints for - not limited to - investigating, estimating,
-and imaging englacial ice structure, sub-glacial boundary conditions
-on the sub-regional scale. Larger problems would require the
-curvature of the Earth to be taken into consideration, but many
-glacier seismic and radar experiments do not expand into regional
-parameter estimation and velocity modeling.</p>
+complex geometries and/or velocity structures to investigate,
+and plan field campaigns to image local and regional subsurface structure,
+particularly for the cryosphere. Larger problems require the
+curvature of the Earth to be taken into consideration.</p>
 <p>Much of this code has been adopted from the SEISMIC_CPML software
-provided by <a href="https://geodynamics.org/cig/software/" target="_blank">Computational Infrastucture for Geophysics (CIG)</a>.
+provided by <a class="reference external" href="https://geodynamics.org/cig/software/">Computational Infrastucture for Geophysics (CIG)</a>.
 Further details to the backend numerical code can be found in
 the <a class="reference internal" href="references.html"><span class="doc">References</span></a> section.</p>
 <div class="toctree-wrapper compound" id="tutorial">
-<p class="caption"><span class="caption-text">Tutorial guide</span><a class="headerlink" href="#tutorial" title="Permalink to this toctree">¶</a></p>
+<p class="caption"><span class="caption-text">Tutorial guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="about.html">1. About</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="about.html#statement-of-purpose">1.1. Statement of Purpose</a></li>
@@ -236,10 +242,15 @@ the <a class="reference internal" href="references.html"><span class="doc">Refer
 <li class="toctree-l2"><a class="reference internal" href="examples.html#fill-model-create-a-common-offset-radar-profile">4.3. Fill model: create a common offset radar profile</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="routines.html">5. Routines and wrappers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="routines.html#routines">5.1. Routines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="routines.html#wrappers">5.2. Wrappers</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="toctree-wrapper compound" id="modules">
-<p class="caption"><span class="caption-text">Command reference</span><a class="headerlink" href="#modules" title="Permalink to this toctree">¶</a></p>
+<p class="caption"><span class="caption-text">Command reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="prjbuild.html">prjbuild</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sourcefunction.html">sourcefunction</a></li>
@@ -258,9 +269,10 @@ the <a class="reference internal" href="references.html"><span class="doc">Refer
 </ul>
 </div>
 <div class="toctree-wrapper compound" id="extras">
-<p class="caption"><span class="caption-text">Extra material</span><a class="headerlink" href="#extras" title="Permalink to this toctree">¶</a></p>
+<p class="caption"><span class="caption-text">Extra material</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="png-creation.html">Creating a png file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build-docs.html">Building documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="materials.html">Currently available materials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="units.html">Units</a></li>
 <li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
@@ -272,7 +284,6 @@ the <a class="reference internal" href="references.html"><span class="doc">Refer
 <ul class="simple">
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
-<p><a class="reference external" href="#top">Back to top ↑</a></p>
 </div>
 </div>
 

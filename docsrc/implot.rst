@@ -28,4 +28,3 @@ Plot a snapshot of the wavefield in 2D
 
 
 
-`Back to top ↑ <#top>`_

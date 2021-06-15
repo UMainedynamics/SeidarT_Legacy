@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,6 +31,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -39,7 +42,7 @@
     <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="prjbuild" href="prjbuild.html" />
+    <link rel="next" title="5. Routines and wrappers" href="routines.html" />
     <link rel="prev" title="3. Getting Started" href="getting_started.html" /> 
 </head>
 
@@ -103,6 +106,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#fill-model-create-a-common-offset-radar-profile">4.3. Fill model: create a common offset radar profile</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="routines.html">5. Routines and wrappers</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Command reference</span></p>
 <ul>
@@ -124,6 +128,7 @@
 <p class="caption"><span class="caption-text">Extra material</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="png-creation.html">Creating a png file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build-docs.html">Building documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="materials.html">Currently available materials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="units.html">Units</a></li>
 <li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
@@ -222,7 +227,9 @@
 <span class="n">D</span><span class="p">,</span><span class="n">nmats</span><span class="p">,</span><span class="mi">3</span>
 <span class="n">D</span><span class="p">,</span><span class="n">tfile</span><span class="p">,</span><span class="mi">10</span>
 
-<span class="c1"># number, id, R/G/B, Temperature, Attenuation, Density, Porosity, Water_Content, Anisotropic, ANG_File</span>
+<span class="c1"># Material definitions:</span>
+<span class="c1"># number, id, R/G/B, Temperature, Attenuation, Density,</span>
+<span class="c1">#       Porosity, Water_Content, Anisotropic, ANG_File</span>
 <span class="n">M</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">ice1h</span><span class="p">,</span><span class="mi">120</span><span class="o">/</span><span class="mi">152</span><span class="o">/</span><span class="mi">76</span><span class="p">,</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">917</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">FALSE</span><span class="p">,</span>
 <span class="n">M</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">water</span><span class="p">,</span><span class="mi">220</span><span class="o">/</span><span class="mi">220</span><span class="o">/</span><span class="mi">220</span><span class="p">,</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">FALSE</span><span class="p">,</span>
 <span class="n">M</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">granite</span><span class="p">,</span><span class="mi">255</span><span class="o">/</span><span class="mi">75</span><span class="o">/</span><span class="mi">75</span><span class="p">,</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2700</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">FALSE</span><span class="p">,</span>
@@ -286,6 +293,15 @@ Starting with the seismic wavefield, enter:</p>
 </pre></div>
 </div>
 <p>This should produce a set of vti files identical to the ones in the folder “shapes_ex1_vti”. This is a short animation, but the steps for a larger one are the same.</p>
+<p>When that is finished let’s build the GIF to view the wavefield. Starting with the seismic wavefield, enter:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">im2anim</span> <span class="n">dipping_bed</span><span class="o">.</span><span class="n">prj</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">n</span> <span class="mi">10</span> <span class="n">Vx</span> <span class="o">-</span><span class="n">f</span> <span class="mi">30</span>
+</pre></div>
+</div>
+<p>then repeat when the command line returns but change the ‘-c’ option to ‘Vz’, ‘Ex’, or ‘Ez’.
+Alternatively, you could change the frame rate (-f) to a higher or smaller number to adjust the speed of the GIF.
+We specified the ‘D,write’ parameter to 10 which is a little undersampled to view seismograms or radargrams,
+but creating the GIF takes some time and we don’t need that much resolution.
+If you would like to create the seismograms decrease the write parameter between 2-4.</p>
 </div>
 <div class="section" id="fill-model-create-a-single-shot-seismogram-and-wiggleplot">
 <h2><span class="section-number">4.2. </span>Fill model: create a single shot seismogram and wiggleplot<a class="headerlink" href="#fill-model-create-a-single-shot-seismogram-and-wiggleplot" title="Permalink to this headline">¶</a></h2>
@@ -342,7 +358,6 @@ we have set it up to be a granite bedrock (blue) overlain by a subglacial (teal 
 <p class="caption"><span class="caption-text">A common offset survey across the ‘fill’ example.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
 </div>
 <p>Play with the gain and exaggeration to vary the image to your liking.</p>
-<p><a class="reference external" href="#top">Back to top ↑</a></p>
 </div>
 </div>
 
@@ -352,7 +367,7 @@ we have set it up to be a granite bedrock (blue) overlain by a subglacial (teal 
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="prjbuild.html" class="btn btn-neutral float-right" title="prjbuild" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="routines.html" class="btn btn-neutral float-right" title="5. Routines and wrappers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="getting_started.html" class="btn btn-neutral float-left" title="3. Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

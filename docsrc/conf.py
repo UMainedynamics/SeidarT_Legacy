@@ -226,12 +226,14 @@ todo_include_todos = True
 # would mean that specific document would be compressed
 # regardless of the global 'pdf_compressed' setting.
 
-pdf_documents = [(
+pdf_documents = [
+    (
     'index',                                        # master rst document
     u'%s_manual' % project,                         # name of the generated pdf
     u'%s %s Documentation' % (project, version),    # title of the pdf
     u'%s' % author.replace(', ', '\\'),             # author names in the pdf
-),]
+    ),
+]
 
 # A comma-separated list of custom stylesheets. Example:
 pdf_stylesheets = ['sphinx', 'kerning', 'a4']
@@ -302,4 +304,13 @@ pdf_style_path = ['.', '_styles']
 # pdf_use_toc = True
 
 # How many levels deep should the table of contents be?
-# pdf_toc_depth = 9999
+pdf_toc_depth = 9999
+
+# Add section number to section references
+pdf_use_numbered_links = False
+
+# Background images fitting mode
+pdf_fit_background_mode = 'scale'
+
+# Repeat table header on tables that cross a page boundary?
+pdf_repeat_table_rows = True

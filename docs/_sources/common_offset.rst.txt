@@ -43,4 +43,3 @@ Three CSV files, containing Ex, Ey, and Ez (or Vx, Vy, Vz) values, with time ser
 
 
 
-`Back to top ↑ <#top>`_

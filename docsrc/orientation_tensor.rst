@@ -46,4 +46,3 @@ orientation_tensor
 
     This will produce a delimited file, the name of which you can enter on the materials line(s) in the prj file.
 
-`Back to top ↑ <#top>`_

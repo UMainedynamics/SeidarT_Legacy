@@ -33,4 +33,3 @@ in the same directory as the output files.
 
 
 
-`Back to top ↑ <#top>`_

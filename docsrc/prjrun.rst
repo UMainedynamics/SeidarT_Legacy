@@ -23,7 +23,7 @@ prjrun
     * ``e`` electromagnetic propagation
     * ``s`` seismic wave propagation
 
-* ``-a [0 1] (optional)
+* ``-a [0 1]`` (optional)
 
     Append/recompute the coefficients to the permittivity and
     stiffness matrices; 1 = yes, 0 = no; default = 1. Do not
@@ -33,4 +33,3 @@ prjrun
 
 .dat files equal in number to the number of time steps specified in the .prj file.
 
-`Back to top ↑ <#top>`_
