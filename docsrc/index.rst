@@ -1,23 +1,22 @@
 SeidarT |version|
 #####################################
 
-| `https://github.com/sbernsen/SeidarT <https://github.com/sbernsen/SeidarT>`_
-| **Multi-layer Fortran-based geophysical wave modeling**
-| *by Steven Bernsen and Christopher Gerbi*
+| `https://github.com/ChristopherGerbi/SeidarT <https://github.com/ChristopherGerbi/SeidarT>`_
+| **Geophysical wave modeling through complex media**
+| **Primary creator:** *Steven Bernsen*
+| **with:** *Christopher Gerbi, Ian Nesbitt, Ann Hill, Senthil Vel, Knut Christianson, Seth Campbell, Ben Hills*
 
+| *Support from this work comes from* `NSF awards <https://nsf.gov/awardsearch/showAward?AWD_ID=1643301&HistoricalAwards=false>`_ *1643301 and 1643353.*
 
 The Seismic and Radar Toolbox (SeidarT) is a collaboration between
-researchers at the Universities of Maine and Washington to provide
-an open source platform for forward modeling mechanical and
-electromagnetic wave propagation. The major objective of the
+the Universities of Maine and Washington to provide
+an open source platform for forward modeling elastic (seismic) and
+electromagnetic (radar) wave propagation. The major objective of the
 project is to easily and quickly implement isotropic and anisotropic
-complex geometries and/or velocity structures to develop prior
-constraints for - not limited to - investigating, estimating,
-and imaging englacial ice structure, sub-glacial boundary conditions
-on the sub-regional scale. Larger problems would require the
-curvature of the Earth to be taken into consideration, but many
-glacier seismic and radar experiments do not expand into regional
-parameter estimation and velocity modeling.
+complex geometries and/or velocity structures to investigate,
+and plan field campaigns to image local and regional subsurface structure,
+particularly for the cryosphere. Larger problems require the
+curvature of the Earth to be taken into consideration.
 
 Much of this code has been adopted from the SEISMIC_CPML software
 provided by `Computational Infrastucture for Geophysics (CIG) <https://geodynamics.org/cig/software/>`_.
@@ -77,4 +76,3 @@ Search documentation
 Need to look something up?
 
 * :ref:`search`
-

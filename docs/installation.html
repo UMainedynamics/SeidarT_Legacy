@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,6 +31,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -125,6 +128,7 @@
 <p class="caption"><span class="caption-text">Extra material</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="png-creation.html">Creating a png file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build-docs.html">Building documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="materials.html">Currently available materials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="units.html">Units</a></li>
 <li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
@@ -236,7 +240,7 @@ environment.</p>
 <dt>First, make sure you have the proper prerequisites</dt><dd><p>On Mac OS X systems with <a class="reference external" href="https://brew.sh/">Homebrew</a>,
 copy/paste/enter the following two lines:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">brew</span> <span class="n">update</span>
-<span class="n">brew</span> <span class="n">install</span> <span class="n">gcc</span> <span class="n">git</span>
+<span class="n">brew</span> <span class="n">install</span> <span class="n">gcc</span> <span class="n">git</span> <span class="n">parallel</span>
 </pre></div>
 </div>
 <p><strong>or</strong> on Debian/Ubuntu systems that use the <code class="code docutils literal notranslate"><span class="pre">aptitude</span></code>
@@ -301,7 +305,7 @@ can be with Homebrew (on OS X) using the commands:</p>
 <p>and via <strong>apt</strong> (on Linux) with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span> <span class="n">update</span>
 <span class="n">sudo</span> <span class="n">apt</span> <span class="n">install</span> <span class="n">gcc</span><span class="o">-</span><span class="mi">10</span> <span class="n">git</span> <span class="n">dos2unix</span> <span class="n">ghostscript</span> <span class="n">imagemagick</span> \
-  <span class="n">python3</span><span class="o">.</span><span class="mi">8</span> <span class="n">python3</span><span class="o">-</span><span class="n">numpy</span> <span class="n">python3</span><span class="o">-</span><span class="n">vtk</span> <span class="n">python3</span><span class="o">-</span><span class="n">pip</span>
+  <span class="n">python3</span><span class="mf">.8</span> <span class="n">python3</span><span class="o">-</span><span class="n">numpy</span> <span class="n">python3</span><span class="o">-</span><span class="n">vtk</span> <span class="n">python3</span><span class="o">-</span><span class="n">pip</span>
 </pre></div>
 </div>
 </dd>

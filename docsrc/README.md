@@ -1,4 +1,4 @@
-# SeidarT Documentation 
+# SeidarT Documentation
 
 This document describes how to modify and build SeidarT documentation.
 
@@ -13,7 +13,7 @@ docs/       # <- this is the folder that github pages pays attention to (product
 docsrc/     # <- this is the editing and build directory
 ```
 
-All edits to the documentation are made in `docsrc/`. 
+All edits to the documentation are made in `docsrc/`.
 
 
 ## Requirements
@@ -27,7 +27,7 @@ To install these, simply activate your SeidarT environment (or another environme
 
 ```
 conda activate SeidarT
-pip install sphinx sphinx-rtd-theme
+pip install sphinx sphinx-rtd-theme rst2pdf
 ```
 
 
