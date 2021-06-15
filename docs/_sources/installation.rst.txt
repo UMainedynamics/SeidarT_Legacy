@@ -51,7 +51,7 @@ environment.
     copy/paste/enter the following two lines::
 
         brew update
-        brew install gcc git
+        brew install gcc git parallel
 
     **or** on Debian/Ubuntu systems that use the :code:`aptitude`
     package manager, do the following to get those prerequisites::
@@ -213,6 +213,3 @@ Here we describe the folders you may need to use while working with the software
 
 * :ref:`genindex`
 * :ref:`search`
-
-
-
