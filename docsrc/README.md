@@ -20,14 +20,14 @@ All edits to the documentation are made in `docsrc/`.
 
 In order to build this documentation, you will need two pieces of Python software:
 
-- Sphinx
+- Sphinx version 3.5.4
 - sphinx-rtd-theme
 
 To install these, simply activate your SeidarT environment (or another environment with Python3) and use pip or conda to install the requirements:
 
 ```
 conda activate SeidarT
-pip install sphinx sphinx-rtd-theme rst2pdf
+pip install sphinx==3.5.4 sphinx-rtd-theme rst2pdf
 ```
 
 
@@ -70,4 +70,10 @@ Updated documentation should be available on Github Pages shortly after pushing.
 Usually, an error running `make html` or `make github` means that you are not in an environment that has Sphinx in it. See [Requirements](#requirements).
 
 Sphinx 4.0 and above depreciates a function that rst2pdf relies on to build the PDF file. At this time it is necessary to downgrade to Sphinx 3.5.4 in order to build documentation in PDF format.
-If you encounter an error stemming from rst2pdf, downgrading usually solves this.
+If you encounter an error stemming from rst2pdf, most likely you are using a version of Sphinx that is too new, and downgrading usually solves this.
+
+To downgrade, ensure you are in the SeidarT environment, then:
+
+```
+pip install sphinx==3.5.4
+```
