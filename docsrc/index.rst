@@ -1,7 +1,7 @@
 SeidarT |version|
 #####################################
 
-| `https://github.com/ChristopherGerbi/SeidarT <https://github.com/ChristopherGerbi/SeidarT>`_
+| `https://github.com/UMainedynamics/SeidarT <https://github.com/umainedynamics/SeidarT>`_
 | **Geophysical wave modeling through complex media**
 | **Primary creator:** *Steven Bernsen*
 | **with:** *Christopher Gerbi, Ian Nesbitt, Ann Hill, Senthil Vel, Knut Christianson, Seth Campbell, Ben Hills*
