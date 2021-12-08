@@ -65,7 +65,7 @@ environment.
     created by Git::
 
         cd /path/to/parent/directory
-        git clone https://github.com/sbernsen/SeidarT
+        git clone https://github.com/umainedynamics/SeidarT
         cd SeidarT
 
 #. Install
