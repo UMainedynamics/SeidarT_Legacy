@@ -1,0 +1,4 @@
+numpy:
+  - 1.23
+python:
+  - 3.9.*  # Adjust Python version as necessary

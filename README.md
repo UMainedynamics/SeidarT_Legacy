@@ -1,9 +1,12 @@
 # SeidarT
 
-### Table of Contents
-[Introduction](#introduction)  
+<!-- ### Table of Contents -->
+<!-- [Introduction](#introduction)  
 [Installation](#install)  
-
+[Auto-Install](#auto-installation) 
+[Manual Install](#manual-installation)  
+[Hardware Requirements](#hardware-requirements)  
+[Operating System Requirements](#operating-system-requirements)   -->
 
 Full documentation appears in the docs folder. 
 
@@ -13,167 +16,42 @@ Full documentation appears in the docs folder.
 
 The Seismic and Radar Toolbox (SeidarT) is a collaboration between researchers at the Universities of Maine and Washington to provide an open source platform for forward modeling mechanical and electromagnetic wave propagation. The major objective of the project is to easily and quickly implement isotropic and anisotropic complex geometries and/or velocity structures to develop prior constraints for - not limited too - investigating, estimating, and imaging englacial ice structure, sub-glacial boundary conditions on the sub-regional scale. Larger problems would require the curvature of the Earth to be taken into consideration, but many glacier seismic and radar experiments do not expand into regional parameter estimation and velocity modeling.
 
-Much of this code has been adopted from the *SEISMIC_CPML* software provided by [Computational Infrastucture for Geophysics (CIG)](https://geodynamics.org/cig/software/). Further details to the backend numerical code can be found in the [References](#references) section below.
+Much of the Staggered Grid FDTD code has been adopted from the *SEISMIC_CPML* software provided by [Computational Infrastucture for Geophysics (CIG)](https://geodynamics.org/cig/software/). Further details to the backend numerical code can be found in the [References](#references) section below.
 
 ## Installation <a name="install"></a>
 
-The dynamical programming language of **Python3** is used as a front end to run the more computationally extensive modeling schemes in **Fortran**. There are a number of ways to install this software depending on your desired level of control over the process. Most users should be fine with the "automatic installation" in the [section below](#auto-install).
+The dynamical programming language of **Python3** is used as a command line interface to run the more computationally extensive modeling schemes in **Fortran**. There are a number of ways to install this software depending on your desired level of control over the process. Most users should be fine with the "automatic installation" in the [section below](#auto-install).
 
-### "Auto" Installation <a name="auto-install"></a>
+SeidarT package binaries are publicly availble on the [PyPi repository](https://pypi.org/project/seidart/) and source code can be found at github (not yet public). 
 
-First, some background:
+### "Auto" installation <a name="auto-install"></a>
 
-This method will install SeidarT on most Unix-based systems using a combination of Anaconda and Fortran compilation. It's not necessary to know or do much more than execute a few command line entries. However, it will help to know that the installer will create what's called a "virtual environment" or more specifically an "Anaconda environment". Without getting into details, this conda environment is basically a way to create a virtual Python configuration that will let this software run but not affect your system's Python configuration, which is a fancy way of saying that conda will avoid causing cascading bad effects on your computer. In short: conda is nice because it plays nicely with various systems. Note well that **you will have to activate this conda environment whenever you wish to run SeidarT.** This is not hard but it is critical. Read on for instructions on how to both install and activate your SeidarT conda environment.
+Extract the *install* directory from the *install.tar.gz* or *install.bz* for Unix/Linux or Windows users, respectively
 
-1. First, make sure you have the proper prerequisites. On Debian/Ubuntu systems, open a Terminal window and do
+There are 2 install scripts, *full_install.sh* and *full_install.bat*, which will cover Linux, MacOS 13 and 14, and Windows , respectively. It's not necessary to know or do much more than execute a few command line entries via a bash terminal or powershell terminal. A virtual environment is created using the Miniconda/Anaconda package manager. This will avoid causing system incompatibilities and complicated software dependencies. Documentation for managing conda environments with Miniconda or Anaconda can be found [here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html). The full Anaconda release has a GUI called Navigator for managing environments. This can be found [here](https://docs.anaconda.com/free/navigator/tutorials/manage-environments/).  
 
-    ~~~
-    sudo apt update
-    sudo apt install gcc-9 gfortran git
-    ~~~
-
-    **or** in a Mac OS X Terminal window with [Homebrew](https://brew.sh), copy/paste/enter the following
-
-    ~~~
-    brew update
-    brew install gcc git
-    ~~~
-
-    *Note to OS X users: you may have to install [Homebrew](https://brew.sh) if you do not have it.*
-
-2. Now, change to the directory where you'd like SeidarT to go, clone it from GitHub, and change into the SeidarT directory created by Git
-
-    ~~~
-    cd /path/to/parent/directory
-    git clone https://github.com/sbernsen/SeidarT
-    cd SeidarT
-    ~~~
-
-3. Run the auto-installer script and follow the prompts
-
-    ~~~
-    bash install.sh
-    ~~~
-
-    This script will first check if Anaconda or Miniconda already exists on your system. It will download and install Miniconda if necessary. It will also add conda to your `$PATH`, which is to say that it will tell your computer where to look to use the conda software. Then, it will use conda to create a SeidarT environment and install the rest of the requirements into that environment. Finally, it will compile the Fortran code in this repository.
-
-4. Activate the SeidarT environment (you will have to do this whenever you want to use SeidarT)
-
-    ~~~
-    conda activate SeidarT
-    ~~~
-
-    *Note: you may have to open a new Terminal window for your system to recognize `conda` as a valid command.*
-
-5. You should now be ready to run SeidarT scripts!
-
-    Remember that whenever you would like to use SeidarT in the future, you will have to activate the SeidarT conda environment first by using the command in step 4.
+The *full_install.?* checks for an Anaconda/Miniconda and will install it if it isn't found. If Anaconda/Miniconda is not defined in your 'PATH' variable than it will be installed using the default install location. After installing the Conda package, the *seidart* environment is built using pre-defined dependencies in a YAML (Yet Another Markup Language) file. Both *Bash* executables and Python modules are built during install. In order to use either, the environment must be active. This can be easily done from the *Bash* command line interface (CLI) using the command
+```
+conda activate seidart
+```
 
 [comment]: ======================================================================
-### Manual Installation Instructions <a name="manual-install"></a>
+### Manual installation<a name="manual-install-pip"></a>
 
-This is the more involved and less sure-fire installation method, probably best left for intermediate level Unix users and up. The following system dependencies are required:
+The full repo can be found on GitHub and hosted on PyPi. *SeidarT* has been tested on Python 3.11 and is not yet supported with Python 3.12. For users that prefer building virtual environments with Anaconda, the install folder contains the *seidart-environment.yml* or it can be found in the root directory of the GitHub repo. The command 
+```
+conda env create -f seidart-environment.yml
+```
+will install all dependencies and the *seidart* package. For users who prefer more control in their installation, their is a small list of dependencies that must be met. These are:  *gcc*>10, *gfortran*, *ghostscript*, *imagemagick*, *numpy*, *pandas*, *matplotlib*, *scipy*, *glob2*, *pyevtk*, *mplstereonet*. Following install of all dependencies, 
+```
+pip install seidart
+```
+will pull and install the package from PyPi. 
 
-**Python3, Fortran95, GCC, pip, git, dos2unix, ghostscript, imageMagick**
+### Hardware Requirements <a name="hardware-requirement"></a>
 
-and additionally, the **Python** dependencies: *numpy*, *scipy*, *matplotlib*, *mplstereonet* (optional for viewing fabric distributions).
+*SeidarT* was tested and developed on a quad core 5th gen i7 processor with 16 Gb of RAM without any burden on the system so a typical modern laptop is sufficient for many application. When running models with large domains or a high number of time steps, the computational load is obviously increased, however the storage requirements become more significant. It can be easy to fill up 10's of Gb of storage, but an external drive can resolve that problem. The Apple M-chips may have compatability issues with particular types of software and Python packages, but we have maintained a relatively simple design along with leveraging some of the most commonly used Python packages which should help to mitigate any issues with computing on an M-chip. 
 
-First, install what you will need to compile the Fortran code. This can be done via **apt** with
-~~~
-sudo apt update
-sudo apt install gcc-10 git dos2unix ghostscript imagemagick python3.8 python3-numpy python3-vtk python3-pip
-~~~
+### Operating System Requirements <a name="operating-system"></a>
 
-and with homebrew using the commands
-
-~~~
-brew update
-brew install gcc git dos2unix ghostscript imagemagick numpy vtk python pip
-~~~
-
-Then, install the rest of the dependencies using pip
-
-~~~
-pip3 install -U matplotlib scipy pyevtk vtk mplstereonet
-~~~
-
-Anaconda installation:
-
-~~~
-conda create -n seidart python=3 pip git ghostscript imagemagick numpy matplotlib scipy pyevtk vtk
-conda activate seidart
-pip install mplstereonet
-~~~
-
-To download the software, open a terminal (*Ctrl-Alt-t* for Ubuntu and *Ctrl-Opt-Shift-t* for Mac) and change directories
-
-~~~
-cd /path/to/parent/directory
-~~~
-
-to where you would like SeidarT to be located then clone the files from *github*
-
-~~~
-git clone git@github.com:sbernsen/SeidarT.git
-~~~
-
-This will create a folder named **SeidarT** that contains all executables and modules. Change directories to the **SeidarT** folder
-
-~~~
-cd SeidarT
-~~~
-
-and run the install file
-
-~~~
-bash noconda_install.sh
-~~~
-
-When the compilation is finished, we can add the folder to the path directory and the python path directory. Currently, this software is supported with **bash** so append the following lines to the *.bashrc* if using Ubuntu
-
-~~~
-export PATH=$PATH:/path/to/SeidarT/bin
-
-export PYTHONPATH=$PYTHONPATH:/path/to/SeidarT/bin
-~~~
-
-and if Python 2 is the default version create an alias in the *.bashrc* file by adding the line in the alias section
-
-~~~
-alias python=python3
-~~~
-
-Depending on the OS release (El Capitan, High Sierra, Mojave, etc.) and whether you have *Anaconda* installed appending a path might be different. Anaconda may set aliases so troubleshooting on a Mac can be cumbersome. Before editing the */etc/path*, *.bash_profile*, *.profile* or *.bashrc* file it is a good idea to create a backup especially if you are not familiar with either or any of those files. To do this copy the original to a new name. For example,
-
-~~~
-cp <location/of/path/definitions> <location/of/path/definitions>_original
-~~~
-
-that way you can always revert back to the working script.
-
-
-There are a variety of ways to edit the documents but for simplicity change directories to the home folder
-
-~~~
-cd ~
-~~~
-
-and input into the command line
-
-~~~
-sudo nano .bashrc
-~~~
-
-or either
-
-~~~
-sudo nano /etc/paths
-sudo nano ~/.profile
-~~~
-
-then scroll down to the bottom of the file and append the path. Save and close (*Ctrl-x* then *Y* and enter) the file then check to make sure it is included in the path
-
-~~~
-echo $PATH
-echo $PYTHONPATH
-~~~
+All of the development was carried out on a Linux operating system and limited to Debian, Ubuntu, Solus 2, and Fedora. No compatibility issues between Linux flavors arose. The binaries are built on Github Actions for Windows 10 and 11 (latest), MacOS 13 and 14 (latest), and most flavors of Linux. Cross-platform usability is one of the core tenets in the development of the software and needs to be maintained in future development. 

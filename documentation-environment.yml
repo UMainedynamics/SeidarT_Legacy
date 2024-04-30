@@ -1,0 +1,30 @@
+name: documentation
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - babel
+  - beautifulsoup4
+  - bzip2
+  - commonmark
+  - docutils
+  - libgfortran5
+  - numpy
+  - pandas
+  - pip
+  - python=3.11
+  - readline
+  - recommonmark
+  - ruamel.yaml
+  - setuptools
+  - sphinx
+  - sphinx-autodoc-typehints
+  - sphinx_rtd_theme
+  - sphinxcontrib-applehelp
+  - sphinxcontrib-devhelp
+  - sphinxcontrib-htmlhelp
+  - sphinxcontrib-jquery  
+  - sphinxcontrib-jsmath
+  - sphinxcontrib-qthelp
+  - sphinxcontrib-serializinghtml
+  - wheel
