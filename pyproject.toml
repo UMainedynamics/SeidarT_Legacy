@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools","wheel","numpy"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "seidart"
+version = "0.1.1"
+license = {file = "LICENSE.txt"}
+description = "seidarT is a 2 and 2.5d seismic and electromagnetic modeling suite."
+requires-python = ">=3.11"
+readme = "README.md"
+authors = [
+    { name = "Steven Bernsen", email = "spbernsen@alaska.edu"},
+    { name = "Christopher Gerbi", email = "christopher.gerbi@maine.edu"},
+]
+maintainers = [
+    { name = "Steven Bernsen", email = "spbernsen@alaska.edu"},
+    { name = "Christopher Gerbi", email = "christopher.gerbi@maine.edu"},
+]
+dependencies = [
+    "numpy",
+    "scipy",
+    "matplotlib",
+    "pandas",
+    "mplstereonet",
+    "pyevtk",
+    "glob2"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "Operating System :: OS Independent",
+    "Framework :: Matplotlib",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: English",
+    "Development Status :: 4 - Beta",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = [
+    "seidart",
+    "seidart.fortran", 
+    "seidart.routines", 
+    "seidart.simulations", 
+    "seidart.visualization"
+]
+
+# Optionals
+[project.urls]
+homepage = "https://github.com/sbernsen/SeidarT"
+documentation = "https://umainedynamics.github.io/SeidarT/index.html"
+
+

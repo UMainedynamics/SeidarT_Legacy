@@ -1,0 +1,51 @@
+package:
+  name: seidart 
+  version: "0.0.6"
+
+source:
+  git_url: https://github.com/sbernsen/SeidarT
+  git_rev: v0.0.6-alpha
+  
+build:
+  number: 0
+  script: conda_build.sh
+
+  # script_env:
+  #   - SETUPTOOLS_SCM_PRETEND_VERSION={{ version }}
+
+requirements:
+  host:
+    - python >=3.11
+    - numpy
+    - setuptools
+    - pip 
+    - {{ compiler('fortran') }}
+  run:
+    - python >=3.11
+    - numpy
+    - scipy
+    - matplotlib 
+    - glob2
+    - pandas
+    - pyevtk
+    - mplstereonet
+
+test:
+  imports:
+    - seidart
+    - seidart.fortran
+    - seidart.routines
+    - seidart.simulations
+    - seidart.visualization
+
+about:
+  home: https://github.com/sbernsen/SeidarT
+  license: GNU Affero General Public License v3
+  license_file: LICENSE.txt
+  summary: "seidarT is a 2 and 2.5d seismic and electromagnetic modeling suite."
+  doc_url: https://umainedynamics.github.io/SeidarT/index.html
+
+
+extra:
+  recipe-maintainers:
+    - sbernsen
